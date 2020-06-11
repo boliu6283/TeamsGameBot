@@ -1,8 +1,8 @@
 {
   "name": "GameBot",
   "version": "1.0.0",
-  "description": "Game",
-  "author": "Bo Liu",
+  "description": "Game Bot on Teams",
+  "author": "Secret Team",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
