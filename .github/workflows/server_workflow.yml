@@ -1,0 +1,39 @@
+name: Bot Server CI CD
+
+env:
+  BOT_SERVER_PATH: '.'
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      # - 'bots/**'
+  pull_request:
+    branches:
+      - master
+      - dev
+    paths:
+      # - 'bots/**'
+
+jobs:
+  api_server_deploy:
+    name: Deploy server
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 10.x to resolve dependencies
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - name: Install Node Dependencies & Build Project
+      run: |
+        npm install
+        npm run build --if-present
+        npm run test --if-present
+    - name: Deploy to Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        package: ${{ env.BOT_SERVER_PATH }}
+        app-name: ${{ secrets.BOT_SERVER_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.BOT_SERVER_WEBAPP_PUBLISH_PROFILE }}
