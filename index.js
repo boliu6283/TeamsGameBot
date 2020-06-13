@@ -33,6 +33,12 @@ const BOOKING_DIALOG = "bookingDialog";
 const ENV_FILE = path.join(__dirname, ".env");
 require("dotenv").config({ path: ENV_FILE });
 
+// Set id & psw to empty for local host
+if (!process.env.port && !process.env.PORT) {
+  process.env.MicrosoftAppId = '';
+  process.env.MicrosoftAppPassword = '';
+}
+
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about adapters.
 const adapter = new BotFrameworkAdapter({
