@@ -1,0 +1,44 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "spacing": "medium",
+      "size": "default",
+      "weight": "bolder",
+      "text": "Welcome to Game Bot!",
+      "wrap": true,
+      "maxLines": 0
+    },
+    {
+      "type": "Image",
+      "url": "https://www.humanesociety.org/sites/default/files/styles/2000x850/public/2018/08/kitten-440379.jpg?h=c8d00152&itok=dz_bhvnR",
+      "size": "stretch"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "🕹️Start Game",
+      "data": {
+        "mainMenuSelection": "startGame"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "📖Rank",
+      "data": {
+        "mainMenuSelection": "rank"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "⚙️Settings",
+      "data": {
+        "mainMenuSelection": "settings"
+      }
+    }
+  ]
+}

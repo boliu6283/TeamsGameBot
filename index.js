@@ -6,6 +6,7 @@
 // Import required packages
 const path = require("path");
 const restify = require("restify");
+const mongoose = require('mongoose');
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
@@ -106,6 +107,24 @@ const luisRecognizer = new FlightBookingRecognizer(luisConfig);
 const bookingDialog = new BookingDialog(BOOKING_DIALOG);
 const dialog = new MainDialog(luisRecognizer, bookingDialog);
 const bot = new DialogAndWelcomeBot(conversationState, userState, dialog);
+
+// Connect to Mongo DB
+mongoose.connect(process.env.db, {
+  bufferMaxEntries: 0,
+  socketTimeoutMS: 0,
+  keepAlive: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useNewUrlParser: true,
+  useFindAndModify: false
+});
+
+/**
+ * Throw error when not able to connect to database
+ */
+mongoose.connection.on('error', () => {
+  throw new Error(`unable to connect to database: ${process.env.db}`);
+});
 
 // Create HTTP server
 const server = restify.createServer();
