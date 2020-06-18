@@ -23,21 +23,21 @@
       "type": "Action.Submit",
       "title": "🕹️Start Game",
       "data": {
-        "mainMenuSelection": "startGame"
+        "mainMenuChoice": "startGame"
       }
     },
     {
       "type": "Action.Submit",
       "title": "📖Rank",
       "data": {
-        "mainMenuSelection": "rank"
+        "mainMenuChoice": "rank"
       }
     },
     {
       "type": "Action.Submit",
       "title": "⚙️Settings",
       "data": {
-        "mainMenuSelection": "settings"
+        "mainMenuChoice": "settings"
       }
     }
   ]

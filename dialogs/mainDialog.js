@@ -66,31 +66,40 @@ class MainDialog extends ComponentDialog {
     }
   }
 
-  /**
-   * First step in the waterfall dialog. Prompts the user for a command.
-   * Currently, this expects a booking request, like "book me a flight from Paris to Berlin on march 22"
-   * Note that the sample LUIS model will only recognize Paris, Berlin, New York and London as airport cities.
-   */
   async introStep(stepContext) {
-    const messageText = stepContext.options.restartMsg
-      ? stepContext.options.restartMsg
-      : 'Greetings!\n';
-    const promptMessage = MessageFactory.text(
-      messageText,
-      messageText,
-      InputHints.ExpectingInput
-    );
+    const input = stepContext.context._activity.value;
+    if (input) {
+      switch(input.mainMenuChoice) {
+        case 'startGame': {
+          // TODO: Render game card
+          break;
+        }
+
+        case 'rank': {
+          break;
+        }
+
+        case 'settings': {
+          break;
+        }
+      }
+      return await stepContext.next();
+    }
+
+    // const messageText = stepContext.options.restartMsg
+    //   ? stepContext.options.restartMsg
+    //   : 'Greetings!\n';
+    // const promptMessage = MessageFactory.text(
+    //   messageText,
+    //   messageText,
+    //   InputHints.ExpectingInput
+    // );
+    // await stepContext.prompt("TextPrompt", { prompt: promptMessage });
+
     const mainMenuCard = CardFactory.adaptiveCard(MainMenuCard);
-  
-    await stepContext.prompt("TextPrompt", { prompt: promptMessage });
     return await stepContext.context.sendActivity({ attachments: [mainMenuCard] });
-    // return await stepContext.next();
   }
 
-  /**
-   * Second step in the waterfall.  This will use LUIS to attempt to extract the origin, destination and travel dates.
-   * Then, it hands off to the bookingDialog child dialog to collect any remaining details.
-   */
   async actStep(stepContext) {
     const bookingDetails = {};
 
@@ -160,7 +169,12 @@ class MainDialog extends ComponentDialog {
       }
     }
 
-    return await stepContext.next();
+    return await stepContext.context.sendActivity(
+      'test',
+      'test',
+      InputHints.IgnoringInput
+    );;
+    // return await stepContext.next();
   }
 
   /**
