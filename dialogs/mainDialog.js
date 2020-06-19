@@ -40,7 +40,7 @@ class MainDialog extends ComponentDialog {
       .addDialog(bookingDialog)
       .addDialog(
         new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
-          this.introStep.bind(this),
+          this.mainMenuStep.bind(this),
           this.actStep.bind(this),
           this.finalStep.bind(this),
         ])
@@ -66,11 +66,11 @@ class MainDialog extends ComponentDialog {
     }
   }
 
-  async introStep(stepContext) {
+  async mainMenuStep(stepContext) {
     const input = stepContext.context._activity.value;
     if (input) {
       switch(input.mainMenuChoice) {
-        case 'startGame': {
+        case 'game': {
           // TODO: Render game card
           break;
         }
