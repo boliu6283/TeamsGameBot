@@ -21,9 +21,9 @@
   "actions": [
     {
       "type": "Action.Submit",
-      "title": "🕹️Start Game",
+      "title": "🕹️Game",
       "data": {
-        "mainMenuChoice": "startGame"
+        "mainMenuChoice": "game"
       }
     },
     {
