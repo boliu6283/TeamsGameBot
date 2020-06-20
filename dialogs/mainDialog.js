@@ -14,7 +14,8 @@ const {
   WaterfallDialog,
 } = require("botbuilder-dialogs");
 const { CardFactory } = require('botbuilder-core');
-
+const { getRandomPic } = require('../server/helpers/pic')
+const { menuPics } = require('../config/pics')
 const MainMenuCard = require('../resources/mainMenuCard.json');
 
 const MAIN_WATERFALL_DIALOG = "mainWaterfallDialog";
@@ -97,6 +98,7 @@ class MainDialog extends ComponentDialog {
     // await stepContext.prompt("TextPrompt", { prompt: promptMessage });
 
     const mainMenuCard = CardFactory.adaptiveCard(MainMenuCard);
+    mainMenuCard.content.body[1].url = getRandomPic(menuPics);
     return await stepContext.context.sendActivity({ attachments: [mainMenuCard] });
   }
 
