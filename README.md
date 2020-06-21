@@ -33,26 +33,26 @@ Gamify working environment with a online Teams board game lobby to tighten up co
    1. `.\ngrok.exe --version` should return `ngrok version 2.x.x`
 4. Git Clone this repository
 5. Resolve the NodeJs package.json dependencies using `npm install`
-   1. [GIF Placeholder]()
+   1. ![Run npm install](/.docs/npm_install.gif)
 6. Create a personal Microsoft Teams application for development
    1. Go to Microsoft Teams => Left Panel => **...** => Search "App Studio"
-      1. [GIF Placeholder]()
+      1. ![Setup Teams App](/.docs/teams_app_studio.gif)
    2. Fill in the information for your new bot
       1. In Bots section, **DO NOT CHECK** "one-way communication"
-      2. [GIF Placeholder]()
+      2. ![Setup Bots App](/.docs/teams_bot_add.gif)
 7. Setup environment `./.env` correctly
    1. `MicrosoftAppId` = `App Studio => Bots => UUID above "App passwords"`
    2. `MicrosoftAppPassword` = `App Studio => Bots => App passwords`
    3. `db` = `Mongo db connection string (acquire from teammates' setting)`
    4. `DebugMode` = `**emulator** for local bot-emulator debug, **teams** for remote debug`
-   5. [GIF Placeholder]()
+   5. ![VSCode Environment](/.docs/vscode_env_setup.gif)
 
 ### Everyday Development
 1. Sync the repository by `git pull` or `git fetch; git rebase`.
 2. Start the bot server with `npm run start` or **VSCode F5**
 3. After the server starts up, use `ngrok.exe http 3978 -host-header=localhost:3978` to expose your local port into public. **DO NOT TURN OFF ngrok.exe when restarting NodeJs server**. Otherwise, you need to replay step 4.
 4. Change bot message endpoint
-5. [GIF Placeholder]()
+5. ![VSCode Daily Development](/.docs/vscode_debug_start.gif)
 
 ### LUIS application to enable language understanding
 
