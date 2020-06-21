@@ -13,6 +13,22 @@ This bot has been created using [Bot Framework](https://dev.botframework.com), i
 
 This sample **requires** prerequisites in order to run.
 
+### Setup Environment
+1. Ensure `nodejs>=12.0` is installed (nodejs interpreter for bot server)
+2. Ensure `ngrok` is installed (port forwarder)
+3. Use `npm install` to resolve node dependencies
+4. Setup .env is correctly
+   1. `MicrosoftAppId` = `App Studio => Bots => UUID above "App passwords"`
+   2. `MicrosoftAppPassword` = `App Studio => Bots => App passwords`
+   3. `LuisAppId` = `Luis.ai => Your Project => Manage => Settings => App ID`
+   4. `LuisAPIKey` = `(acquire from teammates' setting)`
+   5. `LuisAPIHostName` = `(acquire from teammates' setting)`
+   6. `db` = `Mongo db connection string (acquire from teammates' setting)`
+   7. `DebugMode` = `**emulator** for local bot-emulator debug, **teams** for remote debug`
+5. Use `npm run start` to enable local server
+6. Use `ngrok.exe http 3978 -host-header=localhost:3978` to expose port 3978 to public
+7. Setup your teams bot in `App Studio` using the public ngrok url
+
 ### Overview
 
 This bot uses [LUIS](https://www.luis.ai), an AI based cognitive service, to implement language understanding.
@@ -67,7 +83,6 @@ The prerequisite outlined above contain the steps necessary to provision a langu
 ## Deploy the bot to Azure
 
 To learn more about deploying a bot to Azure, see [Deploy your bot to Azure](https://aka.ms/azuredeployment) for a complete list of deployment instructions.
-
 
 ## Further reading
 
