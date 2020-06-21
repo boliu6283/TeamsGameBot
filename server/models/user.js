@@ -8,6 +8,7 @@ const userSchema = new Schema({
   role: { type: String, default: 'User' },
   status: { type: String, default: 'offline' },
   score: { type: Number, default: 10 },
+  credit: { type: Number, default: 0.0 },
   description: { type: String, default: '' },
   subscription: { type: Boolean, default: true },
   gamePurchase: { type: Schema.Types.ObjectId, ref: 'gamePurchase' },
