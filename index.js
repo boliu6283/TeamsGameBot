@@ -34,10 +34,14 @@ const BOOKING_DIALOG = "bookingDialog";
 const ENV_FILE = path.join(__dirname, ".env");
 require("dotenv").config({ path: ENV_FILE });
 
-// Set id & psw to empty for local host
-if (!process.env.port && !process.env.PORT) {
+// Use .env DebugMode = emulator to enable local bot-emulator debug
+// Set id & psw to empty for localhost (when testing on bot-emulator)
+if (process.env.DebugMode === 'emulator' && !process.env.port && !process.env.PORT) {
+  console.log('Environment .env DebugMode="emulator", using local bot-emulator debug');
   process.env.MicrosoftAppId = '';
   process.env.MicrosoftAppPassword = '';
+} else if (process.env.DebugMode === 'teams') {
+  console.log('Environment .env DebugMode="teams", using teams app studio debug');
 }
 
 // Create adapter.
