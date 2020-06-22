@@ -14,6 +14,25 @@ Gamify working environment with a online Teams board game lobby to tighten up co
   - [JavaScript ES6 QuickStart](https://www.codespot.org/javascript-101-es6-and-beyond/)
   - [Node Package Manager (npm) & package.json](https://nodesource.com/blog/an-absolute-beginners-guide-to-using-npm/)
 
+### Architecture
+Main Flow:
+index.js (server hosting)
+   => bots (application module)
+      => dialogs (dialogs logic handling)
+         => resolvers (database access layer)
+
+Folder Structure:
+- **.env**: process environment variable will be propagated into process.env. dictionary
+- **index.js**: entrypoint of the application
+- **constants.js**: constants will be used inside the application
+- **bots**: bot modules need to be loaded
+- **dialogs**: conversation handlers
+- **helpers**: miscellaneous functions
+- **models**: database model mapping, like the M in ASP.NET MVC framework
+- **resolvers**: database access layer, operations on data
+- **static**: static resources, like json and images
+- **tests**: unittesting scenarios
+
 ### Prerequisites
 
 **Essential**
