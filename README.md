@@ -5,6 +5,7 @@ Gamify working environment with a online Teams board game lobby to tighten up co
 
 ### Stack
 - [Bot Framework](https://dev.botframework.com) on Teams to support P2P/GroupChat communication.
+  - [How Bot Works](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-basics?view=azure-bot-service-4.0&tabs=javascript)
   - [JavaScript API Reference](https://docs.microsoft.com/en-us/javascript/api/botbuilder/?view=botbuilder-ts-latest)
 - [LUIS Text Intent Recognition](https://www.luis.ai) to implement core AI natural language processing capabilities.
   - [JavaScript API Reference](https://docs.microsoft.com/en-us/javascript/api/botbuilder-ai/luisrecognizer?view=botbuilder-ts-latest)
@@ -15,11 +16,13 @@ Gamify working environment with a online Teams board game lobby to tighten up co
   - [Node Package Manager (npm) & package.json](https://nodesource.com/blog/an-absolute-beginners-guide-to-using-npm/)
 
 ### Architecture
-Main Flow:
+[Main Flow Overview](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-concept-state?view=azure-bot-service-4.0)
 index.js (server hosting)
-   => bots (application module)
-      => dialogs (dialogs logic handling)
-         => resolvers (database access layer)
+=> adapter (convert HTTP request into turnContext)
+   => bots (application module [activity handlers](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-basics?view=azure-bot-service-4.0&tabs=javascript#bot-logic))
+      => dialogs (dialogs stack handling [using dialogs](https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-concept-dialog?view=azure-bot-service-4.0#using-dialogs))
+         => steps (steps in waterfall state machine)
+            => resolvers (database access layer)
 
 Folder Structure:
 - **.env**: process environment variable will be propagated into process.env. dictionary

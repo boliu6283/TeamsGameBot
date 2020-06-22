@@ -5,7 +5,6 @@ const {
   TimexProperty,
 } = require("@microsoft/recognizers-text-data-types-timex-expression");
 const { InputHints, TeamsInfo } = require("botbuilder");
-const { LuisRecognizer } = require("botbuilder-ai");
 const {
   ComponentDialog,
   DialogSet,
@@ -20,32 +19,22 @@ const Resolvers = require('../resolvers');
 const MainMenuCard = require('../static/mainMenuCard.json');
 
 class MainDialog extends ComponentDialog {
-  constructor(luisRecognizerConfig) {
+  constructor(luisRecognizer) {
     super("MainDialog");
 
-    // Initialize Luis Recognizer https://docs.microsoft.com/en-gb/azure/cognitive-services/luis/luis-migration-api-v3
-    const luisIsConfigured = (luisRecognizerConfig &&
-                              luisRecognizerConfig.applicationId &&
-                              luisRecognizerConfig.endpointKey &&
-                              luisRecognizerConfig.endpoint);
-    if (!luisIsConfigured) {
-      throw new Error("[MainDialog]: Missing parameter 'luisRecognizerConfig' is required");
-    }
-    this.luisRecognizer = new LuisRecognizer(
-      luisRecognizerConfig,
-      { apiVersion: 'v3' }
-    );
+    this.luisRecognizer = luisRecognizer;
 
-    // Define the main dialog and its related components.
+    // Define the main dialog flow and its components.
     this.addDialog(new TextPrompt("TextPrompt"))
-      .addDialog(
-        new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
-          this.mainMenuStep.bind(this),
-          this.actStep.bind(this),
-          this.finalStep.bind(this),
-        ])
-      );
+        .addDialog(
+          new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
+            this.mainMenuStep.bind(this),
+            this.actStep.bind(this),
+            this.finalStep.bind(this),
+          ])
+        );
 
+    // Define the default dialog for a new user to land on
     this.initialDialogId = MAIN_WATERFALL_DIALOG;
   }
 
@@ -73,7 +62,6 @@ class MainDialog extends ComponentDialog {
     if (input) {
       switch(input.mainMenuChoice) {
         case 'game': {
-          // TODO: Render game card
           break;
         }
 
@@ -125,33 +113,6 @@ class MainDialog extends ComponentDialog {
       InputHints.IgnoringInput
     );;
     // return await stepContext.next();
-  }
-
-  /**
-   * Shows a warning if the requested From or To cities are recognized as entities but they are not in the Airport entity list.
-   * In some cases LUIS will recognize the From and To composite entities as a valid cities but the From and To Airport values
-   * will be empty if those entity values can't be mapped to a canonical item in the Airport.
-   */
-  async showWarningForUnsupportedCities(context, fromEntities, toEntities) {
-    const unsupportedCities = [];
-    if (fromEntities.from && !fromEntities.airport) {
-      unsupportedCities.push(fromEntities.from);
-    }
-
-    if (toEntities.to && !toEntities.airport) {
-      unsupportedCities.push(toEntities.to);
-    }
-
-    if (unsupportedCities.length) {
-      const messageText = `Sorry but the following airports are not supported: ${unsupportedCities.join(
-        ", "
-      )}`;
-      await context.sendActivity(
-        messageText,
-        messageText,
-        InputHints.IgnoringInput
-      );
-    }
   }
 
   /**
