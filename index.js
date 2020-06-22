@@ -102,7 +102,7 @@ const luisRecognizer = new LuisRecognizer({
 );
 
 // Create the main dialog
-const mainDialog = new MainDialog(luisRecognizer, userState);
+const mainDialog = new MainDialog(luisRecognizer);
 const mainBot = new DialogBot(conversationState, userState, mainDialog);
 
 // Connect to Mongo DB

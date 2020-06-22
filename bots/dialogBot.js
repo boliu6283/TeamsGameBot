@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 const { ActivityHandler } = require('botbuilder');
+const constants = require('../constants');
 
 class DialogBot extends ActivityHandler {
   constructor(conversationState, userState, dialog) {
@@ -16,13 +17,20 @@ class DialogBot extends ActivityHandler {
     this.conversationState = conversationState;
     this.userState = userState;
     this.dialog = dialog;
-    this.dialogState = this.conversationState.createProperty('DialogState');
+
+    // Create temporary state storage in conversationState.DialogState property
+    this.dialogStateAccessor = this.conversationState.createProperty(
+      constants.DIALOG_STATE);
+    this.userProfileStateAccessor = this.userState.createProperty(
+      constants.USER_PROFILE_STATE);
 
     // Activity Handlers
     // https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-basics?view=azure-bot-service-4.0&tabs=csharp#bot-logic
     this.onMessage(async (context, next) => {
       console.log('Running dialog with Message Activity.');
-      await this.dialog.run(context, this.dialogState);
+
+      // Pass dialogState and userProfileState into mainDialog.run() function
+      await this.dialog.run(context, this.dialogStateAccessor, this.userProfileStateAccessor);
       await next();
     });
 
