@@ -1,3 +1,5 @@
+const User = require('../../models/user');
+
 const getUser = async (args) => {
   return await User.findOne({ aad: args.aad });
 }

@@ -4,7 +4,7 @@
 const {
   TimexProperty,
 } = require("@microsoft/recognizers-text-data-types-timex-expression");
-const { MessageFactory, InputHints } = require("botbuilder");
+const { InputHints, TeamsInfo } = require("botbuilder");
 const { LuisRecognizer } = require("botbuilder-ai");
 const {
   ComponentDialog,
@@ -14,31 +14,30 @@ const {
   WaterfallDialog,
 } = require("botbuilder-dialogs");
 const { CardFactory } = require('botbuilder-core');
-const { getRandomPic } = require('../server/helpers/pic')
-const { menuPics } = require('../config/pics')
-const MainMenuCard = require('../resources/mainMenuCard.json');
-
-const MAIN_WATERFALL_DIALOG = "mainWaterfallDialog";
+const { MAIN_WATERFALL_DIALOG } = require('../constants')
+const { getRandomPic, menuPics } = require('../helpers/thumbnail');
+const Resolvers = require('../resolvers');
+const MainMenuCard = require('../static/mainMenuCard.json');
 
 class MainDialog extends ComponentDialog {
-  constructor(luisRecognizer, bookingDialog) {
+  constructor(luisRecognizerConfig) {
     super("MainDialog");
 
-    if (!luisRecognizer)
-      throw new Error(
-        "[MainDialog]: Missing parameter 'luisRecognizer' is required"
-      );
-    this.luisRecognizer = luisRecognizer;
-
-    if (!bookingDialog)
-      throw new Error(
-        "[MainDialog]: Missing parameter 'bookingDialog' is required"
-      );
+    // Initialize Luis Recognizer https://docs.microsoft.com/en-gb/azure/cognitive-services/luis/luis-migration-api-v3
+    const luisIsConfigured = (luisRecognizerConfig &&
+                              luisRecognizerConfig.applicationId &&
+                              luisRecognizerConfig.endpointKey &&
+                              luisRecognizerConfig.endpoint);
+    if (!luisIsConfigured) {
+      throw new Error("[MainDialog]: Missing parameter 'luisRecognizerConfig' is required");
+    }
+    this.luisRecognizer = new LuisRecognizer(
+      luisRecognizerConfig,
+      { apiVersion: 'v3' }
+    );
 
     // Define the main dialog and its related components.
-    // This is a sample "book a flight" dialog.
     this.addDialog(new TextPrompt("TextPrompt"))
-      .addDialog(bookingDialog)
       .addDialog(
         new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
           this.mainMenuStep.bind(this),
@@ -57,6 +56,8 @@ class MainDialog extends ComponentDialog {
    * @param {*} accessor
    */
   async run(turnContext, accessor) {
+    this._user = await this.loginOrRegisterUser(turnContext);
+
     const dialogSet = new DialogSet(accessor);
     dialogSet.add(this);
 
@@ -87,16 +88,6 @@ class MainDialog extends ComponentDialog {
       return await stepContext.next();
     }
 
-    // const messageText = stepContext.options.restartMsg
-    //   ? stepContext.options.restartMsg
-    //   : 'Greetings!\n';
-    // const promptMessage = MessageFactory.text(
-    //   messageText,
-    //   messageText,
-    //   InputHints.ExpectingInput
-    // );
-    // await stepContext.prompt("TextPrompt", { prompt: promptMessage });
-
     const mainMenuCard = CardFactory.adaptiveCard(MainMenuCard);
     mainMenuCard.content.body[1].url = getRandomPic(menuPics);
     return await stepContext.context.sendActivity({ attachments: [mainMenuCard] });
@@ -104,11 +95,6 @@ class MainDialog extends ComponentDialog {
 
   async actStep(stepContext) {
     const bookingDetails = {};
-
-    // if (!this.luisRecognizer.isConfigured) {
-    //   // LUIS is not configured, we just run the BookingDialog path.
-    //   return await stepContext.beginDialog("bookingDialog", bookingDetails);
-    // }
 
     // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
     const luisResult = await this.luisRecognizer.executeLuisQuery(
@@ -118,44 +104,6 @@ class MainDialog extends ComponentDialog {
       case "MainMenu": {
         const mainMenuCard = CardFactory.adaptiveCard(MainMenuCard);
         await stepContext.context.sendActivity({ attachments: [mainMenuCard] });
-      }
-
-      case "BookFlight": {
-        // Extract the values for the composite entities from the LUIS result.
-        const fromEntities = this.luisRecognizer.getFromEntities(luisResult);
-        const toEntities = this.luisRecognizer.getToEntities(luisResult);
-
-        // Show a warning for Origin and Destination if we can't resolve them.
-        await this.showWarningForUnsupportedCities(
-          stepContext.context,
-          fromEntities,
-          toEntities
-        );
-
-        // Initialize BookingDetails with any entities we may have found in the response.
-        bookingDetails.destination = toEntities.airport;
-        bookingDetails.origin = fromEntities.airport;
-        bookingDetails.travelDate = this.luisRecognizer.getTravelDate(
-          luisResult
-        );
-        console.log(
-          "LUIS extracted these booking details:",
-          JSON.stringify(bookingDetails)
-        );
-
-        // Run the BookingDialog passing in whatever details we have from the LUIS call, it will fill out the remainder.
-        return await stepContext.beginDialog("bookingDialog", bookingDetails);
-      }
-
-      case "GetWeather": {
-        // We haven't implemented the GetWeatherDialog so we just display a TODO message.
-        const getWeatherMessageText = "TODO: get weather flow here";
-        await stepContext.context.sendActivity(
-          getWeatherMessageText,
-          getWeatherMessageText,
-          InputHints.IgnoringInput
-        );
-        break;
       }
 
       default: {
@@ -235,6 +183,19 @@ class MainDialog extends ComponentDialog {
     return await stepContext.replaceDialog(this.initialDialogId, {
       restartMsg: "What else can I do for you?",
     });
+  }
+
+  async loginOrRegisterUser(turnContext) {
+    const userInfo = (await TeamsInfo.getMembers(turnContext))[0];
+    let userDbInfo = await Resolvers.user.getUser({ aad: userInfo.aadObjectId });
+    if (!userDbInfo) {
+      userDbInfo = await Resolvers.user.signupUser({
+        aad: userInfo.aadObjectId,
+        email: userInfo.userPrincipalName,
+        name: userInfo.name
+      });
+    }
+    return userDbInfo;
   }
 }
 

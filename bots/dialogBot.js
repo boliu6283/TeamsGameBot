@@ -4,12 +4,6 @@
 const { ActivityHandler } = require('botbuilder');
 
 class DialogBot extends ActivityHandler {
-  /**
-   *
-   * @param {ConversationState} conversationState
-   * @param {UserState} userState
-   * @param {Dialog} dialog
-   */
   constructor(conversationState, userState, dialog) {
     super();
     if (!conversationState)
