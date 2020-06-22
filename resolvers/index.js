@@ -1,8 +1,9 @@
-const { getUser, signupUser } = require('./user/auth')
+const user = require('./user')
+const game = require('./game');
+const gameSession = require('./gameSession');
 
 module.exports = {
-    user: {
-        getUser,
-        signupUser
-    }
+  user,
+  game,
+  gameSession
 }

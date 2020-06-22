@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 const gameSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, default: '' },
+  capacity: [{ type: Number, default: 0 }],
   price: { type: Number, default: 0 },
   createdAt: { type: Date },
   updatedAt: { type: Date }
