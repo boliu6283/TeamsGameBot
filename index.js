@@ -17,9 +17,10 @@ const {
   MemoryStorage,
   UserState,
 } = require("botbuilder");
+const { LuisRecognizer } = require("botbuilder-ai");
 
 // This bot's main dialog.
-const { DialogAndWelcomeBot } = require("./bots/dialogAndWelcomeBot");
+const { DialogBot } = require("./bots/dialogBot");
 const { MainDialog } = require("./dialogs/mainDialog");
 
 // Note: Ensure you have a .env file and include LuisAppId, LuisAPIKey and LuisAPIHostName.
@@ -89,16 +90,20 @@ const conversationState = new ConversationState(memoryStorage);
 const userState = new UserState(memoryStorage);
 
 // LuisConfiguration Section
-const { LuisAppId, LuisAPIKey, LuisAPIHostName } = process.env;
-const luisConfig = {
-  applicationId: LuisAppId,
-  endpointKey: LuisAPIKey,
-  endpoint: `https://${LuisAPIHostName}`,
-};
+const luisRecognizer = new LuisRecognizer(
+  {
+    applicationId: process.env.LuisAppId,
+    endpointKey: process.env.LuisAPIKey,
+    endpoint: `https://${process.env.LuisAPIKey}`,
+  },
+  {
+    apiVersion: 'v3'
+  }
+);
 
 // Create the main dialog
-const dialog = new MainDialog(luisConfig);
-const bot = new DialogAndWelcomeBot(conversationState, userState, dialog);
+const dialog = new MainDialog(luisRecognizer);
+const bot = new DialogBot(conversationState, userState, dialog);
 
 // Connect to Mongo DB
 mongoose.connect(process.env.db, {
