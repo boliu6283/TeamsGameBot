@@ -12,45 +12,53 @@ const {
   TextPrompt,
   WaterfallDialog,
 } = require("botbuilder-dialogs");
+const { LuisRecognizer } = require('botbuilder-ai');
 const { CardFactory } = require('botbuilder-core');
-const { MAIN_WATERFALL_DIALOG } = require('../constants')
 const { getRandomPic, menuPics } = require('../helpers/thumbnail');
+const constants = require('../constants')
 const Resolvers = require('../resolvers');
 const MainMenuCard = require('../static/mainMenuCard.json');
+const { GameChoiceSubDialog } = require('./gameChoiceSubDialog');
 
 class MainDialog extends ComponentDialog {
-  constructor(luisRecognizer) {
+  constructor(luisRecognizer, userState) {
     super("MainDialog");
 
-    this.luisRecognizer = luisRecognizer;
+    // Dependency Injections
+    this._luisRecognizer = luisRecognizer;
+    this._userState = userState;
+
+    // Register SubDialog
+    this._gameChoiceSubDialog = new GameChoiceSubDialog(this._luisRecognizer);
 
     // Define the main dialog flow and its components.
-    this.addDialog(new TextPrompt("TextPrompt"))
-        .addDialog(
-          new WaterfallDialog(MAIN_WATERFALL_DIALOG, [
-            this.mainMenuStep.bind(this),
-            this.actStep.bind(this),
-            this.finalStep.bind(this),
-          ])
-        );
+    this.addDialog(new TextPrompt("TextPrompt"));
+    this.addDialog(
+      new WaterfallDialog(constants.MAIN_WATERFALL_DIALOG, [
+        this.mainMenuStep.bind(this),
+        this.actStep.bind(this),
+        this.finalStep.bind(this),
+      ])
+    );
 
     // Define the default dialog for a new user to land on
-    this.initialDialogId = MAIN_WATERFALL_DIALOG;
+    this.initialDialogId = constants.MAIN_WATERFALL_DIALOG;
   }
 
   /**
    * The run method handles the incoming activity (in the form of a TurnContext) and passes it through the dialog system.
    * If no dialog is active, it will start the default dialog.
    * @param {*} turnContext
-   * @param {*} accessor
+   * @param {*} dialogState
    */
-  async run(turnContext, accessor) {
+  async run(turnContext, dialogState) {
     this._user = await this.loginOrRegisterUser(turnContext);
 
-    const dialogSet = new DialogSet(accessor);
+    const dialogSet = new DialogSet(dialogState);
     dialogSet.add(this);
 
     const dialogContext = await dialogSet.createContext(turnContext);
+
     const results = await dialogContext.continueDialog();
     if (results.status === DialogTurnStatus.empty) {
       await dialogContext.beginDialog(this.id);
@@ -62,6 +70,7 @@ class MainDialog extends ComponentDialog {
     if (input) {
       switch(input.mainMenuChoice) {
         case 'game': {
+          return await stepContext.beginDialog(constants.GAME_CHOICE_DIALOG);
           break;
         }
 
@@ -85,7 +94,7 @@ class MainDialog extends ComponentDialog {
     const bookingDetails = {};
 
     // Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt)
-    const luisResult = await this.luisRecognizer.executeLuisQuery(
+    const luisResult = await this.luisRecognizer.recognize(
       stepContext.context
     );
     switch (LuisRecognizer.topIntent(luisResult)) {
