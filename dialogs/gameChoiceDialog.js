@@ -1,18 +1,21 @@
 const { Dialog } = require("botbuilder-dialogs");
 const constants = require("../constants");
 
-class GameChoiceSubDialog extends Dialog {
+class GameChoiceDialog extends Dialog {
   constructor(luisRecognizer) {
     super(constants.GAME_CHOICE_DIALOG);
+
+    // Dependency Injections from parent MainDialog
     this._luisRecognizer = luisRecognizer;
   }
 
   async beginDialog(dc, options) {
-    await dc.context.sendActivity(`Hi! I'm a bot.`);
-    return await dc.endDialog();
+    const email = options.user.email;
+    await dc.context.sendActivity(`GameChoiceDialog BEGIN ${email}`);
+    return await dc.continueDialog();
   }
 }
 
 module.exports = {
-  GameChoiceSubDialog
+  GameChoiceDialog
 };
