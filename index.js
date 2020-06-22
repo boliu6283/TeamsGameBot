@@ -18,17 +18,9 @@ const {
   UserState,
 } = require("botbuilder");
 
-const {
-  FlightBookingRecognizer,
-} = require("./dialogs/flightBookingRecognizer");
-
 // This bot's main dialog.
 const { DialogAndWelcomeBot } = require("./bots/dialogAndWelcomeBot");
 const { MainDialog } = require("./dialogs/mainDialog");
-
-// the bot's booking dialog
-const { BookingDialog } = require("./dialogs/bookingDialog");
-const BOOKING_DIALOG = "bookingDialog";
 
 // Note: Ensure you have a .env file and include LuisAppId, LuisAPIKey and LuisAPIHostName.
 const ENV_FILE = path.join(__dirname, ".env");
@@ -73,8 +65,7 @@ const onTurnErrorHandler = async (context, error) => {
     onTurnErrorMessage,
     InputHints.ExpectingInput
   );
-  onTurnErrorMessage =
-    "To continue to run this bot, please fix the bot source code.";
+  onTurnErrorMessage = "To continue to run this bot, please fix the bot source code.";
   await context.sendActivity(
     onTurnErrorMessage,
     onTurnErrorMessage,
@@ -97,7 +88,7 @@ const memoryStorage = new MemoryStorage();
 const conversationState = new ConversationState(memoryStorage);
 const userState = new UserState(memoryStorage);
 
-// If configured, pass in the FlightBookingRecognizer.  (Defining it externally allows it to be mocked for tests)
+// LuisConfiguration Section
 const { LuisAppId, LuisAPIKey, LuisAPIHostName } = process.env;
 const luisConfig = {
   applicationId: LuisAppId,
@@ -105,11 +96,8 @@ const luisConfig = {
   endpoint: `https://${LuisAPIHostName}`,
 };
 
-const luisRecognizer = new FlightBookingRecognizer(luisConfig);
-
-// Create the main dialog.
-const bookingDialog = new BookingDialog(BOOKING_DIALOG);
-const dialog = new MainDialog(luisRecognizer, bookingDialog);
+// Create the main dialog
+const dialog = new MainDialog(luisConfig);
 const bot = new DialogAndWelcomeBot(conversationState, userState, dialog);
 
 // Connect to Mongo DB
@@ -134,9 +122,7 @@ mongoose.connection.on('error', () => {
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
   console.log(`\n${server.name} listening to ${server.url}`);
-  console.log(
-    "\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator"
-  );
+  console.log("\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator");
   console.log('\nTo talk to your bot, open the emulator select "Open Bot"');
 });
 
