@@ -90,11 +90,11 @@ const conversationState = new ConversationState(memoryStorage);
 const userState = new UserState(memoryStorage);
 
 // LuisConfiguration Section
-const luisRecognizer = new LuisRecognizer(
-  {
+const { LuisAppId, LuisAPIKey, LuisAPIHostName } = process.env;
+const luisRecognizer = new LuisRecognizer({
     applicationId: process.env.LuisAppId,
     endpointKey: process.env.LuisAPIKey,
-    endpoint: `https://${process.env.LuisAPIKey}`,
+    endpoint: `https://${process.env.LuisAPIHostName}`,
   },
   {
     apiVersion: 'v3'
@@ -102,8 +102,8 @@ const luisRecognizer = new LuisRecognizer(
 );
 
 // Create the main dialog
-const dialog = new MainDialog(luisRecognizer);
-const bot = new DialogBot(conversationState, userState, dialog);
+const mainDialog = new MainDialog(luisRecognizer, userState);
+const mainBot = new DialogBot(conversationState, userState, mainDialog);
 
 // Connect to Mongo DB
 mongoose.connect(process.env.db, {
@@ -136,7 +136,7 @@ server.post("/api/messages", (req, res) => {
   // Route received a request to adapter for processing
   adapter.processActivity(req, res, async (turnContext) => {
     // route to bot activity handler.
-    await bot.run(turnContext);
+    await mainBot.run(turnContext);
   });
 });
 
@@ -153,6 +153,6 @@ server.on("upgrade", (req, socket, head) => {
   streamingAdapter.useWebSocket(req, socket, head, async (context) => {
     // After connecting via WebSocket, run this logic for every request sent over
     // the WebSocket connection.
-    await bot.run(context);
+    await mainBot.run(context);
   });
 });
