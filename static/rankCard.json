@@ -1,0 +1,39 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "Image",
+      "url": "${rankPic}",
+      "size": "stretch"
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": []
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": []
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+  ]
+}

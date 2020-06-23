@@ -1,5 +1,5 @@
-const { Dialog } = require("botbuilder-dialogs");
-const constants = require("../constants");
+const { Dialog } = require('botbuilder-dialogs');
+const constants = require('../config/constants');
 
 class GameChoiceDialog extends Dialog {
   constructor(luisRecognizer) {

@@ -4,12 +4,17 @@ const getUser = async (args) => {
   return await User.findOne({ aad: args.aad });
 }
 
+const getAllUsersScore = async () => {
+  return await User.find({}, 'name score').sort('-score');
+}
+
 const signupUser = async (args) => {
-  const { aad, email, name } = args;
+  const { aad, email, name, givenName } = args;
   const newUser = new User({
     aad,
     email,
-    name
+    name,
+    givenName
   });
 
   const user = await newUser.save();
@@ -21,5 +26,6 @@ const signupUser = async (args) => {
 
 module.exports = {
   getUser,
+  getAllUsersScore,
   signupUser
 };

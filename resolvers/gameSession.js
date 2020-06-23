@@ -14,7 +14,8 @@ const createSession = async (args) => {
     code,
     game,
     host,
-    members
+    players,
+    audiences
   });
 
   const gameSession = await newGameSession.save();
