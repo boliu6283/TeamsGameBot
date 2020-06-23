@@ -14,6 +14,11 @@ class RankDialog extends Dialog {
   }
 
   async beginDialog(dc, options) {
+    // Clean up RankCard
+    RankCard.body[1].items[0].columns[0].items = [];
+    RankCard.body[1].items[0].columns[1].items = [];
+    RankCard.body[1].items[0].columns[2].items = [];
+
     const usersScore = (await Resolvers.user.getAllUsersScore()).slice(0, 10);
     const rankcard = CardFactory.adaptiveCard(RankCard);
     rankcard.content.body[0].url = rankPics[0];
