@@ -3,8 +3,9 @@
 
 const { ComponentDialog } = require("botbuilder-dialogs");
 const { CardFactory } = require('botbuilder-core');
-const { getRandomPic, menuPics } = require('../helpers/thumbnail');
-const constants = require('../constants')
+const { getRandomPic } = require('../helpers/thumbnail');
+const { menuPics } = require('../config/pics');
+const constants = require('../config/constants');
 const MainMenuCard = require('../static/mainMenuCard.json');
 
 class WelcomeDialog extends ComponentDialog {
@@ -25,7 +26,7 @@ class WelcomeDialog extends ComponentDialog {
         }
 
         case 'rank': {
-          await dc.context.sendActivity('Rank button is not implemented');
+          await dc.beginDialog(constants.RANK_DIALOG, options);
           return dc.endDialog();
         }
 
@@ -44,6 +45,7 @@ class WelcomeDialog extends ComponentDialog {
     // If nothing is chosen, retry current dialog
     // TODO: This should be a separate prompt dialog, need to change it
     const mainMenuCard = CardFactory.adaptiveCard(MainMenuCard);
+    mainMenuCard.content.body[0].text = `Hey ${options.user.givenName}! Welcome to Game Bot!`
     mainMenuCard.content.body[1].url = getRandomPic(menuPics);
     await dc.context.sendActivity({ attachments: [mainMenuCard] });
     return await dc.endDialog(constants.GAME_CHOICE_DIALOG);

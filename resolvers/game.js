@@ -1,6 +1,6 @@
 const Game = require('../models/game');
 
-const getAllGames = async (args) => {
+const getAllGames = async () => {
   return await Game.find({}, 'name description capacity');
 }
 

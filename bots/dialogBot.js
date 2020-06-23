@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 const { ActivityHandler } = require('botbuilder');
-const constants = require('../constants');
+const constants = require('../config/constants');
 
 class DialogBot extends ActivityHandler {
   constructor(conversationState, userState, dialog) {

@@ -28,8 +28,8 @@ index.js (server hosting)
 Folder Structure:
 - **.env**: process environment variable will be propagated into process.env. dictionary
 - **index.js**: entrypoint of the application
-- **constants.js**: constants will be used inside the application
 - **bots**: bot modules need to be loaded
+- **config**: constants will be used inside the application
 - **dialogs**: conversation handlers
 - **helpers**: miscellaneous functions
 - **models**: database model mapping, like the M in ASP.NET MVC framework

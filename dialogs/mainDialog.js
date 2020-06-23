@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const { TeamsInfo } = require("botbuilder");
-const { ComponentDialog, DialogSet, DialogTurnStatus} = require("botbuilder-dialogs");
+const { TeamsInfo } = require('botbuilder');
+const { ComponentDialog, DialogSet, DialogTurnStatus} = require('botbuilder-dialogs');
 const { WelcomeDialog } = require('./welcomeDialog');
+const { RankDialog } = require("./rankDialog");
 const { GameChoiceDialog } = require('./gameChoiceDialog');
-const constants = require('../constants')
+const constants = require('../config/constants')
 const Resolvers = require('../resolvers');
 
 class MainDialog extends ComponentDialog {
@@ -18,7 +19,8 @@ class MainDialog extends ComponentDialog {
     // Register Next Dialog
     this._dialogs = [
       new WelcomeDialog(luisRecognizer),
-      new GameChoiceDialog(luisRecognizer)
+      new GameChoiceDialog(luisRecognizer),
+      new RankDialog(luisRecognizer)
     ];
 
     // Define the default dialog for a new user to land on
@@ -69,13 +71,29 @@ class MainDialog extends ComponentDialog {
   }
 
   async _loginOrRegisterUser(turnContext) {
-    const userInfo = (await TeamsInfo.getMembers(turnContext))[0];
-    let userDbInfo = await Resolvers.user.getUser({ aad: userInfo.aadObjectId });
+    // Mock a user for emulator debug
+    if (process.env.DebugMode === 'emulator') {
+      const mockUser = {
+        aad: 'aad(test)',
+        email: 'test@microsoft.com',
+        name: 'Test(Bo) User',
+        givenName: 'Test(Bo)'
+      };
+      let mockUserDbInfo = await Resolvers.user.getUser({ aad: mockUser.aad });
+      if (!mockUserDbInfo) {
+        userDbInfo = await Resolvers.user.signupUser(mockUser);
+      }
+      return mockUserDbInfo;
+    }
+
+    let userDbInfo = await Resolvers.user.getUser({ aad: turnContext.activity.from.aadObjectId });
     if (!userDbInfo) {
+      const userInfo = (await TeamsInfo.getMembers(turnContext))[0];
       userDbInfo = await Resolvers.user.signupUser({
         aad: userInfo.aadObjectId,
         email: userInfo.userPrincipalName,
-        name: userInfo.name
+        name: userInfo.name,
+        givenName: userInfo.givenName
       });
     }
     return userDbInfo;
