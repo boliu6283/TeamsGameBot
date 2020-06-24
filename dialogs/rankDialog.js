@@ -26,8 +26,8 @@ class RankDialog extends Dialog {
     usersScore.forEach(user => {
       rankcard.content.body[1].items[0].columns[0].items.push({
         type: 'TextBlock',
-        text: i > 3 ? i : rankMedals[i],
-        horizontalAlignment: 'left',
+        text: i > 3 ? i.toString() : rankMedals[i],
+        horizontalAlignment: 'center',
         weight: 'Bolder'
       });
       rankcard.content.body[1].items[0].columns[1].items.push({
@@ -38,8 +38,8 @@ class RankDialog extends Dialog {
       });
       rankcard.content.body[1].items[0].columns[2].items.push({
         type: 'TextBlock',
-        text: user.score,
-        horizontalAlignment: 'right',
+        text: user.score.toString(),
+        horizontalAlignment: 'center',
         weight: 'Bolder'
       });
       i++;
