@@ -1,16 +1,17 @@
 const Game = require('../models/game');
 
 const getAllGames = async () => {
-  return await Game.find({}, 'name description capacity');
+  return await Game.find({}, 'name description capacity profile');
 }
 
 const createGame = async (args) => {
-  const { name, description, capacity, price } = args;
+  const { name, description, capacity, price, profile } = args;
   const newGame = new Game({
     name,
     description,
     capacity,
-    price
+    price,
+    profile
   });
 
   const game = await newGame.save();

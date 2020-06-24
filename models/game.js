@@ -6,6 +6,8 @@ const gameSchema = new Schema({
   description: { type: String, default: '' },
   capacity: [{ type: Number }],
   price: { type: Number, default: 0 },
+  profile: { type: String },
+  pictures: [{ type: String }],
   createdAt: { type: Date },
   updatedAt: { type: Date }
 }, {

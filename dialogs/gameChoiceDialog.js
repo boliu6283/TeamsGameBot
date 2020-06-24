@@ -1,5 +1,8 @@
 const { Dialog } = require('botbuilder-dialogs');
+const { CardFactory } = require('botbuilder-core');
+const Resolvers = require('../resolvers');
 const constants = require('../config/constants');
+const GameMenuCard = require('../static/gameMenuCard.json');
 
 class GameChoiceDialog extends Dialog {
   constructor(luisRecognizer) {
@@ -11,7 +14,13 @@ class GameChoiceDialog extends Dialog {
 
   async beginDialog(dc, options) {
     const email = options.user.email;
-    await dc.context.sendActivity(`GameChoiceDialog BEGIN ${email}`);
+    const allGames = await Resolvers.game.getAllGames();
+    const gameMenuCard = CardFactory.adaptiveCard(GameMenuCard);
+
+    // TODO: render game menu card here
+
+
+    await dc.context.sendActivity({ attachments: [gameMenuCard] });
     return await dc.continueDialog();
   }
 }
