@@ -2,13 +2,14 @@
 // Licensed under the MIT License.
 
 const { ComponentDialog, WaterfallDialog } = require("botbuilder-dialogs");
-const { CardFactory } = require('botbuilder-core');
+const { CardFactory, MessageFactory } = require('botbuilder-core');
 const { RankDialog } = require('./rankDialog');
 const { GameChoiceDialog } = require('./gameChoiceDialog');
 const { getRandomPic } = require('../helpers/thumbnail');
 const { menuPics } = require('../config/pics');
 const constants = require('../config/constants');
 const WelcomeCard = require('../static/welcomeCard.json');
+const { ChoicePrompt } = require("botbuilder-dialogs");
 
 class WelcomeDialog extends ComponentDialog {
   constructor(luisRecognizer) {
@@ -16,6 +17,7 @@ class WelcomeDialog extends ComponentDialog {
 
     this._luisRecognizer = luisRecognizer;
 
+    this.addDialog(new ChoicePrompt('AdaptiveCardPrompt'));
     this.addDialog(new WaterfallDialog(constants.WELCOME_WATERFALL_DIALOG, [
         this.welcomeStep.bind(this),
         this.welcomeChoiceStep.bind(this)
@@ -27,26 +29,25 @@ class WelcomeDialog extends ComponentDialog {
   }
 
   async welcomeStep(stepContext) {
-    if (stepContext.context._activity.value) {
-      return await stepContext.next();
-    }
     const welcomeCard = CardFactory.adaptiveCard(WelcomeCard);
     welcomeCard.content.body[0].text = `Hey ${stepContext.options.user.givenName}! Welcome to Game Bot!`
     welcomeCard.content.body[1].url = getRandomPic(menuPics);
-    await stepContext.context.sendActivity({ attachments: [welcomeCard] });
-    return await stepContext.endDialog();
+    const promptId = await stepContext.prompt('AdaptiveCardPrompt', {
+      choices: ['game', 'rank'],
+      prompt: MessageFactory.attachment(welcomeCard)
+    });
+    console.log(`promptId ${promptId}`);
+    return promptId;
   }
 
   async welcomeChoiceStep(stepContext) {
-    switch (stepContext.context._activity.value.welcomeChoice) {
+    switch (stepContext.result.value.toLowerCase()) {
       case 'game': {
-        await stepContext.beginDialog(constants.GAME_CHOICE_DIALOG, stepContext.options);
-        return stepContext.continueDialog();
+        return await stepContext.replaceDialog(constants.GAME_CHOICE_DIALOG, stepContext.options);
       }
 
       case 'rank': {
-        await stepContext.beginDialog(constants.RANK_DIALOG, stepContext.options);
-        return stepContext.endDialog();
+        return await stepContext.replaceDialog(constants.RANK_DIALOG, stepContext.options);
       }
     }
 
