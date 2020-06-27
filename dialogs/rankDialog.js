@@ -44,9 +44,9 @@ class RankDialog extends Dialog {
       });
       i++;
     });
-    
+
     await dc.context.sendActivity({ attachments: [rankcard] });
-    return await dc.endDialog(constants.RANK_DIALOG);
+    return await dc.continueDialog();
   }
 }
 

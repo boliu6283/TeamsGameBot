@@ -19,19 +19,5 @@
     }
   ],
   "actions": [
-    {
-      "type": "Action.Submit",
-      "title": "🕹️Game",
-      "data": {
-        "welcomeChoice": "game"
-      }
-    },
-    {
-      "type": "Action.Submit",
-      "title": "📖Rank",
-      "data": {
-        "welcomeChoice": "rank"
-      }
-    }
   ]
 }

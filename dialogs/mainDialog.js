@@ -47,8 +47,9 @@ class MainDialog extends ComponentDialog {
 
     // Initiate Dialog conversation, starts main dialog
     const results = await dialogContext.continueDialog();
-    if (results.status === DialogTurnStatus.empty) {
-    // Pass userProfile into options field for beginDialog();
+    if (results.status === DialogTurnStatus.empty ||
+        results.status === DialogTurnStatus.complete) {
+      // Pass userProfile into options field for beginDialog();
       await dialogContext.beginDialog(this.id, {
         user: userProfile.userModel
       });
@@ -62,8 +63,7 @@ class MainDialog extends ComponentDialog {
    * @param {*} options userProfile
    */
   async beginDialog(dc, options) {
-    await dc.beginDialog(constants.WELCOME_DIALOG, options);
-    return dc.endDialog();
+    return await dc.beginDialog(constants.WELCOME_DIALOG, options);
   }
 
   async _loginOrRegisterUser(turnContext) {
