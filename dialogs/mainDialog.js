@@ -4,8 +4,6 @@
 const { TeamsInfo } = require('botbuilder');
 const { ComponentDialog, DialogSet, DialogTurnStatus} = require('botbuilder-dialogs');
 const { WelcomeDialog } = require('./welcomeDialog');
-const { RankDialog } = require("./rankDialog");
-const { GameChoiceDialog } = require('./gameChoiceDialog');
 const constants = require('../config/constants')
 const Resolvers = require('../resolvers');
 
@@ -18,9 +16,7 @@ class MainDialog extends ComponentDialog {
 
     // Register Next Dialog
     this._dialogs = [
-      new WelcomeDialog(luisRecognizer),
-      new GameChoiceDialog(luisRecognizer),
-      new RankDialog(luisRecognizer)
+      new WelcomeDialog(luisRecognizer)
     ];
 
     // Define the default dialog for a new user to land on
