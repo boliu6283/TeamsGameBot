@@ -9,7 +9,7 @@ const getSession = async (args) => {
 }
 
 const createSession = async (args) => {
-  const { code, game, host, members } = args;
+  const { code, game, host, players, audiences } = args;
   const newGameSession = new GameSession({
     code,
     game,

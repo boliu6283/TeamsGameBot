@@ -4,43 +4,34 @@
   "version": "1.0",
   "body": [
     {
-      "type": "Image",
-      "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU",
-      "size": "stretch"
-    },
-    {
       "type": "TextBlock",
       "spacing": "medium",
       "size": "default",
       "weight": "bolder",
-      "text": "Welcome to Game Bot!",
+      "text": "${welcomeText}",
       "wrap": true,
       "maxLines": 0
     },
     {
-      "type": "TextBlock",
-      "size": "default",
-      "isSubtle": true,
-      "text": "Powered by @Secret Team.",
-      "wrap": true,
-      "maxLines": 0
+      "type": "Image",
+      "url": "${welcomePic}",
+      "size": "stretch"
     }
   ],
   "actions": [
     {
-      "type": "Action.OpenUrl",
-      "title": "Game",
-      "url": "https://docs.microsoft.com/en-us/azure/bot-service/?view=azure-bot-service-4.0"
+      "type": "Action.Submit",
+      "title": "🕹️Game",
+      "data": {
+        "welcomeChoice": "game"
+      }
     },
     {
-      "type": "Action.OpenUrl",
-      "title": "Available Players",
-      "url": "https://stackoverflow.com/questions/tagged/botframework"
-    },
-    {
-      "type": "Action.OpenUrl",
-      "title": "Help Menu",
-      "url": "https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-howto-deploy-azure?view=azure-bot-service-4.0"
+      "type": "Action.Submit",
+      "title": "📖Rank",
+      "data": {
+        "welcomeChoice": "rank"
+      }
     }
   ]
 }
