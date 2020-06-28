@@ -89,8 +89,10 @@ const memoryStorage = new MemoryStorage();
 const conversationState = new ConversationState(memoryStorage);
 const userState = new UserState(memoryStorage);
 
+// Create conversation reference for proactive message
+const conversationReferences = {};
+
 // LuisConfiguration Section
-const { LuisAppId, LuisAPIKey, LuisAPIHostName } = process.env;
 const luisRecognizer = new LuisRecognizer({
     applicationId: process.env.LuisAppId,
     endpointKey: process.env.LuisAPIKey,
@@ -103,7 +105,7 @@ const luisRecognizer = new LuisRecognizer({
 
 // Create the main dialog
 const mainDialog = new MainDialog(luisRecognizer);
-const mainBot = new DialogBot(conversationState, userState, mainDialog);
+const mainBot = new DialogBot(conversationReferences, conversationState, userState, mainDialog);
 
 // Connect to Mongo DB
 mongoose.connect(process.env.db, {
@@ -138,6 +140,21 @@ server.post("/api/messages", (req, res) => {
     // route to bot activity handler.
     await mainBot.run(turnContext);
   });
+});
+
+// Proactive message handler will be triggered when /api/notify endpoint
+// resume a conversationReferences from the users
+server.get('/api/notify', async (req, res) => {
+  for (const conversationReference of Object.values(conversationReferences)) {
+      await adapter.continueConversation(conversationReference, async turnContext => {
+          await turnContext.sendActivity('proactive hello');
+      });
+  }
+
+  res.setHeader('Content-Type', 'text/html');
+  res.writeHead(200);
+  res.write('<html><body><h1>Proactive messages have been sent.</h1></body></html>');
+  res.end();
 });
 
 // Listen for Upgrade requests for Streaming.
