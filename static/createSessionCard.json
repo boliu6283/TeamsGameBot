@@ -1,0 +1,65 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "spacing": "medium",
+                  "size": "large",
+                  "weight": "bolder",
+                  "text": "${game.name}",
+                  "wrap": true,
+                  "maxLines": 0
+                },
+                {
+                  "type": "Image",
+                  "url": "${game.profile}",
+                  "size": "stretch"
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "size": "default",
+                  "text": "Player1",
+                  "wrap": true
+                },
+                {
+                  "type": "Input.Text",
+                  "id": "player1",
+                  "placeholder": "email address"
+                },
+                {
+                  "type": "TextBlock",
+                  "size": "default",
+                  "text": "Player2",
+                  "wrap": true
+                },
+                {
+                  "type": "Input.Text",
+                  "id": "player2",
+                  "placeholder": "email address"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
