@@ -17,7 +17,5 @@
       "url": "${welcomePic}",
       "size": "stretch"
     }
-  ],
-  "actions": [
   ]
 }
