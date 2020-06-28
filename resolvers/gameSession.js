@@ -9,13 +9,11 @@ const getSession = async (args) => {
 }
 
 const createSession = async (args) => {
-  const { code, game, host, players, audiences } = args;
+  const { code, game, host } = args;
   const newGameSession = new GameSession({
     code,
     game,
-    host,
-    players,
-    audiences
+    host
   });
 
   const gameSession = await newGameSession.save();
