@@ -1,7 +1,16 @@
 const Game = require('../models/game');
+const game = require('../models/game');
 
 const getAllGames = async () => {
   return await Game.find({}, 'name description capacity profile');
+}
+
+const getGameByName = async (args) => {
+  const { gameName } = args;
+  const gameInfo = await Game.findOne({ name: gameName });
+  if (!gameInfo) throw new Error (`Failed to find game: ${gameName}`);
+
+  return gameInfo;
 }
 
 const createGame = async (args) => {
@@ -23,5 +32,6 @@ const createGame = async (args) => {
 
 module.exports = {
   getAllGames,
-  createGame
+  createGame,
+  getGameByName
 };
