@@ -5,6 +5,7 @@ const { ComponentDialog, WaterfallDialog, ChoicePrompt } = require("botbuilder-d
 const { CardFactory, MessageFactory } = require('botbuilder-core');
 const { RankDialog } = require('./rankDialog');
 const { GameChoiceDialog } = require('./gameChoiceDialog');
+const { JoinSessionDialog } = require('./joinSession');
 const { getRandomPic } = require('../helpers/thumbnail');
 const { menuPics } = require('../config/pics');
 const constants = require('../config/constants');
@@ -18,17 +19,18 @@ class WelcomeDialog extends ComponentDialog {
 
     this.addDialog(new ChoicePrompt(constants.WELCOME_CARD_PROMPT));
     this.addDialog(new WaterfallDialog(constants.WELCOME_WATERFALL_DIALOG, [
-        this.welcomeStep.bind(this),
+        this.welcomeCardStep.bind(this),
         this.welcomeChoiceStep.bind(this)
     ]));
     this.addDialog(new GameChoiceDialog(luisRecognizer));
     this.addDialog(new RankDialog(luisRecognizer));
+    this.addDialog(new JoinSessionDialog(luisRecognizer));
 
     this.initialDialogId = constants.WELCOME_WATERFALL_DIALOG;
   }
 
-  async welcomeStep(stepContext) {
-    const welcomeCard = CardFactory.adaptiveCard(WelcomeCard);
+  async welcomeCardStep(stepContext) {
+    let welcomeCard = CardFactory.adaptiveCard(WelcomeCard);
     welcomeCard.content.body[0].text = `Hey ${stepContext.options.user.givenName}! Welcome to Game Bot!`
     welcomeCard.content.body[1].url = getRandomPic(menuPics);
 
@@ -49,7 +51,7 @@ class WelcomeDialog extends ComponentDialog {
       }
 
       case '🪑Join': {
-        return await stepContext.replaceDialog(constants.RANK_DIALOG, stepContext.options);
+        return await stepContext.replaceDialog(constants.JOIN_SESSION_DIALOG, stepContext.options);
       }
     }
 

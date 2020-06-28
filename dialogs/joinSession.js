@@ -1,31 +1,28 @@
-const { ComponentDialog, WaterfallDialog, ChoicePrompt } = require('botbuilder-dialogs');
+const { ComponentDialog, WaterfallDialog, ChoicePrompt, ListStyle } = require('botbuilder-dialogs');
 const { CardFactory, MessageFactory } = require('botbuilder-core');
-const { CreateSessionDialog } = require('./createSession');
 const Resolvers = require('../resolvers');
 const constants = require('../config/constants');
 const GameCard = require('../static/gameCard.json');
 
-class GameChoiceDialog extends ComponentDialog {
+class JoinSessionDialog extends ComponentDialog {
   constructor(luisRecognizer) {
-    super(constants.GAME_CHOICE_DIALOG);
+    super(constants.JOIN_SESSION_DIALOG);
 
     this._luisRecognizer = luisRecognizer;
 
-    this.addDialog(new ChoicePrompt(constants.GAME_CARD_PROMPT));
-    this.addDialog(new WaterfallDialog(constants.GAME_WATERFALL_DIALOG, [
-        this.gameCardStep.bind(this),
-        this.gameChoiceStep.bind(this)
+    this.addDialog(new ChoicePrompt(constants.JOIN_SESSION_CARD_PROMPT));
+    this.addDialog(new WaterfallDialog(constants.JOIN_SESSION_WATERFALL_DIALOG, [
+        this.gameStep.bind(this)
     ]));
-    this.addDialog(new CreateSessionDialog(constants.CREATE_SESSION_DIALOG));
 
-    this.initialDialogId = constants.GAME_WATERFALL_DIALOG;
+    this.initialDialogId = constants.JOIN_SESSION_WATERFALL_DIALOG;
   }
 
-  async gameCardStep(stepContext) {
+  async gameStep(stepContext) {
     // Clean up GameCard
     GameCard.body = [];
     
-    let gameCard = CardFactory.adaptiveCard(GameCard);
+    const gameCard = CardFactory.adaptiveCard(GameCard);
     const allGames = await Resolvers.game.getAllGames();
     const allGameChoices = allGames.map(game => game.name);
 
@@ -83,13 +80,8 @@ class GameChoiceDialog extends ComponentDialog {
       choices: allGameChoices
     });
   }
-
-  async gameChoiceStep(stepContext) {
-    stepContext.options.gameChoice = stepContext.result.value;
-    return await stepContext.replaceDialog(constants.CREATE_SESSION_DIALOG, stepContext.options);
-  }
 }
 
 module.exports = {
-  GameChoiceDialog
+  JoinSessionDialog
 };
