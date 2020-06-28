@@ -40,11 +40,10 @@ class GameChoiceDialog extends ComponentDialog {
       const gameDescription = {
         type: 'TextBlock',
         spacing: 'medium',
-        size: 'default',
-        weight: 'bolder',
+        size: 'small',
+        weight: 'default',
         text: game.description,
-        wrap: true,
-        maxLines: 0
+        wrap: true
       };
 
       const gameImage = {
