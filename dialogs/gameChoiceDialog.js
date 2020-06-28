@@ -1,44 +1,85 @@
-const { Dialog } = require('botbuilder-dialogs');
-const { CardFactory } = require('botbuilder-core');
+const { ComponentDialog, WaterfallDialog, ChoicePrompt, ListStyle } = require('botbuilder-dialogs');
+const { CardFactory, MessageFactory } = require('botbuilder-core');
 const Resolvers = require('../resolvers');
 const constants = require('../config/constants');
-const GameMenuCard = require('../static/gameMenuCard.json');
+const GameCard = require('../static/gameCard.json');
 
-class GameChoiceDialog extends Dialog {
+class GameChoiceDialog extends ComponentDialog {
   constructor(luisRecognizer) {
     super(constants.GAME_CHOICE_DIALOG);
 
-    // Dependency Injections from parent MainDialog
     this._luisRecognizer = luisRecognizer;
+
+    this.addDialog(new ChoicePrompt(constants.GAME_CARD_PROMPT));
+    this.addDialog(new WaterfallDialog(constants.GAME_WATERFALL_DIALOG, [
+        this.gameStep.bind(this)
+    ]));
+
+    this.initialDialogId = constants.GAME_WATERFALL_DIALOG;
   }
 
-  async beginDialog(dc, options) {
-    // Clean up GameMenuCard
-    GameMenuCard.body[0].items[0].columns[0].items = [];
-    GameMenuCard.body[0].items[0].columns[1].items = [];
-
+  async gameStep(stepContext) {
+    // Clean up GameCard
+    GameCard.body = [];
+    
+    const gameCard = CardFactory.adaptiveCard(GameCard);
     const allGames = await Resolvers.game.getAllGames();
-    const gameMenuCard = CardFactory.adaptiveCard(GameMenuCard);
+    const allGameChoices = allGames.map(game => game.name);
 
-    // TODO: render game menu card here
     allGames.forEach(game => {
-      gameMenuCard.content.body[0].items[0].columns[0].items.push({
+      const gameTitle = {
+        type: 'TextBlock',
+        spacing: 'medium',
+        size: 'large',
+        weight: 'bolder',
+        text: game.name,
+        wrap: true,
+        maxLines: 0
+      };
+
+      const gameDescription = {
+        type: 'TextBlock',
+        spacing: 'medium',
+        size: 'default',
+        weight: 'bolder',
+        text: game.description,
+        wrap: true,
+        maxLines: 0
+      };
+
+      const gameImage = {
         type: 'Image',
         url: game.profile,
         size: 'auto'
-      });
-      gameMenuCard.content.body[0].items[0].columns[1].items.push({
-        type: 'Action.Submit',
-        title: 'Create Room',
-        data: {
-          action: 'create',
-          gameMenuChoice: game._id
-        }
+      };
+
+      gameCard.content.body.push({
+        type: 'Container',
+        items: [
+          {
+            type: 'ColumnSet',
+            columns: [
+              {
+                type: 'Column',
+                width: 'stretch',
+                items: [gameTitle, gameDescription]
+              },
+              {
+                type: 'Column',
+                width: 'stretch',
+                items: [gameImage]
+              }
+            ]
+          }
+        ]
       });
     });
 
-    await dc.context.sendActivity({ attachments: [gameMenuCard] });
-    return await dc.continueDialog();
+    return await stepContext.prompt(constants.GAME_CARD_PROMPT, {
+      prompt: MessageFactory.attachment(gameCard),
+      retryPrompt: 'Please select a game.',
+      choices: allGameChoices
+    });
   }
 }
 
