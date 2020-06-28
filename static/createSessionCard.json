@@ -15,8 +15,8 @@
               "items": [
                 {
                   "type": "TextBlock",
-                  "spacing": "medium",
-                  "size": "large",
+                  "spacing": "large",
+                  "size": "extraLarge",
                   "weight": "bolder",
                   "text": "${game.name}",
                   "wrap": true,
@@ -29,7 +29,7 @@
                 },
                 {
                   "type": "TextBlock",
-                  "spacing": "medium",
+                  "spacing": "large",
                   "size": "large",
                   "weight": "bolder",
                   "text": "${roomCode}",
