@@ -26,34 +26,15 @@
                   "type": "Image",
                   "url": "${game.profile}",
                   "size": "stretch"
-                }
-              ]
-            },
-            {
-              "type": "Column",
-              "width": "stretch",
-              "items": [
-                {
-                  "type": "TextBlock",
-                  "size": "default",
-                  "text": "Player1",
-                  "wrap": true
-                },
-                {
-                  "type": "Input.Text",
-                  "id": "player1",
-                  "placeholder": "email address"
                 },
                 {
                   "type": "TextBlock",
-                  "size": "default",
-                  "text": "Player2",
-                  "wrap": true
-                },
-                {
-                  "type": "Input.Text",
-                  "id": "player2",
-                  "placeholder": "email address"
+                  "spacing": "medium",
+                  "size": "large",
+                  "weight": "bolder",
+                  "text": "${roomCode}",
+                  "wrap": true,
+                  "maxLines": 0
                 }
               ]
             }
