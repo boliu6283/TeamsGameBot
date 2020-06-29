@@ -30,7 +30,8 @@ const notifyAll = async (message) => {
 
 const addConversationReference = (context) => {
   const cref = TurnContext.getConversationReference(context.activity);
-  _conversationReferences[cref.user.aadObjectId] = cref;
+  const userId = cref.user.aadObjectId || cref.user.id;
+  _conversationReferences[userId] = cref;
 }
 
 module.exports = {
