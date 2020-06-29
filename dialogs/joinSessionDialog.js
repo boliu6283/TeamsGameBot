@@ -42,46 +42,79 @@ class JoinSessionDialog extends ComponentDialog {
     // make sure the response is from postback(adaptive submit button)
     // otherwise fall back to initial user input card
     if (!(activity.value || {}).session_code) {
-      return await this.fallBackToUserInput('action unsupported, please enter a valid room number', stepContext)
+      return await this.fallBackToUserInput(
+        'action unsupported, please enter a valid session code',
+        stepContext)
     }
-    const sessionCode = activity.value.session_code;
 
-    // valid user input sessionCode, fallback to user input if failed
-    if (!sessionCode || sessionCode < 0) {
-      console.log('invalid room number:' + sessionCode);
-      return this.fallBackToUserInput('error, please enter a valid room number', stepContext);
+    // validate user input sessionCode, fallback to user input if failed
+    const sessionCode = activity.value.session_code;
+    const session = await Resolvers.gameSession.getSession({ code: sessionCode });
+    if (!session) {
+      console.log('invalid session code:' + sessionCode);
+      return await this.fallBackToUserInput(
+        'Session cannot be found, please retry again',
+        stepContext);
+    }
+
+    // block user if join as a host
+    if (session.host.aad === stepContext.options.user.aad) {
+      return await this.fallBackToUserInput(
+        'You cannot join your own room as a host, please share the room code with others',
+        stepContext);
+    }
+
+    // block user if the session is started or completed
+    if (session.status === 'start') {
+      return await this.fallBackToUserInput(
+        'This session has already been started',
+        stepContext);
+    }
+
+    if (session.status === 'complete') {
+      return await this.fallBackToUserInput(
+        'This session is completed, please consider join a new room',
+        stepContext);
     }
 
     // add current user into the session.players
-    await Resolvers.gameSession.addPlayerToSession({
-      code: sessionCode,
-      userId: stepContext.options.user._id
-    });
-    await stepContext.context.sendActivity("Opening Room ......");
+    await this.addPlayerToAwaitingSession(session, stepContext);
 
     // notify host that someone join the meeting, generate a link to start game
-    const session = await Resolvers.gameSession.getSession({ code: sessionCode });
-    const emailList = session.players.map(p => p.email).join(',');
-    await Resolvers.proactiveMessage.notifyIndividual(
-      session.host.aad,
-      `${stepContext.options.user.name} has now joined room ${sessionCode}.
-       Do you want to start the game?
-       https://teams.microsoft.com/l/chat/0/0?users=${emailList}&topicName=GameBotSession${sessionCode}`
-    );
-
-    // TODO chi:
-    // check session status, if session is await then include myself and update session
-    // otherwise just pop error says session already over
-
-    // TODO chi:
-    // send p2p message to host-> payload: my name?
+    await this.notifyHostToStartSession(session, stepContext);
 
     return await stepContext.endDialog();
+  }
+
+  async addPlayerToAwaitingSession(session, stepContext) {
+    await Resolvers.gameSession.addPlayerToSession({
+      code: session.code,
+      userId: stepContext.options.user._id
+    });
+    await stepContext.context.sendActivity(`Successfully joined session ${session.code}`);
+  }
+
+  async notifyHostToStartSession(session, stepContext) {
+    await Resolvers.proactiveMessage.notifyIndividual(
+      session.host.aad,
+      this.generateHostNotificationCard(session, stepContext)
+    );
   }
 
   async fallBackToUserInput(errorMessage, stepContext) {
     await stepContext.context.sendActivity(errorMessage);
     return await stepContext.replaceDialog(constants.JOIN_SESSION_WATERFALL_DIALOG, stepContext.options);
+  }
+
+  generateHostNotificationCard(session, stepContext) {
+    const emailList = session.players.map(p => p.email).join(',');
+    const playerList = session.players.concat(session.host.name).map(p => `<li>${p.name}</li>`).join('');
+    const newPlayer = stepContext.options.user.name;
+    return `<b>${newPlayer}</b> has now joined the room <b>${session.code}</b> hosted by you.
+    <ul>${playerList}</ul>
+    <a href='https://teams.microsoft.com/l/chat/0/0?users=${emailList}&topicName=GameBotSession${session.code}'>
+     Start Game
+    </a>`;
   }
 }
 
