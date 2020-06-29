@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const { TurnContext } = require('botbuilder-core');
 const { ActivityHandler } = require('botbuilder');
 const constants = require('../config/constants');
+const Resolvers = require('../resolvers');
 
 class DialogBot extends ActivityHandler {
   constructor(conversationReferences, conversationState, userState, dialog) {
@@ -32,8 +32,9 @@ class DialogBot extends ActivityHandler {
     // https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-basics?view=azure-bot-service-4.0&tabs=csharp#bot-logic
     this.onMessage(async (context, next) => {
       console.log('Running dialog with Message Activity.');
+
       // Storing conversation reference for proactive message
-      this.addConversationReference(context.activity);
+      Resolvers.proactiveMessage.addConversationReference(context);
 
       // Pass dialogState and userProfileState into mainDialog.run() function
       await this.dialog.run(context, this.dialogStateAccessor, this.userProfileStateAccessor);
@@ -47,10 +48,7 @@ class DialogBot extends ActivityHandler {
     });
   }
 
-  addConversationReference(activity) {
-    const conversationReference = TurnContext.getConversationReference(activity);
-    this.conversationReferences[conversationReference.conversation.id] = conversationReference;
-  }
+
 }
 
 module.exports.DialogBot = DialogBot;

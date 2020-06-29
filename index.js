@@ -22,6 +22,7 @@ const { LuisRecognizer } = require("botbuilder-ai");
 // This bot's main dialog.
 const { DialogBot } = require("./bots/dialogBot");
 const { MainDialog } = require("./dialogs/mainDialog");
+const Resolver = require("./resolvers");
 
 // Note: Ensure you have a .env file and include LuisAppId, LuisAPIKey and LuisAPIHostName.
 const ENV_FILE = path.join(__dirname, ".env");
@@ -39,10 +40,9 @@ if (process.env.DebugMode === 'emulator' && !process.env.port && !process.env.PO
 
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about adapters.
-const adapter = new BotFrameworkAdapter({
-  appId: process.env.MicrosoftAppId,
-  appPassword: process.env.MicrosoftAppPassword,
-});
+const adapter = Resolver.botAdapter.getInstance(
+  process.env.MicrosoftAppId,
+  process.env.MicrosoftAppPassword);
 
 // Catch-all for errors.
 const onTurnErrorHandler = async (context, error) => {
@@ -94,17 +94,17 @@ const conversationReferences = {};
 
 // LuisConfiguration Section
 const luisRecognizer = new LuisRecognizer({
-    applicationId: process.env.LuisAppId,
-    endpointKey: process.env.LuisAPIKey,
-    endpoint: `https://${process.env.LuisAPIHostName}`,
-  },
+  applicationId: process.env.LuisAppId,
+  endpointKey: process.env.LuisAPIKey,
+  endpoint: `https://${process.env.LuisAPIHostName}`,
+},
   {
     apiVersion: 'v3'
   }
 );
 
 // Create the main dialog
-const mainDialog = new MainDialog(luisRecognizer);
+const mainDialog = new MainDialog(conversationReferences, luisRecognizer);
 const mainBot = new DialogBot(conversationReferences, conversationState, userState, mainDialog);
 
 // Connect to Mongo DB
@@ -140,21 +140,6 @@ server.post("/api/messages", (req, res) => {
     // route to bot activity handler.
     await mainBot.run(turnContext);
   });
-});
-
-// Proactive message handler will be triggered when /api/notify endpoint
-// resume a conversationReferences from the users
-server.get('/api/notify', async (req, res) => {
-  for (const conversationReference of Object.values(conversationReferences)) {
-      await adapter.continueConversation(conversationReference, async turnContext => {
-          await turnContext.sendActivity('proactive hello');
-      });
-  }
-
-  res.setHeader('Content-Type', 'text/html');
-  res.writeHead(200);
-  res.write('<html><body><h1>Proactive messages have been sent.</h1></body></html>');
-  res.end();
 });
 
 // Listen for Upgrade requests for Streaming.
