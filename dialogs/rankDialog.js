@@ -45,6 +45,7 @@ class RankDialog extends Dialog {
       i++;
     });
 
+    await Resolvers.proactiveMessage.notifyAll(`Proactive Message: ${options.user.aad}`);
     await dc.context.sendActivity({ attachments: [rankcard] });
     return await dc.continueDialog();
   }
