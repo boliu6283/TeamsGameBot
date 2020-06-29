@@ -1,0 +1,32 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "New Member Joined: "
+        },
+        {
+            "type": "TextBlock",
+            "text": "Current Players in the Room:"
+        },
+        {
+            "type": "TextBlock",
+            "text": "",
+            "wrap": true
+        }
+    ],
+    "actions": [{
+        "type": "Action.Submit",
+        "title": "Click to Start Game",
+        "data": {
+            "msteams": {
+                "type": "messageBack",
+                "displayText": "Spyfall",
+                "text": "",
+                "value": "{\"bfKey\": \"bfVal\", \"conflictKey\": \"from value\"}"
+            }
+        }
+    }]
+}

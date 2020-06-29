@@ -1,0 +1,31 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "Location: "
+        },
+        {
+            "type": "TextBlock",
+            "text": "Role: "
+        },
+        {
+            "type": "Input.Text",
+            "id": "vote"
+        }
+    ],
+    "actions": [{
+        "type": "Action.Submit",
+        "title": "Submit your Vote/Guess",
+        "data": {
+            "msteams": {
+                "type": "messageBack",
+                "displayText": "Spyfall",
+                "text": "",
+                "value": "{\"bfKey\": \"bfVal\", \"conflictKey\": \"from value\"}"
+            }
+        }
+    }]
+}

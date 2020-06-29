@@ -4,6 +4,7 @@
 const { TeamsInfo } = require('botbuilder');
 const { ComponentDialog, DialogSet, DialogTurnStatus} = require('botbuilder-dialogs');
 const { WelcomeDialog } = require('./welcomeDialog');
+const {SpyfallDialog} = require('./spyfallDialog');
 const constants = require('../config/constants')
 const Resolvers = require('../resolvers');
 
@@ -16,7 +17,8 @@ class MainDialog extends ComponentDialog {
 
     // Register Next Dialog
     this._dialogs = [
-      new WelcomeDialog(luisRecognizer)
+      new WelcomeDialog(luisRecognizer),
+      new SpyfallDialog(luisRecognizer),
     ];
 
     // Define the default dialog for a new user to land on
@@ -63,6 +65,14 @@ class MainDialog extends ComponentDialog {
    * @param {*} options userProfile
    */
   async beginDialog(dc, options) {
+    if(dc.context.activity.value && dc.context.activity.value.msteams){
+      // start a game
+      const startGameArgs = dc.context.activity.value.msteams;
+      if(startGameArgs.displayText == 'Spyfall'){
+        const sessionCode = startGameArgs.text;
+        return await dc.beginDialog(constants.SPYFALL_DIALOG, options);
+      }
+    }
     return await dc.beginDialog(constants.WELCOME_DIALOG, options);
   }
 

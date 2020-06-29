@@ -8,6 +8,7 @@ const { CardFactory, MessageFactory } = require('botbuilder-core');
 const Resolvers = require('../resolvers');
 const constants = require('../config/constants');
 const JoinSessionCard = require('../static/joinSessionCard.json');
+const newPlayerJoinCard = require('../static/newPlayerJoinCard.json');
 const { getSession } = require('../resolvers/gameSession');
 
 class JoinSessionDialog extends ComponentDialog {
@@ -49,7 +50,7 @@ class JoinSessionDialog extends ComponentDialog {
 
     // validate user input sessionCode, fallback to user input if failed
     const sessionCode = activity.value.session_code;
-    const session = await Resolvers.gameSession.getSession({ code: sessionCode });
+    let session = await Resolvers.gameSession.getSession({ code: sessionCode });
     if (!session) {
       console.log('invalid session code:' + sessionCode);
       return await this.fallBackToUserInput(
@@ -82,6 +83,9 @@ class JoinSessionDialog extends ComponentDialog {
     // add current user into the session.players
     await this.addPlayerToAwaitingSession(session, stepContext);
 
+    // get updated session
+    session = await Resolvers.gameSession.getSession({ code: sessionCode });
+
     // notify host that someone join the meeting, generate a link to start game
     await this.notifyHostToStartSession(session, stepContext);
 
@@ -97,7 +101,7 @@ class JoinSessionDialog extends ComponentDialog {
   }
 
   async notifyHostToStartSession(session, stepContext) {
-    await Resolvers.proactiveMessage.notifyIndividual(
+    await Resolvers.proactiveMessage.notifyIndividualCard(
       session.host.aad,
       this.generateHostNotificationCard(session, stepContext)
     );
@@ -109,14 +113,12 @@ class JoinSessionDialog extends ComponentDialog {
   }
 
   generateHostNotificationCard(session, stepContext) {
-    const emailList = session.players.map(p => p.email).join(',');
-    const playerList = session.players.map(p => `<li>${p.name}</li>`).join('');
-    const newPlayer = stepContext.options.user.name;
-    return `<b>${newPlayer}</b> has now joined the room <b>${session.code}</b> hosted by you.
-    <ul>${playerList}</ul>
-    <a href='https://teams.microsoft.com/l/chat/0/0?users=${emailList}&topicName=GameBotSession${session.code}'>
-     Start Game
-    </a>`;
+    const card = CardFactory.adaptiveCard(newPlayerJoinCard);
+    card.content.body[0].text += stepContext.options.user.name;
+    const playersStr = session.players.map(p => p.email).join('\r ');;
+    card.content.body[2].text = playersStr;
+    card.content.actions[0].data.msteams.text = session.code;
+    return card;
   }
 }
 

@@ -14,6 +14,15 @@ const notifyIndividual = async (userAad, message) => {
   }
 }
 
+const notifyIndividualCard = async(userAad, card) => {
+  const adapter = BotAdapter.getInstance();
+  if (_conversationReferences[userAad]) {
+    const cref = _conversationReferences[userAad];
+    await adapter.continueConversation(cref, async turnContext => {
+      await turnContext.sendActivity({attachments: [card]});
+    });
+  }
+}
 // sessionCode = RoomNumber, RoomCode, SessionCode
 const notifySession = async (sessionCode, message) => {
   const session = await GameSession.getSession({ code: sessionCode });
@@ -38,5 +47,6 @@ module.exports = {
   addConversationReference,
   notifyAll,
   notifySession,
-  notifyIndividual
+  notifyIndividual,
+  notifyIndividualCard,
 }
