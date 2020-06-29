@@ -1,42 +1,42 @@
 {
-    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "type": "AdaptiveCard",
-    "version": "1.0",
-    "body": [
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "spacing": "large",
+      "size": "default",
+      "weight": "bolder",
+      "text": "Please type room number",
+      "wrpa": true,
+      "maxLines": 0
+    },
+    {
+      "type": "Container",
+      "items": [
         {
-            "type": "TextBlock",
-            "spacing": "large",
-            "size": "default",
-            "weight": "bolder",
-            "text": "Please type room number",
-            "wrpa": true,
-            "maxLines": 0
-        },
-        {
-            "type": "Container",
-            "items": [
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
                 {
-                    "type": "ColumnSet",
-                    "columns": [
-                        {
-                            "type": "Column",
-                            "width": "auto",
-                            "items": [
-                                {
-                                    "type": "Input.Number",
-                                    "id": "id_room_number"
-                                }
-                            ]
-                        }
-                    ]
+                  "type": "Input.Text",
+                  "id": "session_code"
                 }
-            ]
+              ]
+            }
+          ]
         }
-    ],
-    "actions": [
-        {
-            "type": "Action.Submit",
-            "title": "Join"
-        }
-    ]
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Join"
+    }
+  ]
 }

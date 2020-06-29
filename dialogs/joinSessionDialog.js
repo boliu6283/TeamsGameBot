@@ -8,6 +8,7 @@ const { CardFactory, MessageFactory } = require('botbuilder-core');
 const Resolvers = require('../resolvers');
 const constants = require('../config/constants');
 const JoinSessionCard = require('../static/joinSessionCard.json');
+const { getSession } = require('../resolvers/gameSession');
 
 class JoinSessionDialog extends ComponentDialog {
   constructor(luisRecognizer) {
@@ -31,7 +32,7 @@ class JoinSessionDialog extends ComponentDialog {
     // Adaptive Card nativly don't work with prompt, it won't wait for user action
     // to send back, as a workaround, we will first send the card and end the current dialog
     // let waterfall flow execute and handle adaptive user input in the next dialog in waterfall
-    // ref: https://stackoverflow.com/questions/54156007/handling-adaptive-cards-in-microsoft-bot-framework-v4-nodejs/54188107#54188107 
+    // ref: https://stackoverflow.com/questions/54156007/handling-adaptive-cards-in-microsoft-bot-framework-v4-nodejs/54188107#54188107
     return Dialog.EndOfTurn;
   }
 
@@ -40,19 +41,33 @@ class JoinSessionDialog extends ComponentDialog {
 
     // make sure the response is from postback(adaptive submit button)
     // otherwise fall back to initial user input card
-    if (!activity.channelData.postBack) {
+    if (!(activity.value || {}).session_code) {
       return await this.fallBackToUserInput('action unsupported, please enter a valid room number', stepContext)
     }
-    const roomNumber = activity.value.id_room_number;
+    const sessionCode = activity.value.session_code;
 
-    // valid user input roomNumber, fallback to user input if failed
-    if (!roomNumber || roomNumber < 0) {
-      console.log('invalid room number:' + roomNumber);
+    // valid user input sessionCode, fallback to user input if failed
+    if (!sessionCode || sessionCode < 0) {
+      console.log('invalid room number:' + sessionCode);
       return this.fallBackToUserInput('error, please enter a valid room number', stepContext);
     }
 
-    const session = await Resolvers.gameSession.getSession({ code: roomNumber });
+    // add current user into the session.players
+    await Resolvers.gameSession.addPlayerToSession({
+      code: sessionCode,
+      userId: stepContext.options.user._id
+    });
     await stepContext.context.sendActivity("Opening Room ......");
+
+    // notify host that someone join the meeting, generate a link to start game
+    const session = await Resolvers.gameSession.getSession({ code: sessionCode });
+    const emailList = session.players.map(p => p.email).join(',');
+    await Resolvers.proactiveMessage.notifyIndividual(
+      session.host.aad,
+      `${stepContext.options.user.name} has now joined room ${sessionCode}.
+       Do you want to start the game?
+       https://teams.microsoft.com/l/chat/0/0?users=${emailList}&topicName=GameBotSession${sessionCode}`
+    );
 
     // TODO chi:
     // check session status, if session is await then include myself and update session

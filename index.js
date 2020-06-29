@@ -18,6 +18,7 @@ const {
   UserState,
 } = require("botbuilder");
 const { LuisRecognizer } = require("botbuilder-ai");
+const { MicrosoftAppCredentials } = require('botframework-connector');
 
 // This bot's main dialog.
 const { DialogBot } = require("./bots/dialogBot");
@@ -43,6 +44,9 @@ if (process.env.DebugMode === 'emulator' && !process.env.port && !process.env.PO
 const adapter = Resolver.botAdapter.getInstance(
   process.env.MicrosoftAppId,
   process.env.MicrosoftAppPassword);
+
+// Register trust service url endpoint
+// MicrosoftAppCredentials.trustServiceUrl("https://smba.trafficmanager.net/");
 
 // Catch-all for errors.
 const onTurnErrorHandler = async (context, error) => {
