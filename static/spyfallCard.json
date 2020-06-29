@@ -5,11 +5,36 @@
     "body": [
         {
             "type": "TextBlock",
-            "text": "Location: "
+            "text": "All Locations: "
+        },
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+              ]
+            }
+          ]
         },
         {
             "type": "TextBlock",
-            "text": "Role: "
+            "text": "Location: ",
+            "weight": "bolder",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "Role: ",
+            "weight": "bolder",
+            "wrap": true
         },
         {
             "type": "Input.Text",
