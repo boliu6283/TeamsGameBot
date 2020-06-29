@@ -58,11 +58,13 @@ class JoinSessionDialog extends ComponentDialog {
     }
 
     // block user if join as a host
+    /*
     if (session.host.aad === stepContext.options.user.aad) {
       return await this.fallBackToUserInput(
         'You cannot join your own room as a host, please share the room code with others',
         stepContext);
     }
+    */
 
     // block user if the session is started or completed
     if (session.status === 'start') {
@@ -108,7 +110,7 @@ class JoinSessionDialog extends ComponentDialog {
 
   generateHostNotificationCard(session, stepContext) {
     const emailList = session.players.map(p => p.email).join(',');
-    const playerList = session.players.concat(session.host.name).map(p => `<li>${p.name}</li>`).join('');
+    const playerList = session.players.map(p => `<li>${p.name}</li>`).join('');
     const newPlayer = stepContext.options.user.name;
     return `<b>${newPlayer}</b> has now joined the room <b>${session.code}</b> hosted by you.
     <ul>${playerList}</ul>
