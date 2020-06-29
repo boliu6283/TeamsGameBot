@@ -58,13 +58,11 @@ class JoinSessionDialog extends ComponentDialog {
     }
 
     // block user if join as a host
-    /*
     if (session.host.aad === stepContext.options.user.aad) {
       return await this.fallBackToUserInput(
         'You cannot join your own room as a host, please share the room code with others',
         stepContext);
     }
-    */
 
     // block user if the session is started or completed
     if (session.status === 'start') {
@@ -109,12 +107,18 @@ class JoinSessionDialog extends ComponentDialog {
   }
 
   generateHostNotificationCard(session, stepContext) {
-    const emailList = session.players.map(p => p.email).join(',');
-    const playerList = session.players.map(p => `<li>${p.name}</li>`).join('');
-    const newPlayer = stepContext.options.user.name;
-    return `<b>${newPlayer}</b> has now joined the room <b>${session.code}</b> hosted by you.
-    <ul>${playerList}</ul>
-    <a href='https://teams.microsoft.com/l/chat/0/0?users=${emailList}&topicName=GameBotSession${session.code}'>
+    const newPlayerUsername = stepContext.options.user.name;
+    const newPlayerEmail = stepContext.options.user.email;
+
+    const playerList = session.players.map(p => `<li>${p.name}</li>`);
+    const emailList = session.players.map(p => p.email);
+
+    playerList.push(newPlayerUsername);
+    emailList.push(newPlayerEmail);
+
+    return `<b>${newPlayerUsername}</b> has now joined the room <b>${session.code}</b> hosted by you.
+    <ul>${playerList.join('')}</ul>
+    <a href='https://teams.microsoft.com/l/chat/0/0?users=${emailList.join(',')}&topicName=GameBotSession${session.code}'>
      Start Game
     </a>`;
   }
