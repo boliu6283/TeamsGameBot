@@ -18,6 +18,18 @@ class SpyfallDialog extends ComponentDialog {
         this.restartStep.bind(this)
     ]));
 
+    for(let i = 0; i < SpyfallRoles.locations.length; i++){
+      const locationItem = {
+        type:'TextBlock',
+        text:SpyfallRoles.locations[i]
+      }
+      if(i%2==0){
+        SpyfallCard.body[1].columns[0].items.push(locationItem);
+      }else{
+        SpyfallCard.body[1].columns[1].items.push(locationItem);
+      }
+    }
+
     this.initialDialogId = constants.SPYFALL_WATERFALL_DIALOG;
   }
 
@@ -33,27 +45,25 @@ class SpyfallDialog extends ComponentDialog {
     const location = SpyfallRoles.locations[this.getRandomInt(SpyfallRoles.locations.length)];
     const spyIndex = this.getRandomInt(session.players.length+1);
     session.players.forEach(async (player, index)=>{
-      let role = '';
-      if(index == spyIndex){
-        role='Spy';
-      } else {
-        role = SpyfallRoles[`location.${location}.role${(index+spyIndex)%7 + 1}`];
-      }
       const playerCard = CardFactory.adaptiveCard(SpyfallCard);
-      playerCard.content.body[0].text = 'Location: '+location;
-      playerCard.content.body[1].text = 'Role: ' + role;
+      if(index == spyIndex){
+        playerCard.content.body[3].text = 'Role: Spy';
+        playerCard.content.body[2].text = 'Location: (empty, try guess)';
+      } else {
+        playerCard.content.body[3].text = 'Role: ' + SpyfallRoles[`location.${location}.role${(index+spyIndex)%7 + 1}`];
+        playerCard.content.body[2].text = 'Location: '+location;
+      }
       await Resolvers.proactiveMessage.notifyIndividualCard(player.aad, playerCard);
     });
 
     let hostSpyfallCard = CardFactory.adaptiveCard(SpyfallCard);
-    hostSpyfallCard.content.body[0].text = 'Location: '+location;
-    let hostRole = '';
     if(spyIndex == session.players.length){
-      hostRole = 'Spy';
+      hostSpyfallCard.content.body[3].text = 'Role: Spy';
+      hostSpyfallCard.content.body[2].text = 'Location: (empty, try guess)';
     } else {
-      hostRole = SpyfallRoles[`location.${location}.role${(spyIndex)%7 + 1}`];
+      hostSpyfallCard.content.body[3].text = 'Role: ' + SpyfallRoles[`location.${location}.role${(spyIndex)%7 + 1}`];
+      hostSpyfallCard.content.body[2].text = 'Location: '+location;
     }
-    hostSpyfallCard.content.body[1].text = 'Role: ' + hostRole;
 
     return await stepContext.prompt(constants.SPYFALL_PROMPT, {
       prompt: MessageFactory.attachment(hostSpyfallCard),
