@@ -111,38 +111,12 @@ class JoinSessionDialog extends ComponentDialog {
   }
 
   generateHostNotificationCard(session, stepContext) {
-<<<<<<< HEAD
     const card = CardFactory.adaptiveCard(newPlayerJoinCard);
     card.content.body[0].text += stepContext.options.user.name;
     const playersStr = session.players.map(p => p.email).join('\r ');;
     card.content.body[2].text = playersStr;
     card.content.actions[0].data.msteams.text = session.code;
     return card;
-||||||| c1b1754
-    const emailList = session.players.map(p => p.email).join(',');
-    const playerList = session.players.map(p => `<li>${p.name}</li>`).join('');
-    const newPlayer = stepContext.options.user.name;
-    return `<b>${newPlayer}</b> has now joined the room <b>${session.code}</b> hosted by you.
-    <ul>${playerList}</ul>
-    <a href='https://teams.microsoft.com/l/chat/0/0?users=${emailList}&topicName=GameBotSession${session.code}'>
-     Start Game
-    </a>`;
-=======
-    const newPlayerUsername = stepContext.options.user.name;
-    const newPlayerEmail = stepContext.options.user.email;
-
-    const playerList = session.players.map(p => `<li>${p.name}</li>`);
-    const emailList = session.players.map(p => p.email);
-
-    playerList.push(newPlayerUsername);
-    emailList.push(newPlayerEmail);
-
-    return `<b>${newPlayerUsername}</b> has now joined the room <b>${session.code}</b> hosted by you.
-    <ul>${playerList.join('')}</ul>
-    <a href='https://teams.microsoft.com/l/chat/0/0?users=${emailList.join(',')}&topicName=GameBotSession${session.code}'>
-     Start Game
-    </a>`;
->>>>>>> 41c313f0c26638fce95138167783a5def60fad4f
   }
 }
 
