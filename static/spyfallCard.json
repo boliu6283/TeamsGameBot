@@ -1,56 +1,56 @@
 {
-    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "type": "AdaptiveCard",
-    "version": "1.0",
-    "body": [
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "All Locations: "
+    },
+    {
+      "type": "ColumnSet",
+      "columns": [
         {
-            "type": "TextBlock",
-            "text": "All Locations: "
+          "type": "Column",
+          "width": "auto",
+          "items": []
         },
         {
-          "type": "ColumnSet",
-          "columns": [
-            {
-              "type": "Column",
-              "width": "auto",
-              "items": [
-              ]
-            },
-            {
-              "type": "Column",
-              "width": "stretch",
-              "items": [
-              ]
-            }
-          ]
-        },
-        {
-            "type": "TextBlock",
-            "text": "Location: ",
-            "weight": "bolder",
-            "wrap": true
-        },
-        {
-            "type": "TextBlock",
-            "text": "Role: ",
-            "weight": "bolder",
-            "wrap": true
-        },
-        {
-            "type": "Input.Text",
-            "id": "vote"
+          "type": "Column",
+          "width": "stretch",
+          "items": []
         }
-    ],
-    "actions": [{
-        "type": "Action.Submit",
-        "title": "Submit your Vote/Guess",
-        "data": {
-            "msteams": {
-                "type": "messageBack",
-                "displayText": "Spyfall",
-                "text": "",
-                "value": "{\"bfKey\": \"bfVal\", \"conflictKey\": \"from value\"}"
-            }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Location: ",
+      "weight": "bolder",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Role: ",
+      "weight": "bolder",
+      "wrap": true
+    },
+    {
+      "type": "Input.Text",
+      "id": "vote"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Submit your Vote/Guess",
+      "data": {
+        "msteams": {
+          "type": "messageBack",
+          "displayText": "Spyfall",
+          "text": "",
+          "value": "{\"bfKey\": \"bfVal\", \"conflictKey\": \"from value\"}"
         }
-    }]
+      }
+    }
+  ]
 }
