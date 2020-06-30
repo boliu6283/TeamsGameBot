@@ -23,9 +23,16 @@ module.exports = {
     CREATE_SESSION_CARD_PROMPT: 'createSessionCardPrompt',
     CREATE_SESSION_WATERFALL_DIALOG: 'createSessionWaterfallDialog',
 
+    // Proactive Message Callbacks
+    SPYFALL_START_CALLBACK: 'spyfallStartCallback',
+
     // Conversation State constants
     DIALOG_STATE: 'DialogState',
 
     // User State constants
-    USER_PROFILE_STATE: 'UserProfileState'
+    USER_PROFILE_STATE: 'UserProfileState',
+
+    // Configurations
+    DEFAULT_SPYFALL_LIFESPAN_SEC: 45,
+    DEFAULT_COUNTDOWN_INTERVAL_SEC: 10,
 }

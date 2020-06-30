@@ -10,7 +10,10 @@ const gameSessionSchema = new Schema({
   players: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   audiences: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   createdAt: { type: Date },
-  updatedAt: { type: Date }
+  updatedAt: { type: Date },
+  startedAt: { type: Date },
+  expectedToEndAt: { type: Date },
+  completedAt: { type: Date }
 }, {
   timestamps: true
 });

@@ -14,6 +14,8 @@ class SpyfallDialog extends ComponentDialog {
     this._luisRecognizer = luisRecognizer;
     this.addDialog(new ChoicePrompt(constants.SPYFALL_PROMPT));
     this.addDialog(new WaterfallDialog(constants.SPYFALL_WATERFALL_DIALOG, [
+        this.startGameSession.bind(this),
+        this.registerCountdown.bind(this),
         this.distributeRoleStep.bind(this),
         this.restartStep.bind(this)
     ]));
@@ -37,6 +39,45 @@ class SpyfallDialog extends ComponentDialog {
     return Math.floor(Math.random() * Math.floor(max));
   }
 
+  async startGameSession(stepContext) {
+    // Only host's proactive card response will have msteams session code
+    const startGameArgs = stepContext.context.activity.value.msteams;
+    if (startGameArgs) {
+      const sessionCode = startGameArgs.text;
+      const lifespan = constants.DEFAULT_SPYFALL_LIFESPAN_SEC;
+
+      await Resolvers.proactiveMessage.notifySession(
+        sessionCode,
+        `Spyfall ${sessionCode} is now started, try to find the spy in ${lifespan} seconds`);
+
+      // TODO: lifespan should be adjustable based on the number of players
+      await Resolvers.gameSession.startSession({
+        code: sessionCode,
+        lifespanSec: lifespan
+      });
+    }
+    return stepContext.next();
+  }
+
+  async registerCountdown(stepContext) {
+    // Only the host needs to register the countdown timer
+    const startGameArgs = stepContext.context.activity.value.msteams;
+    if (startGameArgs) {
+      const sessionCode = startGameArgs.text;
+
+      // To prevent the host from keep clicking on the proactive card
+      // We should only register the timer once at a time
+      await Resolvers.countdown.register(
+        sessionCode,
+        constants.DEFAULT_COUNTDOWN_INTERVAL_SEC,
+        async () => {
+          // TODO: handle win logic and prompt retry card
+          await Resolvers.proactiveMessage.notifySession(
+            sessionCode, `Spyfall ${sessionCode} is now finished, spy wins`);
+        });
+    }
+    return await stepContext.next();
+  }
 
   async distributeRoleStep(stepContext) {
     const startGameArgs = stepContext.context.activity.value.msteams;

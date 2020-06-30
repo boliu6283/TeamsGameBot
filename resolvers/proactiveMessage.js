@@ -2,6 +2,7 @@ const { TurnContext } = require('botbuilder-core');
 const BotAdapter = require('./botAdapter');
 const GameSession = require('./gameSession');
 
+// { userAad: turnContext }
 let _conversationReferences = {};
 
 const notifyIndividual = async (userAad, message) => {
@@ -29,6 +30,7 @@ const notifySession = async (sessionCode, message) => {
   session.players.forEach(async (p) => {
     await notifyIndividual(p.aad, message);
   });
+  await notifyIndividual(session.host.aad, message);
 }
 
 const notifyAll = async (message) => {

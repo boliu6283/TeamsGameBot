@@ -4,7 +4,7 @@
 const { TeamsInfo } = require('botbuilder');
 const { ComponentDialog, DialogSet, DialogTurnStatus} = require('botbuilder-dialogs');
 const { WelcomeDialog } = require('./welcomeDialog');
-const {SpyfallDialog} = require('./spyfallDialog');
+const { SpyfallDialog } = require('./spyfallDialog');
 const constants = require('../config/constants')
 const Resolvers = require('../resolvers');
 
@@ -65,10 +65,11 @@ class MainDialog extends ComponentDialog {
    * @param {*} options userProfile
    */
   async beginDialog(dc, options) {
-    if(dc.context.activity.value && dc.context.activity.value.msteams){
-      // start a game
+    // Handler for proactive messages
+    if (dc.context.activity.value && dc.context.activity.value.msteams) {
+      // start a new spyfall game from newPlayerJoinCard.json
       const startGameArgs = dc.context.activity.value.msteams;
-      if(startGameArgs.displayText == 'Spyfall'){
+      if (startGameArgs.displayText === constants.SPYFALL_START_CALLBACK) {
         const sessionCode = startGameArgs.text;
         return await dc.beginDialog(constants.SPYFALL_DIALOG, options);
       }
