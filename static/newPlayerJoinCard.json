@@ -23,9 +23,9 @@
         "data": {
             "msteams": {
                 "type": "messageBack",
-                "displayText": "Spyfall",
+                "displayText": "spyfallStartCallback",
                 "text": "",
-                "value": "{\"bfKey\": \"bfVal\", \"conflictKey\": \"from value\"}"
+                "value": ""
             }
         }
     }]

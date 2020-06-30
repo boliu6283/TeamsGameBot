@@ -21,10 +21,13 @@ const addPlayerToSession = async (args) => {
 
 const createSession = async (args) => {
   const { code, game, host } = args;
+  const currentTime = new Date();
   const newGameSession = new GameSession({
     code,
     game,
-    host
+    host,
+    status: 'await',
+    createdAt: currentTime
   });
 
   const gameSession = await newGameSession.save();
@@ -38,9 +41,42 @@ const deleteSession = async (args) => {
   return await findOneAndDelete({ code: args.code });
 }
 
+const startSession = async (args) => {
+  const { code, lifespanSec } = args;
+  const currentTime = new Date();
+
+  let expectedEndTime = null;
+  // Set session expected end time if lifespan is set
+  if (lifespanSec) {
+    expectedEndTime = new Date(currentTime.getTime() + lifespanSec * 1000);
+  }
+
+  return await GameSession.findOneAndUpdate({
+    code
+  }, {
+    status: 'start',
+    updatedAt: currentTime,
+    startedAt: currentTime,
+    expectedToEndAt: expectedEndTime
+  });
+}
+
+const endSession = async (args) => {
+  const { code } = args;
+  const currentTime = new Date();
+  return await GameSession.findOneAndUpdate({
+    code
+  }, {
+    status: 'complete',
+    completedAt: currentTime
+  });
+}
+
 module.exports = {
   getSession,
   addPlayerToSession,
   createSession,
-  deleteSession
+  deleteSession,
+  startSession,
+  endSession
 };
