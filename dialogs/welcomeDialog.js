@@ -33,8 +33,8 @@ class WelcomeDialog extends ComponentDialog {
     let welcomeCard = CardFactory.adaptiveCard(WelcomeCard);
     welcomeCard.content.body[0].text = `Hey ${stepContext.options.user.givenName}! Welcome to Game Bot!`
     welcomeCard.content.body[1].url = getRandomPic(menuPics);
-    await stepContext.context.sendActivity({ attachments: [welcomeCard] });
-
+    const activity = await stepContext.context.sendActivity({ attachments: [welcomeCard] });
+    stepContext.options.lastActivityId = activity.id;
     return Dialog.EndOfTurn;
   }
 
@@ -46,6 +46,7 @@ class WelcomeDialog extends ComponentDialog {
 
     switch (choice.welcomeChoice) {
       case 'host': {
+        // await stepContext.context.deleteActivity(stepContext.options.lastActivityId);
         return await stepContext.replaceDialog(constants.GAME_CHOICE_DIALOG, stepContext.options);
       }
 
