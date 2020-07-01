@@ -6,6 +6,8 @@ module.exports = {
     WELCOME_WATERFALL_DIALOG: 'welcomeWaterfallDialog',
     SPYFALL_PROMPT: 'spyfallPrompt',
     SPYFALL_WATERFALL_DIALOG: 'spyfallWaterfallDialog',
+    SPYFALL_RAISE_POLL_DIALOG: 'spyfallRaisePollDialog',
+    SPYFALL_RESULT_COLLECT_DIALOG: 'spyfallResultCollectDialog',
     SPYFALL_DIALOG: 'spyfallDialog',
 
     GAME_CHOICE_DIALOG: 'gameChoiceDialog',
