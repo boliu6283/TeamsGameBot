@@ -105,6 +105,8 @@ class SpyfallDialog extends ComponentDialog {
       hostSpyfallCard.content.body[3].text = 'Role: ' + SpyfallRoles[`location.${location}.role${(spyIndex)%7 + 1}`];
       hostSpyfallCard.content.body[2].text = 'Location: '+location;
     }
+    
+    
 
     return await stepContext.prompt(constants.SPYFALL_PROMPT, {
       prompt: MessageFactory.attachment(hostSpyfallCard),
