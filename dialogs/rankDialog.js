@@ -46,7 +46,7 @@ class RankDialog extends Dialog {
     });
 
     await dc.context.sendActivity({ attachments: [rankcard] });
-    return await dc.continueDialog();
+    return await dc.endDialog();
   }
 }
 
