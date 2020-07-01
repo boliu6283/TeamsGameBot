@@ -1,4 +1,4 @@
-const { ComponentDialog, WaterfallDialog, ChoicePrompt } = require('botbuilder-dialogs');
+const { Dialog, ComponentDialog, WaterfallDialog, ChoicePrompt } = require('botbuilder-dialogs');
 const { CardFactory, MessageFactory } = require('botbuilder-core');
 const { CreateSessionDialog } = require('./createSession');
 const Resolvers = require('../resolvers');
@@ -24,10 +24,10 @@ class GameChoiceDialog extends ComponentDialog {
   async gameCardStep(stepContext) {
     // Clean up GameCard
     GameCard.body = [];
+    GameCard.actions = [];
     
     let gameCard = CardFactory.adaptiveCard(GameCard);
     const allGames = await Resolvers.game.getAllGames();
-    const allGameChoices = allGames.map(game => game.name);
 
     allGames.forEach(game => {
       const gameTitle = {
@@ -75,21 +75,30 @@ class GameChoiceDialog extends ComponentDialog {
           }
         ]
       });
+
+      const gameBtn = {
+        type: 'Action.Submit',
+        title: game.name,
+        data: {
+          gameChoice: game.name
+        }
+      };
+
+      gameCard.content.actions.push(gameBtn);
     });
 
-    const newActivity = MessageFactory.text('The new text for the activity');
-    newActivity.id = stepContext.options.lastActivityId;
-    await stepContext.context.updateActivity(newActivity);
-    // await stepContext.context.deleteActivity(stepContext.options.lastActivityId);
-    return await stepContext.prompt(constants.GAME_CARD_PROMPT, {
-      prompt: MessageFactory.attachment(gameCard),
-      retryPrompt: 'Please select a game.',
-      choices: allGameChoices
-    });
+    await stepContext.context.deleteActivity(stepContext.options.lastActivityId);
+    stepContext.options.lastActivityId = (await stepContext.context.sendActivity({ attachments: [gameCard] })).id;
+
+    return Dialog.EndOfTurn;
   }
 
   async gameChoiceStep(stepContext) {
-    stepContext.options.gameChoice = stepContext.result.value;
+    const choice = stepContext.context._activity.value;
+    if (!choice) {
+      return await stepContext.replaceDialog(constants.GAME_CHOICE_DIALOG, stepContext.options);
+    }
+    stepContext.options.gameChoice = choice.gameChoice;
     return await stepContext.replaceDialog(constants.CREATE_SESSION_DIALOG, stepContext.options);
   }
 }
