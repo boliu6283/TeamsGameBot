@@ -3,7 +3,7 @@ const { CardFactory } = require('botbuilder-core');
 const Resolvers = require('../resolvers');
 const constants = require('../config/constants');
 const JoinSessionCard = require('../static/joinSessionCard.json');
-const newPlayerJoinCard = require('../static/newPlayerJoinCard.json');
+const NewPlayerJoinCard = require('../static/newPlayerJoinCard.json');
 
 class JoinSessionDialog extends ComponentDialog {
   constructor(luisRecognizer) {
@@ -105,12 +105,12 @@ class JoinSessionDialog extends ComponentDialog {
   }
 
   generateHostNotificationCard(session, stepContext) {
-    const card = CardFactory.adaptiveCard(newPlayerJoinCard);
-    card.content.body[0].text += stepContext.options.user.name;
-    const playersStr = session.players.map(p => p.email).join('\r ');;
-    card.content.body[2].text = playersStr;
-    card.content.actions[0].data.msteams.text = session.code;
-    return card;
+    const newPlayerJoinCard = CardFactory.adaptiveCard(NewPlayerJoinCard);
+    newPlayerJoinCard.content.body[0].text += stepContext.options.user.name;
+    const playersStr = session.players.map(p => p.name).join('\r ');;
+    newPlayerJoinCard.content.body[2].text = playersStr;
+    newPlayerJoinCard.content.actions[0].data.msteams.text = session.code;
+    return newPlayerJoinCard;
   }
 }
 
