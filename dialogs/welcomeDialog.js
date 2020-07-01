@@ -43,17 +43,18 @@ class WelcomeDialog extends ComponentDialog {
     if (!choice) {
       return await stepContext.replaceDialog(constants.WELCOME_DIALOG, stepContext.options);
     }
-    switch (choice.welcomeChoice) {
-      case 'game': {
-        return await stepContext.replaceDialog(constants.GAME_CHOICE_DIALOG, stepContext.options);
-      }
 
-      case 'rank': {
-        return await stepContext.replaceDialog(constants.RANK_DIALOG, stepContext.options);
+    switch (choice.welcomeChoice) {
+      case 'host': {
+        return await stepContext.replaceDialog(constants.GAME_CHOICE_DIALOG, stepContext.options);
       }
 
       case 'join': {
         return await stepContext.replaceDialog(constants.JOIN_SESSION_DIALOG, stepContext.options);
+      }
+
+      case 'rank': {
+        return await stepContext.replaceDialog(constants.RANK_DIALOG, stepContext.options);
       }
     }
 

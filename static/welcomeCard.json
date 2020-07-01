@@ -21,23 +21,23 @@
   "actions": [
     {
       "type": "Action.Submit",
-      "title": "🕹️Game",
+      "title": "🕹️Host game",
       "data": {
-        "welcomeChoice": "game"
+        "welcomeChoice": "host"
       }
     },
     {
       "type": "Action.Submit",
-      "title": "📖Rank",
-      "data": {
-        "welcomeChoice": "rank"
-      }
-    },
-    {
-      "type": "Action.Submit",
-      "title": "🪑Join",
+      "title": "🪑Join game",
       "data": {
         "welcomeChoice": "join"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "🔝Top10 Rank",
+      "data": {
+        "welcomeChoice": "rank"
       }
     }
   ]
