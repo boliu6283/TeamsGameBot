@@ -24,6 +24,7 @@ const notifyIndividualCard = async(userAad, card) => {
     });
   }
 }
+
 // sessionCode = RoomNumber, RoomCode, SessionCode
 const notifySession = async (sessionCode, message) => {
   const session = await GameSession.getSession({ code: sessionCode });
