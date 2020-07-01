@@ -77,6 +77,10 @@ class GameChoiceDialog extends ComponentDialog {
       });
     });
 
+    const newActivity = MessageFactory.text('The new text for the activity');
+    newActivity.id = stepContext.options.lastActivityId;
+    await stepContext.context.updateActivity(newActivity);
+    // await stepContext.context.deleteActivity(stepContext.options.lastActivityId);
     return await stepContext.prompt(constants.GAME_CARD_PROMPT, {
       prompt: MessageFactory.attachment(gameCard),
       retryPrompt: 'Please select a game.',

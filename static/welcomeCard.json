@@ -21,14 +21,14 @@
   "actions": [
     {
       "type": "Action.Submit",
-      "title": "🕹️Host game",
+      "title": "🕹️Host Game",
       "data": {
         "welcomeChoice": "host"
       }
     },
     {
       "type": "Action.Submit",
-      "title": "🪑Join game",
+      "title": "🪑Join Game",
       "data": {
         "welcomeChoice": "join"
       }
