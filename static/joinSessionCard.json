@@ -24,7 +24,7 @@
               "items": [
                 {
                   "type": "Input.Text",
-                  "id": "session_code"
+                  "id": "sessionCode"
                 }
               ]
             }

@@ -17,5 +17,28 @@
       "url": "${welcomePic}",
       "size": "stretch"
     }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "🕹️Game",
+      "data": {
+        "welcomeChoice": "game"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "📖Rank",
+      "data": {
+        "welcomeChoice": "rank"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "🪑Join",
+      "data": {
+        "welcomeChoice": "join"
+      }
+    }
   ]
 }

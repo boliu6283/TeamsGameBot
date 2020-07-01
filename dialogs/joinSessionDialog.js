@@ -1,15 +1,9 @@
-const {
-  Dialog,
-  ComponentDialog,
-  WaterfallDialog,
-  ChoicePrompt,
-  TextPrompt } = require('botbuilder-dialogs');
-const { CardFactory, MessageFactory } = require('botbuilder-core');
+const { Dialog, ComponentDialog, WaterfallDialog } = require('botbuilder-dialogs');
+const { CardFactory } = require('botbuilder-core');
 const Resolvers = require('../resolvers');
 const constants = require('../config/constants');
 const JoinSessionCard = require('../static/joinSessionCard.json');
 const newPlayerJoinCard = require('../static/newPlayerJoinCard.json');
-const { getSession } = require('../resolvers/gameSession');
 
 class JoinSessionDialog extends ComponentDialog {
   constructor(luisRecognizer) {
@@ -26,9 +20,9 @@ class JoinSessionDialog extends ComponentDialog {
   }
 
   async joinSessionCardSetup(stepContext) {
-    // first send user a card asking for room number
-    const userInputCard = CardFactory.adaptiveCard(JoinSessionCard);
-    await stepContext.context.sendActivity({ attachments: [userInputCard] });
+    // first send user a card asking for room code
+    const joinSessionCard = CardFactory.adaptiveCard(JoinSessionCard);
+    await stepContext.context.sendActivity({ attachments: [joinSessionCard] });
 
     // Adaptive Card nativly don't work with prompt, it won't wait for user action
     // to send back, as a workaround, we will first send the card and end the current dialog
@@ -42,14 +36,14 @@ class JoinSessionDialog extends ComponentDialog {
 
     // make sure the response is from postback(adaptive submit button)
     // otherwise fall back to initial user input card
-    if (!(activity.value || {}).session_code) {
+    if (!(activity.value || {}).sessionCode) {
       return await this.fallBackToUserInput(
         'action unsupported, please enter a valid session code',
         stepContext)
     }
 
     // validate user input sessionCode, fallback to user input if failed
-    const sessionCode = activity.value.session_code;
+    const sessionCode = activity.value.sessionCode;
     let session = await Resolvers.gameSession.getSession({ code: sessionCode });
     if (!session) {
       console.log('invalid session code:' + sessionCode);
