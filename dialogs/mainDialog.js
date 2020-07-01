@@ -4,7 +4,7 @@
 const { TeamsInfo } = require('botbuilder');
 const { ComponentDialog, DialogSet, DialogTurnStatus} = require('botbuilder-dialogs');
 const { WelcomeDialog } = require('./welcomeDialog');
-const { SpyfallDialog } = require('./spyfallDialog');
+const { SpyfallDialog } = require('./games/spyfall/spyfallDialog');
 const constants = require('../config/constants')
 const Resolvers = require('../resolvers');
 
