@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const { ComponentDialog, WaterfallDialog, ChoicePrompt } = require("botbuilder-dialogs");
-const { CardFactory, MessageFactory } = require('botbuilder-core');
+const { Dialog, ComponentDialog, WaterfallDialog, ChoicePrompt } = require("botbuilder-dialogs");
+const { CardFactory } = require('botbuilder-core');
 const { RankDialog } = require('./rankDialog');
 const { GameChoiceDialog } = require('./gameChoiceDialog');
 const { JoinSessionDialog } = require('./joinSessionDialog');
@@ -33,24 +33,26 @@ class WelcomeDialog extends ComponentDialog {
     let welcomeCard = CardFactory.adaptiveCard(WelcomeCard);
     welcomeCard.content.body[0].text = `Hey ${stepContext.options.user.givenName}! Welcome to Game Bot!`
     welcomeCard.content.body[1].url = getRandomPic(menuPics);
+    await stepContext.context.sendActivity({ attachments: [welcomeCard] });
 
-    return await stepContext.prompt(constants.WELCOME_CARD_PROMPT, {
-      prompt: MessageFactory.attachment(welcomeCard),
-      choices: ['🕹️Game', '📖Rank', '🪑Join']
-    });
+    return Dialog.EndOfTurn;
   }
 
   async welcomeChoiceStep(stepContext) {
-    switch (stepContext.result.value) {
-      case '🕹️Game': {
+    const choice = stepContext.context._activity.value;
+    if (!choice) {
+      return await stepContext.replaceDialog(constants.WELCOME_DIALOG, stepContext.options);
+    }
+    switch (choice.welcomeChoice) {
+      case 'game': {
         return await stepContext.replaceDialog(constants.GAME_CHOICE_DIALOG, stepContext.options);
       }
 
-      case '📖Rank': {
+      case 'rank': {
         return await stepContext.replaceDialog(constants.RANK_DIALOG, stepContext.options);
       }
 
-      case '🪑Join': {
+      case 'join': {
         return await stepContext.replaceDialog(constants.JOIN_SESSION_DIALOG, stepContext.options);
       }
     }
