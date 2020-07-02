@@ -24,7 +24,6 @@ module.exports = {
     CREATE_SESSION_WATERFALL_DIALOG: 'createSessionWaterfallDialog',
 
     // Proactive Message Callbacks
-    SPYFALL_START_CALLBACK: 'spyfallStartCallback',
 
     // Conversation State constants
     DIALOG_STATE: 'DialogState',
@@ -33,6 +32,6 @@ module.exports = {
     USER_PROFILE_STATE: 'UserProfileState',
 
     // Configurations
-    DEFAULT_SPYFALL_LIFESPAN_SEC: 45,
+    DEFAULT_SPYFALL_LIFESPAN_SEC: 30,
     DEFAULT_COUNTDOWN_INTERVAL_SEC: 10,
 }
