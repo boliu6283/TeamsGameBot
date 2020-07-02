@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const { Dialog, ComponentDialog, WaterfallDialog, ChoicePrompt } = require("botbuilder-dialogs");
+const { Dialog, ComponentDialog, WaterfallDialog } = require("botbuilder-dialogs");
 const { CardFactory } = require('botbuilder-core');
 const { RankDialog } = require('./rankDialog');
 const { GameChoiceDialog } = require('./gameChoiceDialog');
@@ -17,7 +17,6 @@ class WelcomeDialog extends ComponentDialog {
 
     this._luisRecognizer = luisRecognizer;
 
-    this.addDialog(new ChoicePrompt(constants.WELCOME_CARD_PROMPT));
     this.addDialog(new WaterfallDialog(constants.WELCOME_WATERFALL_DIALOG, [
         this.welcomeCardStep.bind(this),
         this.welcomeChoiceStep.bind(this)

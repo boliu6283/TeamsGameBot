@@ -1,6 +1,6 @@
 const { Dialog, ComponentDialog, WaterfallDialog, ChoicePrompt } = require('botbuilder-dialogs');
-const { CardFactory, MessageFactory } = require('botbuilder-core');
-const { CreateSessionDialog } = require('./createSession');
+const { CardFactory } = require('botbuilder-core');
+const { CreateSessionDialog } = require('./createSessionDialog');
 const Resolvers = require('../resolvers');
 const constants = require('../config/constants');
 const GameCard = require('../static/gameCard.json');
@@ -11,7 +11,6 @@ class GameChoiceDialog extends ComponentDialog {
 
     this._luisRecognizer = luisRecognizer;
 
-    this.addDialog(new ChoicePrompt(constants.GAME_CARD_PROMPT));
     this.addDialog(new WaterfallDialog(constants.GAME_WATERFALL_DIALOG, [
         this.gameCardStep.bind(this),
         this.gameChoiceStep.bind(this)
