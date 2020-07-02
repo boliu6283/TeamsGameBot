@@ -95,7 +95,7 @@ class SpyfallDialog extends ComponentDialog {
       if (index == spyIndex) {
         this.renderSpyCard(playerCard);
       } else {
-        this.renderRoleCard(playerCard, index, spyIndex, location, filteredVoteChoices, player._id, session);
+        this.renderRoleCard(playerCard, index, spyIndex, location, filteredVoteChoices, player._id);
       }
       await Resolvers.proactiveMessage.notifyIndividualCard(
         player.aad,
