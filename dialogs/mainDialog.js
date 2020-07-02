@@ -66,12 +66,14 @@ class MainDialog extends ComponentDialog {
    */
   async beginDialog(dc, options) {
     // Handler for proactive messages
-    if (dc.context.activity.value && dc.context.activity.value.msteams) {
-      // start a new spyfall game from newPlayerJoinCard.json
-      const startGameArgs = dc.context.activity.value.msteams;
-      if (startGameArgs.displayText === constants.SPYFALL_START_CALLBACK) {
-        const sessionCode = startGameArgs.text;
+    const input = dc.context.activity.value;
+    if (input) {
+      if (input.sessionCode) {
         return await dc.beginDialog(constants.SPYFALL_DIALOG, options);
+      } else if (input.spyGuess) {
+        return await dc.beginDialog(constants.SPYFALL_GUESS_DIALOG, options);
+      } else if (input.playerVote) {
+        return await dc.beginDialog(constants.SPYFALL_VOTE_DIALOG, options);
       }
     }
     return await dc.beginDialog(constants.WELCOME_DIALOG, options);

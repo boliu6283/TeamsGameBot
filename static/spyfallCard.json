@@ -54,15 +54,8 @@
   "actions": [
     {
       "type": "Action.Submit",
-      "title": "Submit your Vote/Guess",
-      "data": {
-        "msteams": {
-          "type": "messageBack",
-          "displayText": "Spyfall",
-          "text": "",
-          "value": ""
-        }
-      }
+      "title": "${btnName}",
+      "data": {}
     }
   ]
 }

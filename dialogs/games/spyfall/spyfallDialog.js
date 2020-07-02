@@ -35,53 +35,49 @@ class SpyfallDialog extends ComponentDialog {
   }
 
   async startGameSession(stepContext) {
-    // Only host's proactive card response will have msteams session code
-    const startGameArgs = stepContext.context.activity.value.msteams;
-    if (startGameArgs) {
-      const sessionCode = startGameArgs.text;
-      const lifespan = constants.DEFAULT_SPYFALL_LIFESPAN_SEC;
-
-      await Resolvers.proactiveMessage.notifySession(
-        sessionCode,
-        `Spyfall ${sessionCode} is now started, try to find the spy in ${lifespan} seconds`
-      );
-
-      // TODO: lifespan should be adjustable based on the number of players
-      await Resolvers.gameSession.startSession({
-        code: sessionCode,
-        lifespanSec: lifespan
-      });
+    if (stepContext.context.activity.value) {
+      stepContext.options.sessionCode = stepContext.context.activity.value.sessionCode;
     }
+    const sessionCode = stepContext.options.sessionCode;
+    const lifespan = constants.DEFAULT_SPYFALL_LIFESPAN_SEC;
+
+    await Resolvers.proactiveMessage.notifySession(
+      sessionCode,
+      `Spyfall ${sessionCode} is now started, try to find the spy in ${lifespan} seconds`
+    );
+
+    // TODO: lifespan should be adjustable based on the number of players
+    await Resolvers.gameSession.startSession({
+      code: sessionCode,
+      lifespanSec: lifespan
+    });
+
     return stepContext.next();
   }
 
   async registerCountdown(stepContext) {
     // Only the host needs to register the countdown timer
-    const startGameArgs = stepContext.context.activity.value.msteams;
-    if (startGameArgs) {
-      const sessionCode = startGameArgs.text;
+    const sessionCode = stepContext.options.sessionCode;
 
-      // To prevent the host from keep clicking on the proactive card
-      // We should only register the timer once at a time
-      await Resolvers.countdown.register(
-        sessionCode,
-        constants.DEFAULT_COUNTDOWN_INTERVAL_SEC,
-        async () => {
-          // TODO: handle win logic and prompt retry card
-          await Resolvers.proactiveMessage.notifySession(
-            sessionCode,
-            `Spyfall ${sessionCode} is now finished, spy wins`
-          );
-        }
-      );
-    }
+    // To prevent the host from keep clicking on the proactive card
+    // We should only register the timer once at a time
+    await Resolvers.countdown.register(
+      sessionCode,
+      constants.DEFAULT_COUNTDOWN_INTERVAL_SEC,
+      async () => {
+        // TODO: handle win logic and prompt retry card
+        await Resolvers.proactiveMessage.notifySession(
+          sessionCode,
+          `Spyfall ${sessionCode} is now finished, spy wins`
+        );
+      }
+    );
+
     return await stepContext.next();
   }
 
   async distributeRoleStep(stepContext) {
-    const startGameArgs = stepContext.context.activity.value.msteams;
-    const sessionCode = startGameArgs.text;
-    let session = await Resolvers.gameSession.getSession({ code: sessionCode });
+    let session = await Resolvers.gameSession.getSession({ code: stepContext.options.sessionCode });
     const location = SpyfallRoles.locations[getRandomInt(SpyfallRoles.locations.length)];
     const spyIndex = getRandomInt(session.players.length + 1);
     let voteChoices = session.players.map(p => {
@@ -99,7 +95,7 @@ class SpyfallDialog extends ComponentDialog {
       if (index == spyIndex) {
         this.renderSpyCard(playerCard);
       } else {
-        this.renderRoleCard(playerCard, spyIndex, location, filteredVoteChoices, player._id);
+        this.renderRoleCard(playerCard, index, spyIndex, location, filteredVoteChoices, player._id, session);
       }
       await Resolvers.proactiveMessage.notifyIndividualCard(
         player.aad,
@@ -141,14 +137,14 @@ class SpyfallDialog extends ComponentDialog {
     card.content.actions[0].title = 'Guess your location';
   }
 
-  renderRoleCard(card, spyIndex, location, voteChoices, id) {
+  renderRoleCard(card, index, spyIndex, location, voteChoices, id) {
     card.content.body[2].text =
       'Your location: ' +
       SpyfallRoles[`location.${location}`];
 
     card.content.body[3].text =
       'Your role: ' +
-      SpyfallRoles[`location.${location}.role${(spyIndex % 7) + 1}`];
+      SpyfallRoles[`location.${location}.role${((index + spyIndex) % 7) + 1}`];
 
     card.content.body[4].text = 'Note: you only have one chance to vote.'
 

@@ -101,15 +101,17 @@ class JoinSessionDialog extends ComponentDialog {
 
   async fallBackToUserInput(errorMessage, stepContext) {
     await stepContext.context.sendActivity(errorMessage);
+
     return await stepContext.replaceDialog(constants.JOIN_SESSION_WATERFALL_DIALOG, stepContext.options);
   }
 
   generateHostNotificationCard(session, stepContext) {
     const newPlayerJoinCard = CardFactory.adaptiveCard(NewPlayerJoinCard);
     newPlayerJoinCard.content.body[0].text += stepContext.options.user.name;
-    const playersStr = session.players.map(p => p.name).join('\r ');
+    const playersStr = session.players.map(p => p.name).join('     ');
     newPlayerJoinCard.content.body[2].text = playersStr;
-    newPlayerJoinCard.content.actions[0].data.msteams.text = session.code;
+    newPlayerJoinCard.content.actions[0].data.sessionCode = session.code;
+
     return newPlayerJoinCard;
   }
 }
