@@ -5,14 +5,22 @@
   "body": [
     {
       "type": "TextBlock",
-      "text": "All Locations: "
+      "spacing": "medium",
+      "size": "large",
+      "weight": "bolder",
+      "text": "All Locations"
     },
     {
       "type": "ColumnSet",
       "columns": [
         {
           "type": "Column",
-          "width": "auto",
+          "width": "stretch",
+          "items": []
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
           "items": []
         },
         {
@@ -24,20 +32,24 @@
     },
     {
       "type": "TextBlock",
-      "text": "Location: ",
+      "text": "Your location: ",
       "weight": "bolder",
       "wrap": true
     },
     {
       "type": "TextBlock",
-      "text": "Role: ",
+      "text": "Your role: ",
       "weight": "bolder",
       "wrap": true
     },
     {
-      "type": "Input.Text",
-      "id": "vote"
-    }
+      "type": "TextBlock",
+      "spacing": "medium",
+      "size": "small",
+      "weight": "bolder",
+      "text": "${note}"
+    },
+    {}
   ],
   "actions": [
     {
@@ -48,7 +60,7 @@
           "type": "messageBack",
           "displayText": "Spyfall",
           "text": "",
-          "value": "{\"bfKey\": \"bfVal\", \"conflictKey\": \"from value\"}"
+          "value": ""
         }
       }
     }

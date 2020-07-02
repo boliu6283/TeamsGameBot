@@ -107,7 +107,7 @@ class JoinSessionDialog extends ComponentDialog {
   generateHostNotificationCard(session, stepContext) {
     const newPlayerJoinCard = CardFactory.adaptiveCard(NewPlayerJoinCard);
     newPlayerJoinCard.content.body[0].text += stepContext.options.user.name;
-    const playersStr = session.players.map(p => p.name).join('\r ');;
+    const playersStr = session.players.map(p => p.name).join('\r ');
     newPlayerJoinCard.content.body[2].text = playersStr;
     newPlayerJoinCard.content.actions[0].data.msteams.text = session.code;
     return newPlayerJoinCard;

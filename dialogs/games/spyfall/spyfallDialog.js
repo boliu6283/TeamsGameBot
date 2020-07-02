@@ -2,7 +2,8 @@
 // Licensed under the MIT License.
 
 const { ComponentDialog, WaterfallDialog, ChoicePrompt } = require('botbuilder-dialogs');
-const { CardFactory, MessageFactory } = require('botbuilder-core');
+const { CardFactory } = require('botbuilder-core');
+const { getRandomInt } = require('../../../helpers/thumbnail');
 const constants = require('../../../config/constants');
 const SpyfallRoles = require('../../../static/spyfall.json');
 const SpyfallCard = require('../../../static/spyfallCard.json');
@@ -27,18 +28,10 @@ class SpyfallDialog extends ComponentDialog {
         type: 'TextBlock',
         text: SpyfallRoles.locations[i]
       };
-      if (i % 2 == 0) {
-        SpyfallCard.body[1].columns[0].items.push(locationItem);
-      } else {
-        SpyfallCard.body[1].columns[1].items.push(locationItem);
-      }
+      SpyfallCard.body[1].columns[i % 3].items.push(locationItem);
     }
 
     this.initialDialogId = constants.SPYFALL_WATERFALL_DIALOG;
-  }
-
-  getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
   }
 
   async startGameSession(stepContext) {
@@ -89,21 +82,24 @@ class SpyfallDialog extends ComponentDialog {
     const startGameArgs = stepContext.context.activity.value.msteams;
     const sessionCode = startGameArgs.text;
     let session = await Resolvers.gameSession.getSession({ code: sessionCode });
-    const location =
-      SpyfallRoles.locations[this.getRandomInt(SpyfallRoles.locations.length)];
-    const spyIndex = this.getRandomInt(session.players.length + 1);
+    const location = SpyfallRoles.locations[getRandomInt(SpyfallRoles.locations.length)];
+    const spyIndex = getRandomInt(session.players.length + 1);
+    let voteChoices = session.players.map(p => {
+      return { title: p.name, value: p._id};
+    });
+    voteChoices.push({
+      title: session.host.name,
+      value: session.host._id
+    });
+
+    session.players.push(session.host);
     session.players.forEach(async (player, index) => {
+      const filteredVoteChoices = voteChoices.filter(choice => choice.title !== player.name);
       const playerCard = CardFactory.adaptiveCard(SpyfallCard);
       if (index == spyIndex) {
-        playerCard.content.body[3].text = 'Role: Spy';
-        playerCard.content.body[2].text = 'Location: (empty, try guess)';
+        this.renderSpyCard(playerCard);
       } else {
-        playerCard.content.body[3].text =
-          'Role: ' +
-          SpyfallRoles[
-            `location.${location}.role${((index + spyIndex) % 7) + 1}`
-          ];
-        playerCard.content.body[2].text = 'Location: ' + location;
+        this.renderRoleCard(playerCard, spyIndex, location, filteredVoteChoices, player._id);
       }
       await Resolvers.proactiveMessage.notifyIndividualCard(
         player.aad,
@@ -111,19 +107,8 @@ class SpyfallDialog extends ComponentDialog {
       );
     });
 
-    let hostSpyfallCard = CardFactory.adaptiveCard(SpyfallCard);
-    if (spyIndex == session.players.length) {
-      hostSpyfallCard.content.body[3].text = 'Role: Spy';
-      hostSpyfallCard.content.body[2].text = 'Location: (empty, try guess)';
-    } else {
-      hostSpyfallCard.content.body[3].text =
-        'Role: ' +
-        SpyfallRoles[`location.${location}.role${(spyIndex % 7) + 1}`];
-      hostSpyfallCard.content.body[2].text = 'Location: ' + location;
-    }
-
     return await stepContext.prompt(constants.SPYFALL_PROMPT, {
-      prompt: MessageFactory.attachment(hostSpyfallCard),
+      prompt: 'wtf',
       choices: ['🕹️StartAnotherMatch', '📖EndGame']
     });
   }
@@ -143,6 +128,38 @@ class SpyfallDialog extends ComponentDialog {
     }
 
     return await stepContext.endDialog();
+  }
+
+  renderSpyCard(card) {
+    card.content.body[2].text = 'Your location: ❓';
+    card.content.body[3].text = 'Your role: 😈Spy';
+    card.content.body[4].text = 'Note: you only have one chance to guess.'
+    card.content.body[5] = {
+      type: 'Input.Text',
+      id: 'guess'
+    };
+    card.content.actions[0].title = 'Guess your location';
+  }
+
+  renderRoleCard(card, spyIndex, location, voteChoices, id) {
+    card.content.body[2].text =
+      'Your location: ' +
+      SpyfallRoles[`location.${location}`];
+
+    card.content.body[3].text =
+      'Your role: ' +
+      SpyfallRoles[`location.${location}.role${(spyIndex % 7) + 1}`];
+
+    card.content.body[4].text = 'Note: you only have one chance to vote.'
+
+    card.content.body[5] = {
+      type: 'Input.ChoiceSet',
+      id,
+      style: 'expanded',
+      choices: voteChoices
+    };
+
+    card.content.actions[0].title = 'Vote the spy';
   }
 }
 
