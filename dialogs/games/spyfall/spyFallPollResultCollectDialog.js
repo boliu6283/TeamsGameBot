@@ -1,13 +1,13 @@
 const { Dialog, ComponentDialog, WaterfallDialog } = require('botbuilder-dialogs');
 const { CardFactory } = require('botbuilder-core');
-const Resolvers = require('../resolvers');
-const constants = require('../config/constants');
+const Resolvers = require('../../../resolvers');
+const constants = require('../../../config/constants');
 
 // This dialog will proactively engage each user to make decision
 // on the raised poll.
 // The poll result will be collected in SpyFallResultCollectDialog
 //
-class SpyFallResultCollectDialog extends ComponentDialog {
+class SpyFallPollResultCollectDialog extends ComponentDialog {
   constructor(luisRecognizer) {
     super(constants.spyfallResultCollectDialog);
 
@@ -26,5 +26,5 @@ class SpyFallResultCollectDialog extends ComponentDialog {
 }
 
 module.exports = {
-  SpyFallResultCollectDialog
+  SpyFallPollResultCollectDialog
 };
