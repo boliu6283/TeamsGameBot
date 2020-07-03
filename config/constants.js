@@ -7,7 +7,7 @@ module.exports = {
     SPYFALL_PROMPT: 'spyfallPrompt',
     SPYFALL_WATERFALL_DIALOG: 'spyfallWaterfallDialog',
     SPYFALL_RAISE_POLL_DIALOG: 'spyfallRaisePollDialog',
-    SPYFALL_RESULT_COLLECT_DIALOG: 'spyfallResultCollectDialog',
+    SPYFALL_POLL_RESULT_COLLECT_DIALOG: 'spyfallPollResultCollectDialog',
     SPYFALL_DIALOG: 'spyfallDialog',
 
     GAME_CHOICE_DIALOG: 'gameChoiceDialog',
@@ -23,6 +23,11 @@ module.exports = {
     CREATE_SESSION_WATERFALL_DIALOG: 'createSessionWaterfallDialog',
 
     // Proactive Message Callbacks
+    // Spyfall Start Game Proactive Message Callbacks
+    SPYFALL_START_CALLBACK: 'spyfallStartCallback',
+
+    // Spyfall Poll Result Collect Proactive Message Callback
+    SPYFALL_POLL_RESULT_COLLECT_CALLBACK: 'spyfallPollResultCollectCallback',
 
     // Conversation State constants
     DIALOG_STATE: 'DialogState',

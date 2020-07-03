@@ -1,11 +1,11 @@
 const { Dialog, ComponentDialog, WaterfallDialog } = require('botbuilder-dialogs');
 const { CardFactory } = require('botbuilder-core');
-const Resolvers = require('../resolvers');
-const constants = require('../config/constants');
+const Resolvers = require('../../../resolvers');
+const constants = require('../../../config/constants');
+const PollResultCollectorCard = require('../static/pollResultCollectorCard.json');
 
-// This dialog will proactively engage each user to make decision
-// on the raised poll.
-// The poll result will be collected in SpyFallResultCollectDialog
+// This dialog will proactively engage each user to make decision on the raised poll
+// The poll result will be collected in SpyFallPollResultCollectDialog
 //
 class SpyFallRaisePollDialog extends ComponentDialog {
   constructor(luisRecognizer) {
@@ -15,13 +15,13 @@ class SpyFallRaisePollDialog extends ComponentDialog {
   }
 
   async beginDialog(dc, options) {
-    // TODO: Follow the pattern of the JoinSessionDialog
-    // 1. If this poll is raised by the spy, then it will directly give the result of the game
-
-    // 2. If this poll is raised by the player, then create a card and proactively engage every player.
+    // 1. The poll is raised by the player, create a card and proactively engage every player.
     //    The card will be a Agree/Disagree selection card.
+    let pollResultCollectorCard = CardFactory.adaptiveCard(PollResultCollectorCard);
+    pollResultCollectorCard.content.body[0].text = `Player {} raised the poll to disclose {} as a spy`;
 
     // 3. All responses from players will be collected in SpyFallResultCollectDialog.
+    
 
     // 4. Once SpyFallResultCollectDialog finishes on data collecting, it will pop the result.
 
