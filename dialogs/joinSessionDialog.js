@@ -37,8 +37,11 @@ class JoinSessionDialog extends ComponentDialog {
     // make sure the response is from postback(adaptive submit button)
     // otherwise fall back to initial user input card
     if (!(activity.value || {}).sessionCode) {
+      if (activity.value.return == "true") {
+        return await stepContext.replaceDialog(constants.WELCOME_DIALOG, stepContext.options);
+      }
       return await this.fallBackToUserInput(
-        'action unsupported, please enter a valid session code',
+        'Action unsupported, please enter a valid room number, or press Return to exit.',
         stepContext)
     }
 
@@ -48,27 +51,27 @@ class JoinSessionDialog extends ComponentDialog {
     if (!session) {
       console.log('invalid session code:' + sessionCode);
       return await this.fallBackToUserInput(
-        'Session cannot be found, please retry again',
+        'Room cannot be found, please try again.',
         stepContext);
     }
 
     // block user if join as a host
     if (session.host.aad === stepContext.options.user.aad) {
       return await this.fallBackToUserInput(
-        'You cannot join your own room as a host, please share the room code with others',
+        'You cannot join your own room as a host, please share the room code with others.',
         stepContext);
     }
 
     // block user if the session is started or completed
     if (session.status === 'start') {
       return await this.fallBackToUserInput(
-        'This session has already been started',
+        'This game session has already started.',
         stepContext);
     }
 
     if (session.status === 'complete') {
       return await this.fallBackToUserInput(
-        'This session is completed, please consider join a new room',
+        'This game session is completed, please consider joining a new room.',
         stepContext);
     }
 
