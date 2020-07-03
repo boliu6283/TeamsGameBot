@@ -37,6 +37,13 @@
     {
       "type": "Action.Submit",
       "title": "Join"
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Return",
+      "data": {
+        "return": "true"
+      }
     }
   ]
 }
