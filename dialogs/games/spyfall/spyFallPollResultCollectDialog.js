@@ -22,7 +22,7 @@ class SpyFallPollResultCollectDialog extends Dialog {
 
     // 1. Once we catched call here, we push the value into the map.
     //
-    var pollResult = null;
+    let pollResult = null;
     if (sessionVoteResultMap.has(sessionCode)) {
       pollResult = sessionVoteResultMap.get(sessionCode);
     } else {
@@ -30,7 +30,12 @@ class SpyFallPollResultCollectDialog extends Dialog {
       // Besides, since we don't count Host as a player in the session,
       // the total number of players here, should be session.players.length + 1.
       //
-      pollResult = { votedPlayersCount: 1, agreedCount: 1, totalPlayers: session.players.length + 1, isRightGuess: pollResultInfo.isRightGuess };
+      pollResult = { 
+        votedPlayersCount: 1,
+        agreedCount: 1,
+        totalPlayers: session.players.length + 1,
+        isRightGuess: pollResultInfo.isRightGuess
+      };
     }
     
     pollResult.votedPlayersCount += 1
