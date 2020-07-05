@@ -17,25 +17,21 @@
     {
       "type": "Action.Submit",
       "title": "Agree",
-      "data": {
-        "msteam": {
-          "type": "messageBack",
-          "displayText": "spyfallPollResultCollectCallback",
-          "text": "",
-          "value": "{\"callback\": \"spyfallPollResultCollectCallback\", \"result\": \"Yes\"}"
-        }
+      "data": 
+      {
+        "spyfallPollSelectedResult": "Agree",
+        "sessionCode": "${sessionCode}",
+        "isRightGuess": "${isRightGuess}"
       }
     },
     {
       "type": "Action.Submit",
       "title": "Disagree",
-      "data": {
-        "msteam": {
-          "type": "messageBack",
-          "displayText": "spyfallPollResultCollectCallback",
-          "text": "",
-          "value": "{\"callback\": \"spyfallPollResultCollectCallback\", \"result\": \"No\"}"
-        }
+      "data": 
+      {
+        "spyfallPollSelectedResult": "Disagree",
+        "sessionCode": "${sessionCode}",
+        "isRightGuess": "${isRightGuess}"
       }
     }
   ]

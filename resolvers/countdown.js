@@ -97,10 +97,18 @@ const resume = (sessionCode) => {
   }
 }
 
+const kill = (sessionCode) => {
+  const countdown = _countdownTimer[sessionCode];
+  if (countdown) {
+    countdown.stop();
+  }
+}
+
 module.exports = {
   checkIfExist,
   register,
   restart,
   pause,
-  resume
+  resume,
+  kill
 }

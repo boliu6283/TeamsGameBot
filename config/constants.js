@@ -26,9 +26,6 @@ module.exports = {
     // Spyfall Start Game Proactive Message Callbacks
     SPYFALL_START_CALLBACK: 'spyfallStartCallback',
 
-    // Spyfall Poll Result Collect Proactive Message Callback
-    SPYFALL_POLL_RESULT_COLLECT_CALLBACK: 'spyfallPollResultCollectCallback',
-
     // Conversation State constants
     DIALOG_STATE: 'DialogState',
 
