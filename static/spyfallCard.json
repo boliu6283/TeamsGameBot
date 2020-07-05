@@ -55,7 +55,12 @@
     {
       "type": "Action.Submit",
       "title": "${btnName}",
-      "data": {}
+      "data": 
+      {
+        "playerVote": "${index}",
+        "spyIdx": "${spyIdx}",
+        "sessionCode": "${sessionCode}"
+      }
     }
   ]
 }

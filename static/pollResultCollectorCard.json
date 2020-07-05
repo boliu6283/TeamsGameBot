@@ -1,0 +1,38 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "spacing": "large",
+      "size": "default",
+      "weight": "bolder",
+      "text": "{raisePollText}",
+      "wrpa": true,
+      "maxLines": 0
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Agree",
+      "data": 
+      {
+        "spyfallPollSelectedResult": "Agree",
+        "sessionCode": "${sessionCode}",
+        "isRightGuess": "${isRightGuess}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Disagree",
+      "data": 
+      {
+        "spyfallPollSelectedResult": "Disagree",
+        "sessionCode": "${sessionCode}",
+        "isRightGuess": "${isRightGuess}"
+      }
+    }
+  ]
+}
