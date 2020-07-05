@@ -27,10 +27,11 @@ class SpyFallRaisePollDialog extends Dialog {
     
     // 2. Pause the countdown.
     //
-    await Resolvers.countdown.pause({ sessionCode: raisedPollInfo.sessionCode });
+    await Resolvers.countdown.pause(pollResultInfo.sessionCode);
 
     // 3. Broadcast poll in the specific session.
     //
+    relatedSession.players.push(relatedSession.host);
     relatedSession.players.forEach(async (player, index) => {
       if (index != raisedPollInfo.playerVote) {
         let pollResultCollectorCard = CardFactory.adaptiveCard(PollResultCollectorCard);

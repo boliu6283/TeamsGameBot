@@ -27,8 +27,10 @@ class SpyFallPollResultCollectDialog extends Dialog {
       pollResult = sessionVoteResultMap.get(sessionCode);
     } else {
       // The person who raised the poll will be counted as 'Agree'.
+      // Besides, since we don't count Host as a player in the session,
+      // the total number of players here, should be session.players.length + 1.
       //
-      pollResult = { votedPlayersCount: 1, agreedCount: 1, totalPlayers: session.players.length, isRightGuess: pollResultInfo.isRightGuess };
+      pollResult = { votedPlayersCount: 1, agreedCount: 1, totalPlayers: session.players.length + 1, isRightGuess: pollResultInfo.isRightGuess };
     }
     
     pollResult.votedPlayersCount += 1
@@ -48,7 +50,7 @@ class SpyFallPollResultCollectDialog extends Dialog {
         if (isRightGuess) {
           // This is a good guess. End the game.
           //
-          await Resolvers.countdown.kill({ sessionCode: pollResultInfo.sessionCode });
+          await Resolvers.countdown.kill(pollResultInfo.sessionCode);
           await Resolvers.proactiveMessage.notifySession(
             pollResultInfo.sessionCode,
             `Spyfall ${sessionCode} is now finished, players win`
@@ -56,7 +58,7 @@ class SpyFallPollResultCollectDialog extends Dialog {
         } else {
           // This is a bad guess. Spy win the game.
           //
-          await Resolvers.countdown.kill({ sessionCode: pollResultInfo.sessionCode });
+          await Resolvers.countdown.kill(pollResultInfo.sessionCode);
           await Resolvers.proactiveMessage.notifySession(
             pollResultInfo.sessionCode,
             `Spyfall ${sessionCode} is now finished, spy win`
@@ -65,7 +67,7 @@ class SpyFallPollResultCollectDialog extends Dialog {
       } else {
         // The poll is not passed. Resume the countdown.
         //
-        await Resolvers.countdown.resume({ sessionCode: pollResultInfo.sessionCode });
+        await Resolvers.countdown.resume(pollResultInfo.sessionCode);
 
         // Notify session, the game is not ended.
         //
