@@ -5,6 +5,8 @@ const { TeamsInfo } = require('botbuilder');
 const { ComponentDialog, DialogSet, DialogTurnStatus} = require('botbuilder-dialogs');
 const { WelcomeDialog } = require('./welcomeDialog');
 const { SpyfallDialog } = require('./games/spyfall/spyfallDialog');
+const { SpyFallRaisePollDialog } = require('./games/spyfall/spyFallRaisePollDialog');
+const { SpyFallPollResultCollectDialog } = require('./games/spyfall/spyFallPollResultCollectDialog');
 const constants = require('../config/constants')
 const Resolvers = require('../resolvers');
 
@@ -19,6 +21,8 @@ class MainDialog extends ComponentDialog {
     this._dialogs = [
       new WelcomeDialog(luisRecognizer),
       new SpyfallDialog(luisRecognizer),
+      new SpyFallRaisePollDialog(luisRecognizer),
+      new SpyFallPollResultCollectDialog(luisRecognizer),
     ];
 
     // Define the default dialog for a new user to land on
@@ -68,12 +72,14 @@ class MainDialog extends ComponentDialog {
     // Handler for proactive messages
     const input = dc.context.activity.value;
     if (input) {
-      if (input.sessionCode) {
+      if (input.callBackMessage) {
         return await dc.beginDialog(constants.SPYFALL_DIALOG, options);
       } else if (input.spyGuess) {
         return await dc.beginDialog(constants.SPYFALL_GUESS_DIALOG, options);
-      } else if (input.playerVote) {
-        return await dc.beginDialog(constants.SPYFALL_VOTE_DIALOG, options);
+      } else if (input.selectedPersonAAD) {
+        return await dc.beginDialog(constants.SPYFALL_RAISE_POLL_DIALOG, options);
+      } else if (input.spyfallPollSelectedResult) {
+        return await dc.beginDialog(constants.SPYFALL_POLL_RESULT_COLLECT_DIALOG, options);
       }
     }
     return await dc.beginDialog(constants.WELCOME_DIALOG, options);
@@ -105,6 +111,7 @@ class MainDialog extends ComponentDialog {
         givenName: userInfo.givenName
       });
     }
+    
     return userDbInfo;
   }
 }

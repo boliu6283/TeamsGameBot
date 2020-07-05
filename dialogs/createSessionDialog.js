@@ -29,7 +29,7 @@ class CreateSessionDialog extends Dialog {
     await Resolvers.gameSession.createSession({ code: roomCode, game: gameInfo._id, host: userInfo._id});
 
     // Render session creation card. 
-    // TODO: add title for room code.
+    // 
     let createSessionCard = CardFactory.adaptiveCard(CreateSessionCard);
     createSessionCard.content.body[0].items[0].columns[0].items[0].text = gameInfo.name;
     createSessionCard.content.body[0].items[0].columns[0].items[1].url = gameInfo.profile;
