@@ -89,10 +89,6 @@ class SpyfallDialog extends ComponentDialog {
     });
 
     session.players.push(session.host);
-    await Resolvers.gameSession.addPlayerToSession({
-      code: session.code,
-      userId: session.host._id
-    });
 
     session.players.forEach(async (player, index) => {
       const filteredVoteChoices = voteChoices.filter(choice => choice.title !== player.name);
