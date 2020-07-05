@@ -22,13 +22,18 @@ class SpyFallPollResultCollectDialog extends Dialog {
 
     // 1. Once we catched call here, we push the value into the map.
     //
-    var pollResult = null;
+    let pollResult = null;
     if (sessionVoteResultMap.has(sessionCode)) {
       pollResult = sessionVoteResultMap.get(sessionCode);
     } else {
       // The person who raised the poll will be counted as 'Agree'.
       //
-      pollResult = { votedPlayersCount: 1, agreedCount: 1, totalPlayers: session.players.length, isRightGuess: pollResultInfo.isRightGuess };
+      pollResult = { 
+        votedPlayersCount: 1,
+        agreedCount: 1,
+        totalPlayers: session.players.length,
+        isRightGuess: pollResultInfo.isRightGuess
+      };
     }
     
     pollResult.votedPlayersCount += 1
@@ -48,7 +53,7 @@ class SpyFallPollResultCollectDialog extends Dialog {
         if (isRightGuess) {
           // This is a good guess. End the game.
           //
-          await Resolvers.countdown.kill({ sessionCode: pollResultInfo.sessionCode });
+          await Resolvers.countdown.kill(pollResultInfo.sessionCode);
           await Resolvers.proactiveMessage.notifySession(
             pollResultInfo.sessionCode,
             `Spyfall ${sessionCode} is now finished, players win`
@@ -56,7 +61,7 @@ class SpyFallPollResultCollectDialog extends Dialog {
         } else {
           // This is a bad guess. Spy win the game.
           //
-          await Resolvers.countdown.kill({ sessionCode: pollResultInfo.sessionCode });
+          await Resolvers.countdown.kill(pollResultInfo.sessionCode);
           await Resolvers.proactiveMessage.notifySession(
             pollResultInfo.sessionCode,
             `Spyfall ${sessionCode} is now finished, spy win`

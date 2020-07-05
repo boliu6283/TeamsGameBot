@@ -5,6 +5,7 @@ const { TeamsInfo } = require('botbuilder');
 const { ComponentDialog, DialogSet, DialogTurnStatus} = require('botbuilder-dialogs');
 const { WelcomeDialog } = require('./welcomeDialog');
 const { SpyfallDialog } = require('./games/spyfall/spyfallDialog');
+const { SpyfallGuessDialog } = require('./games/spyfall/spyfallGuessDialog');
 const { SpyFallRaisePollDialog } = require('./games/spyfall/spyFallRaisePollDialog');
 const { SpyFallPollResultCollectDialog } = require('./games/spyfall/spyFallPollResultCollectDialog');
 const constants = require('../config/constants')
@@ -21,6 +22,7 @@ class MainDialog extends ComponentDialog {
     this._dialogs = [
       new WelcomeDialog(luisRecognizer),
       new SpyfallDialog(luisRecognizer),
+      new SpyfallGuessDialog(luisRecognizer),
       new SpyFallRaisePollDialog(luisRecognizer),
       new SpyFallPollResultCollectDialog(luisRecognizer),
     ];

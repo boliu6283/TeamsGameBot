@@ -98,7 +98,7 @@ class SpyfallDialog extends ComponentDialog {
       const filteredVoteChoices = voteChoices.filter(choice => choice.title !== player.name);
       const playerCard = CardFactory.adaptiveCard(SpyfallCard);
       if (index == spyIndex) {
-        this.renderSpyCard(playerCard);
+        this.renderSpyCard(playerCard, location);
       } else {
         this.renderRoleCard(playerCard, index, spyIndex, location, filteredVoteChoices, stepContext.options.sessionCode);
       }
@@ -132,14 +132,15 @@ class SpyfallDialog extends ComponentDialog {
     return await stepContext.endDialog();
   }
 
-  renderSpyCard(card) {
+  renderSpyCard(card, location) {
     card.content.body[2].text = 'Your location: ❓';
     card.content.body[3].text = 'Your role: 😈Spy';
     card.content.body[4].text = 'Note: you only have one chance to guess.'
     card.content.body[5] = {
       type: 'Input.Text',
-      id: 'guess'
+      id: 'spyGuess'
     };
+    card.content.actions[0].data.location = location;
     card.content.actions[0].title = 'Guess your location';
   }
 
