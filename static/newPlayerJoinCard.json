@@ -22,7 +22,8 @@
       "type": "Action.Submit",
       "title": "Click to Start Game",
       "data": {
-        "sessionCode": "${code}"
+        "sessionCode": "${code}",
+        "callBackMessage": "StartSpyfall"
       }
     }
   ]
