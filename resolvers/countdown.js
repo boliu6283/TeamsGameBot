@@ -11,6 +11,7 @@ class SessionCountDown {
     this._interval = null;
     this._intervalSec = intervalSec;
     this._finishCallback = finishCallback;
+    this._isPause = false;
 
     this._lastPause = null;
     this._pauseDurationMs = 0;
@@ -31,11 +32,13 @@ class SessionCountDown {
 
   pause() {
     this._lastPause = new Date();
+    this._isPause = true;
   }
 
   resume() {
     this._pauseDurationMs = (new Date().getTime() - this._lastPause.getTime());
     this._lastPause = null;
+    this._isPause = false;
   }
 
   hasFinished() {
@@ -50,6 +53,10 @@ class SessionCountDown {
   }
 
   async handleCountdownEvent() {
+    if (this._isPause) {
+      return;
+    }
+
     if (this.hasFinished()) {
       this.stop();
       this._finishCallback();

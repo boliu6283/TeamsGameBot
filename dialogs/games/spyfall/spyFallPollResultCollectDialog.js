@@ -19,6 +19,9 @@ class SpyFallPollResultCollectDialog extends Dialog {
     const sessionCode = pollResultInfo.sessionCode;
     const session = await Resolvers.gameSession.getSession({ code: sessionCode });
     const spyfallPollSelectedResult = pollResultInfo.spyfallPollSelectedResult;
+    session.players.push(session.host);
+    const raisedPollPlayer = session.players[pollResultInfo.votePlayerIndex];
+    const spyInfo = session.players[pollResultInfo.spyIndex];
 
     // 1. Once we catched call here, we push the value into the map.
     //
@@ -26,20 +29,16 @@ class SpyFallPollResultCollectDialog extends Dialog {
     if (sessionVoteResultMap.has(sessionCode)) {
       pollResult = sessionVoteResultMap.get(sessionCode);
     } else {
-      // The person who raised the poll will be counted as 'Agree'.
-      // Besides, since we don't count Host as a player in the session,
-      // the total number of players here, should be session.players.length + 1.
-      //
       pollResult = { 
         votedPlayersCount: 1,
         agreedCount: 1,
-        totalPlayers: session.players.length + 1,
+        totalPlayers: session.players.length,
         isRightGuess: pollResultInfo.isRightGuess
       };
     }
     
     pollResult.votedPlayersCount += 1
-    if (spyfallPollSelectedResult === true) {
+    if (spyfallPollSelectedResult === 'Agree') {
       pollResult.agreedCount += 1;
     }
 
@@ -60,14 +59,28 @@ class SpyFallPollResultCollectDialog extends Dialog {
             pollResultInfo.sessionCode,
             `Spyfall ${sessionCode} is now finished, players win`
           );
+
+          // Update player's scores.
+          //
+          session.players.forEach(async (player, index) => {
+            if (index === pollResultInfo.votePlayerIndex) {
+              await Resolvers.user.updateUserScore({aad: player.aad, earnedScore: 10});
+            } else if (index !== pollResultInfo.spyIndex) {
+              await Resolvers.user.updateUserScore({aad: player.aad, earnedScore: 5});
+            }
+          });
         } else {
           // This is a bad guess. Spy win the game.
           //
           await Resolvers.countdown.kill(pollResultInfo.sessionCode);
           await Resolvers.proactiveMessage.notifySession(
             pollResultInfo.sessionCode,
-            `Spyfall ${sessionCode} is now finished, spy win`
+            `Spyfall ${sessionCode} is now finished, spy wins`
           );
+
+          // Update spy's score.
+          //
+          await Resolvers.user.updateUserScore({aad: spyInfo.aad, earnedScore: 20});
         }
       } else {
         // The poll is not passed. Resume the countdown.

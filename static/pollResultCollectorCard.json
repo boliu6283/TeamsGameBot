@@ -21,7 +21,9 @@
       {
         "spyfallPollSelectedResult": "Agree",
         "sessionCode": "${sessionCode}",
-        "isRightGuess": "${isRightGuess}"
+        "isRightGuess": "${isRightGuess}",
+        "spyIndex": "${spyIndex}",
+        "votePlayerIndex": "${votePlayerIndex}"
       }
     },
     {
@@ -31,7 +33,9 @@
       {
         "spyfallPollSelectedResult": "Disagree",
         "sessionCode": "${sessionCode}",
-        "isRightGuess": "${isRightGuess}"
+        "isRightGuess": "${isRightGuess}",
+        "spyIndex": "${spyIndex}",
+        "votePlayerIndex": "${votePlayerIndex}"
       }
     }
   ]
