@@ -20,6 +20,8 @@ class SpyFallRaisePollDialog extends Dialog {
     //
     const raisedPollInfo = dc.context.activity.value;
     const relatedSession = await Resolvers.gameSession.getSession({ code: raisedPollInfo.sessionCode });
+
+    relatedSession.players.push(relatedSession.host);
     const raiseGuyInfo = relatedSession.players[raisedPollInfo.playerVote];
     const trueSpyInfo = relatedSession.players[raisedPollInfo.spyIdx];
     const selectedPlayerInfo = await Resolvers.user.getUser({ aad: raisedPollInfo.selectedPersonAAD });
@@ -27,11 +29,10 @@ class SpyFallRaisePollDialog extends Dialog {
     
     // 2. Pause the countdown.
     //
-    await Resolvers.countdown.pause(pollResultInfo.sessionCode);
+    await Resolvers.countdown.pause(raisedPollInfo.sessionCode);
 
     // 3. Broadcast poll in the specific session.
     //
-    relatedSession.players.push(relatedSession.host);
     relatedSession.players.forEach(async (player, index) => {
       if (index != raisedPollInfo.playerVote) {
         let pollResultCollectorCard = CardFactory.adaptiveCard(PollResultCollectorCard);
