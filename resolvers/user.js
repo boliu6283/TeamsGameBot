@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const { findOne } = require('../models/user');
 
 const getUser = async (args) => {
   return await User.findOne({ aad: args.aad });
@@ -24,8 +25,17 @@ const signupUser = async (args) => {
   return user;
 }
 
+const updateUserScore = async (args) => {
+  const { aad, earnedScore } = args;
+  const user = await User.findOneAndUpdate({ aad: aad }, { $inc: { score: earnedScore } }, { new: true });
+  
+  if (!user) throw new Error ('Failed to save new record in User collection');
+  console.log(`${user._id} added to User collection successfully`);
+}
+
 module.exports = {
   getUser,
   getAllUsersScore,
-  signupUser
+  signupUser,
+  updateUserScore
 };

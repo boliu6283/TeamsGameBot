@@ -40,9 +40,13 @@ class SpyFallRaisePollDialog extends Dialog {
         
         pollResultCollectorCard.content.actions[0].data.sessionCode = raisedPollInfo.sessionCode;
         pollResultCollectorCard.content.actions[0].data.isRightGuess = isRightGuess;
+        pollResultCollectorCard.content.actions[0].data.spyIndex = raisedPollInfo.spyIdx;
+        pollResultCollectorCard.content.actions[0].data.votePlayerIndex = raisedPollInfo.playerVote;
 
         pollResultCollectorCard.content.actions[1].data.sessionCode = raisedPollInfo.sessionCode;
         pollResultCollectorCard.content.actions[1].data.isRightGuess = isRightGuess;
+        pollResultCollectorCard.content.actions[1].data.spyIndex = raisedPollInfo.spyIdx;
+        pollResultCollectorCard.content.actions[1].data.votePlayerIndex = raisedPollInfo.playerVote;
         await Resolvers.proactiveMessage.notifyIndividualCard(
           player.aad,
           pollResultCollectorCard
