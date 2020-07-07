@@ -34,14 +34,16 @@ class JoinSessionDialog extends ComponentDialog {
   async searchSession(stepContext) {
     const activity = stepContext.context.activity;
 
+    // user click return button, go back to the welcome card.
+    if ((activity.value || {}).return == "true") {
+      return await stepContext.replaceDialog(constants.WELCOME_DIALOG, stepContext.options);
+    }
+
     // make sure the response is from postback(adaptive submit button)
     // otherwise fall back to initial user input card
     if (!(activity.value || {}).sessionCode) {
-      if (activity.value.return == "true") {
-        return await stepContext.replaceDialog(constants.WELCOME_DIALOG, stepContext.options);
-      }
       return await this.fallBackToUserInput(
-        'Action unsupported, please enter a valid room number, or press Return to exit.',
+        'Action unsupported, please enter a valid room number, or click Return to exit.',
         stepContext)
     }
 
