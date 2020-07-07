@@ -27,7 +27,7 @@ class SpyFallRaisePollDialog extends Dialog {
     //    Then we do not allow any other one to raise another poll.
     //
     if (spyfallGameSessionVotingStatus.has(relatedSession.code)) {
-      console.log(`info: There is an active ppll in spyfall game session: ${relatedSession.code}`);
+      console.log(`info: There is an active poll in spyfall game session: ${relatedSession.code}`);
       return await dc.endDialog();
     } else {
       spyfallGameSessionVotingStatus.add(relatedSession.code);
@@ -48,7 +48,11 @@ class SpyFallRaisePollDialog extends Dialog {
     relatedSession.players.forEach(async (player, index) => {
       if (index != raisedPollInfo.playerVote) {
         let pollResultCollectorCard = CardFactory.adaptiveCard(PollResultCollectorCard);
-        pollResultCollectorCard.content.body[0].text = `Player ${raiseGuyInfo.name} raised the poll to disclose ${selectedPlayerInfo.name} as a spy`;
+        pollResultCollectorCard.content.body[0].text = `
+        Player **${raiseGuyInfo.name}
+        raised the poll to disclose
+        ${selectedPlayerInfo.name}** as a spy.
+        `;
         
         pollResultCollectorCard.content.actions[0].data.sessionCode = raisedPollInfo.sessionCode;
         pollResultCollectorCard.content.actions[0].data.isRightGuess = isRightGuess;

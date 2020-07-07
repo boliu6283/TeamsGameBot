@@ -84,6 +84,7 @@ class MainDialog extends ComponentDialog {
         return await dc.beginDialog(constants.SPYFALL_POLL_RESULT_COLLECT_DIALOG, options);
       }
     }
+    
     return await dc.beginDialog(constants.WELCOME_DIALOG, options);
   }
 
@@ -100,6 +101,7 @@ class MainDialog extends ComponentDialog {
       if (!mockUserDbInfo) {
         mockUserDbInfo = await Resolvers.user.signupUser(mockUser);
       }
+
       return mockUserDbInfo;
     }
 
