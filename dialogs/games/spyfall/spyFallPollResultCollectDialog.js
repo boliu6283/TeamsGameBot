@@ -1,6 +1,7 @@
 const { Dialog } = require('botbuilder-dialogs');
 const Resolvers = require('../../../resolvers');
 const constants = require('../../../config/constants');
+const SpyFallRaisePollDialogCache = require('./spyFallRaisePollDialog');
 
 // The poll result will be collected in this dialog.
 // A global dictionary will be cached to determine whether a poll is ended.
@@ -96,8 +97,20 @@ class SpyFallPollResultCollectDialog extends Dialog {
       }
 
       // Whenever a poll is done. We should clean it from the map.
+      // Besides, we need to clean the cache in the SpyFallRaisePollDialog.
+      // Otherwise, it may block the further poll request. 
       //
       sessionVoteResultMap.delete(sessionCode);
+      
+      // Sanity check
+      // DEVNOTE: However, if SpyFallRaisePollDialogCache does not have the value for
+      // this sessionCode. It must be a bug, though it is transient error.
+      //
+      if (SpyFallRaisePollDialogCache.SpyFallRaisePollDialogCache.has(sessionCode)) {
+        SpyFallRaisePollDialogCache.SpyFallRaisePollDialogCache.delete(sessionCode);
+      } else {
+        console.log(`WARNING: ${sessionCode} was not inserted into the SpyFallRaisePollDialogCache!`);
+      }
     }
 
     return await dc.endDialog();
