@@ -7,6 +7,8 @@ const PollResultCollectorCard = require('../../../static/pollResultCollectorCard
 // This dialog will proactively engage each user to make decision on the raised poll
 // The poll result will be collected in SpyFallPollResultCollectDialog
 //
+let spyfallGameSessionVotingStatus = new Set();
+
 class SpyFallRaisePollDialog extends Dialog {
   constructor(luisRecognizer) {
     super(constants.SPYFALL_RAISE_POLL_DIALOG);
@@ -21,17 +23,27 @@ class SpyFallRaisePollDialog extends Dialog {
     const raisedPollInfo = dc.context.activity.value;
     const relatedSession = await Resolvers.gameSession.getSession({ code: raisedPollInfo.sessionCode });
 
+    // 2. If someone has already raised the poll to against the spy.
+    //    Then we do not allow any other one to raise another poll.
+    //
+    if (spyfallGameSessionVotingStatus.has(relatedSession.code)) {
+      console.log(`info: There is an active ppll in spyfall game session: ${relatedSession.code}`);
+      return await dc.endDialog();
+    } else {
+      spyfallGameSessionVotingStatus.add(relatedSession.code);
+    }
+
     relatedSession.players.push(relatedSession.host);
     const raiseGuyInfo = relatedSession.players[raisedPollInfo.playerVote];
     const trueSpyInfo = relatedSession.players[raisedPollInfo.spyIdx];
     const selectedPlayerInfo = await Resolvers.user.getUser({ aad: raisedPollInfo.selectedPersonAAD });
     const isRightGuess = selectedPlayerInfo.aad === trueSpyInfo.aad;
     
-    // 2. Pause the countdown.
+    // 3. Pause the countdown.
     //
     await Resolvers.countdown.pause(raisedPollInfo.sessionCode);
 
-    // 3. Broadcast poll in the specific session.
+    // 4. Broadcast poll in the specific session.
     //
     relatedSession.players.forEach(async (player, index) => {
       if (index != raisedPollInfo.playerVote) {
@@ -53,11 +65,12 @@ class SpyFallRaisePollDialog extends Dialog {
         );
       }
     });
-
+    
     return await dc.endDialog();
   }
 }
 
 module.exports = {
-  SpyFallRaisePollDialog
+  SpyFallRaisePollDialog,
+  SpyFallRaisePollDialogCache: spyfallGameSessionVotingStatus
 };
