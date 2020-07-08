@@ -1,26 +1,76 @@
+const { MessageFactory } = require('botbuilder');
 const { TurnContext } = require('botbuilder-core');
 const BotAdapter = require('./botAdapter');
 const GameSession = require('./gameSession');
 
-// { userAad: turnContext }
+// userId = userAad | userObjectId
+// { userId: { turnContext: turnContext, updatables: { updatableId: activityId } }}
 let _conversationReferences = {};
 
-const notifyIndividual = async (userAad, message) => {
+const notifyIndividual = async (userId, message) => {
   const adapter = BotAdapter.getInstance();
-  if (_conversationReferences[userAad]) {
-    const cref = _conversationReferences[userAad];
+  if (_conversationReferences[userId]) {
+    const cref = _conversationReferences[userId].turnContext;
+    let activityId = null;
     await adapter.continueConversation(cref, async turnContext => {
-      await turnContext.sendActivity(message);
+      const messageContext = MessageFactory.text(message);
+      const activityContext = await turnContext.sendActivity(messageContext);
+      activityId = activityContext.id;
+    });
+    return activityId;
+  }
+}
+
+// In BotEmulator, this functionality is not usable due to Web Chat limitation
+// https://github.com/microsoft/BotFramework-Emulator/issues/1123
+
+// Update the previous proactive message card according to updatableId
+// If there's no previous message, create a new one on the updatableId
+const notifyUpdatableIndividual = async (userId, message, updatableId) => {
+  const adapter = BotAdapter.getInstance();
+  if (_conversationReferences[userId]) {
+    const cref = _conversationReferences[userId].turnContext;
+    const updatables = _conversationReferences[userId].updatables;
+
+    await adapter.continueConversation(cref, async turnContext => {
+      const messageContext = MessageFactory.text(message);
+      // If a conversation has updatable id, we update the last message
+      // Otherwise, we create a new activity
+      if (updatables[updatableId]) {
+        messageContext.id = updatables[updatableId];
+        await turnContext.updateActivity(messageContext);
+      } else {
+        updatables[updatableId] = await notifyIndividual(userId, message);
+      }
     });
   }
 }
 
-const notifyIndividualCard = async(userAad, card) => {
+// Delete updatable messages
+const deleteUpdatableIndividual = async (userId, updatableId) => {
   const adapter = BotAdapter.getInstance();
-  if (_conversationReferences[userAad]) {
-    const cref = _conversationReferences[userAad];
+  if (_conversationReferences[userId]) {
+    const cref = _conversationReferences[userId].turnContext;
+    const updatables = _conversationReferences[userId].updatables;
+
     await adapter.continueConversation(cref, async turnContext => {
-      await turnContext.sendActivity({attachments: [card]});
+      // If a conversation has updatable id, we update the last message
+      // Otherwise, we create a new activity
+      if (updatables[updatableId]) {
+        await turnContext.deleteActivity(updatables[updatableId]);
+        delete updatables[updatableId];
+      }
+    });
+  }
+}
+
+const notifyIndividualCard = async(userId, card) => {
+  const adapter = BotAdapter.getInstance();
+  if (_conversationReferences[userId]) {
+    const cref = _conversationReferences[userId].turnContext;
+    await adapter.continueConversation(cref, async turnContext => {
+      const activityContext = await turnContext.sendActivity({attachments: [card]});
+      _conversationReferences[userId].activityId = activityContext.id;
     });
   }
 }
@@ -34,6 +84,22 @@ const notifySession = async (sessionCode, message) => {
   await notifyIndividual(session.host.aad, message);
 }
 
+const notifyUpdatableSession = async (sessionCode, message, updatableId) => {
+  const session = await GameSession.getSession({ code: sessionCode });
+  session.players.forEach(async (p) => {
+    await notifyUpdatableIndividual(p.aad, message, updatableId);
+  });
+  await notifyUpdatableIndividual(session.host.aad, message, updatableId);
+}
+
+const deleteUpdatableSession = async (sessionCode, updatableId) => {
+  const session = await GameSession.getSession({ code: sessionCode });
+  session.players.forEach(async (p) => {
+    await deleteUpdatableIndividual(p.aad, updatableId);
+  });
+  await deleteUpdatableIndividual(session.host.aad, updatableId);
+}
+
 const notifyAll = async (message) => {
   Object.keys(_conversationReferences).forEach(async (k) => {
     await notifyIndividual(k, message);
@@ -43,13 +109,21 @@ const notifyAll = async (message) => {
 const addConversationReference = (context) => {
   const cref = TurnContext.getConversationReference(context.activity);
   const userId = cref.user.aadObjectId || cref.user.id;
-  _conversationReferences[userId] = cref;
+  if (!_conversationReferences[userId]) {
+    _conversationReferences[userId] = {};
+    _conversationReferences[userId].updatables = {};
+  }
+  _conversationReferences[userId].turnContext = cref;
 }
 
 module.exports = {
   addConversationReference,
   notifyAll,
   notifySession,
+  notifyUpdatableSession,
   notifyIndividual,
+  notifyUpdatableIndividual,
   notifyIndividualCard,
+  deleteUpdatableIndividual,
+  deleteUpdatableSession
 }
