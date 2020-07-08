@@ -6,8 +6,8 @@ const { ComponentDialog, DialogSet, DialogTurnStatus} = require('botbuilder-dial
 const { WelcomeDialog } = require('./welcomeDialog');
 const { SpyfallDialog } = require('./games/spyfall/spyfallDialog');
 const { SpyfallGuessDialog } = require('./games/spyfall/spyfallGuessDialog');
-const { SpyFallRaisePollDialog } = require('./games/spyfall/spyFallRaisePollDialog');
-const { SpyFallPollResultCollectDialog } = require('./games/spyfall/spyFallPollResultCollectDialog');
+const { SpyfallRaisePollDialog } = require('./games/spyfall/spyfallRaisePollDialog');
+const { SpyfallPollResultCollectDialog } = require('./games/spyfall/spyfallPollResultCollectDialog');
 const constants = require('../config/constants')
 const Resolvers = require('../resolvers');
 
@@ -23,8 +23,8 @@ class MainDialog extends ComponentDialog {
       new WelcomeDialog(luisRecognizer),
       new SpyfallDialog(luisRecognizer),
       new SpyfallGuessDialog(luisRecognizer),
-      new SpyFallRaisePollDialog(luisRecognizer),
-      new SpyFallPollResultCollectDialog(luisRecognizer),
+      new SpyfallRaisePollDialog(luisRecognizer),
+      new SpyfallPollResultCollectDialog(luisRecognizer),
     ];
 
     // Define the default dialog for a new user to land on

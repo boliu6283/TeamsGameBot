@@ -166,5 +166,5 @@ class SpyfallDialog extends ComponentDialog {
 }
 
 module.exports = {
-  SpyfallDialog,
+  SpyfallDialog
 };

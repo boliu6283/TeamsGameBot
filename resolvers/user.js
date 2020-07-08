@@ -27,10 +27,15 @@ const signupUser = async (args) => {
 
 const updateUserScore = async (args) => {
   const { aad, earnedScore } = args;
-  const user = await User.findOneAndUpdate({ aad: aad }, { $inc: { score: earnedScore } }, { new: true });
-  
+  const user = await User.findOneAndUpdate(
+    { aad: aad },
+    { $inc: { score: earnedScore } },
+    { new: true }
+  );
   if (!user) throw new Error ('Failed to save new record in User collection');
   console.log(`${user._id} added to User collection successfully`);
+
+  return user;
 }
 
 module.exports = {
