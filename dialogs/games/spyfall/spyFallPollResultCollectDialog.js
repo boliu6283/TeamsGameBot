@@ -1,14 +1,14 @@
 const { Dialog } = require('botbuilder-dialogs');
 const Resolvers = require('../../../resolvers');
 const constants = require('../../../config/constants');
-const SpyFallRaisePollDialogCache = require('./spyFallRaisePollDialog');
+const SpyfallRaisePollDialogCache = require('./spyfallRaisePollDialog');
 
 // The poll result will be collected in this dialog.
 // A global dictionary will be cached to determine whether a poll is ended.
 //
 let sessionVoteResultMap = new Map();
 
-class SpyFallPollResultCollectDialog extends Dialog {
+class SpyfallPollResultCollectDialog extends Dialog {
   constructor(luisRecognizer) {
     super(constants.SPYFALL_POLL_RESULT_COLLECT_DIALOG);
 
@@ -103,13 +103,13 @@ class SpyFallPollResultCollectDialog extends Dialog {
       sessionVoteResultMap.delete(sessionCode);
       
       // Sanity check
-      // DEVNOTE: However, if SpyFallRaisePollDialogCache does not have the value for
+      // DEVNOTE: However, if SpyfallRaisePollDialogCache does not have the value for
       // this sessionCode. It must be a bug, though it is transient error.
       //
-      if (SpyFallRaisePollDialogCache.SpyFallRaisePollDialogCache.has(sessionCode)) {
-        SpyFallRaisePollDialogCache.SpyFallRaisePollDialogCache.delete(sessionCode);
+      if (SpyfallRaisePollDialogCache.SpyfallRaisePollDialogCache.has(sessionCode)) {
+        SpyfallRaisePollDialogCache.SpyfallRaisePollDialogCache.delete(sessionCode);
       } else {
-        console.log(`WARNING: ${sessionCode} was not inserted into the SpyFallRaisePollDialogCache!`);
+        console.log(`WARNING: ${sessionCode} was not inserted into the SpyfallRaisePollDialogCache!`);
       }
     }
 
@@ -118,5 +118,5 @@ class SpyFallPollResultCollectDialog extends Dialog {
 }
 
 module.exports = {
-  SpyFallPollResultCollectDialog
+  SpyfallPollResultCollectDialog
 };

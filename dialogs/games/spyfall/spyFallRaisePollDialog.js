@@ -5,11 +5,11 @@ const constants = require('../../../config/constants');
 const PollResultCollectorCard = require('../../../static/pollResultCollectorCard.json');
 
 // This dialog will proactively engage each user to make decision on the raised poll
-// The poll result will be collected in SpyFallPollResultCollectDialog
+// The poll result will be collected in SpyfallPollResultCollectDialog
 //
 let spyfallGameSessionVotingStatus = new Set();
 
-class SpyFallRaisePollDialog extends Dialog {
+class SpyfallRaisePollDialog extends Dialog {
   constructor(luisRecognizer) {
     super(constants.SPYFALL_RAISE_POLL_DIALOG);
 
@@ -75,6 +75,6 @@ class SpyFallRaisePollDialog extends Dialog {
 }
 
 module.exports = {
-  SpyFallRaisePollDialog,
-  SpyFallRaisePollDialogCache: spyfallGameSessionVotingStatus
+  SpyfallRaisePollDialog,
+  SpyfallRaisePollDialogCache: spyfallGameSessionVotingStatus
 };
