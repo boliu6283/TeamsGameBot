@@ -11,6 +11,7 @@ class SpyfallGuessDialog extends Dialog {
 
   async beginDialog(dc, options) {
     const { spyGuess, location, sessionCode } = dc.context.activity.value;
+    await Resolvers.countdown.resume(sessionCode);
     await Resolvers.countdown.kill(sessionCode);
     if (spyGuess.toLowerCase() === location) {
       await Resolvers.proactiveMessage.notifySession(
