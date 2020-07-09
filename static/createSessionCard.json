@@ -25,11 +25,19 @@
                 {
                   "type": "Image",
                   "url": "${game.profile}",
-                  "size": "stretch"
+                  "size": "large"
                 },
                 {
                   "type": "TextBlock",
-                  "spacing": "large",
+                  "spacing": "medium",
+                  "size": "medium",
+                  "text": "${rules}",
+                  "wrap": true,
+                  "maxLines": 0
+                },
+                {
+                  "type": "TextBlock",
+                  "spacing": "medium",
                   "size": "large",
                   "weight": "bolder",
                   "text": "${roomCode}",
