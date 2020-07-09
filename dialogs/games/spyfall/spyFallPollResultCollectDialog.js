@@ -59,7 +59,7 @@ class SpyfallPollResultCollectDialog extends Dialog {
           await Resolvers.countdown.kill(pollResultInfo.sessionCode);
           await Resolvers.proactiveMessage.notifySession(
             pollResultInfo.sessionCode,
-            `Spyfall ${sessionCode} is now finished, players win`
+            `**Spyfall ${sessionCode} is now finished, players win!**`
           );
 
           // Update player's scores.
@@ -78,7 +78,7 @@ class SpyfallPollResultCollectDialog extends Dialog {
           await Resolvers.countdown.kill(pollResultInfo.sessionCode);
           await Resolvers.proactiveMessage.notifySession(
             pollResultInfo.sessionCode,
-            `Spyfall ${sessionCode} is now finished, spy wins`
+            `**Spyfall ${sessionCode} is now finished, spy wins!**`
           );
 
           // Update spy's score.
@@ -94,7 +94,7 @@ class SpyfallPollResultCollectDialog extends Dialog {
         //
         await Resolvers.proactiveMessage.notifySession(
           pollResultInfo.sessionCode,
-          `Spyfall ${sessionCode}. Poll not pass. Resume countdown`
+          `**Spyfall ${sessionCode}. Poll not pass. Resume countdown!**`
         );
       }
 
