@@ -54,7 +54,7 @@ class SpyfallDialog extends ComponentDialog {
 
     await Resolvers.proactiveMessage.notifySession(
       sessionCode,
-      `Spyfall ${sessionCode} is now started, try to find the spy in ${lifespan} seconds`
+      `**Spyfall ${sessionCode} is now started, try to find the spy in ${lifespan} seconds!**`
     );
 
     // TODO: lifespan should be adjustable based on the number of players
@@ -79,7 +79,7 @@ class SpyfallDialog extends ComponentDialog {
         // TODO: handle win logic and prompt retry card
         await Resolvers.proactiveMessage.notifySession(
           sessionCode,
-          `Spyfall ${sessionCode} is now finished, spy wins`
+          `**Spyfall ${sessionCode} is now finished, spy wins!**`
         );
       }
     );

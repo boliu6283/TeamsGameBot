@@ -16,12 +16,12 @@ class SpyfallGuessDialog extends Dialog {
     if (spyGuess.toLowerCase() === location) {
       await Resolvers.proactiveMessage.notifySession(
         sessionCode,
-        `Spyfall ${sessionCode} is now finished, spy win`
+        `**Spyfall ${sessionCode} is now finished, spy wins!**`
       );
     } else {
       await Resolvers.proactiveMessage.notifySession(
         sessionCode,
-        `Spyfall ${sessionCode} is now finished, players win`
+        `**Spyfall ${sessionCode} is now finished, players win!**`
       );
     }
 
