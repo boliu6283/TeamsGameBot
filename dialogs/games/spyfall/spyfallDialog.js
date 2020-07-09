@@ -9,6 +9,8 @@ const SpyfallRoles = require('../../../static/spyfall.json');
 const SpyfallCard = require('../../../static/spyfallCard.json');
 const Resolvers = require('../../../resolvers');
 
+let votedPlayerSet = new Set();
+
 class SpyfallDialog extends ComponentDialog {
   constructor(luisRecognizer) {
     super(constants.SPYFALL_DIALOG);
@@ -38,6 +40,8 @@ class SpyfallDialog extends ComponentDialog {
     if (stepContext.context.activity.value) {
       stepContext.options.sessionCode = stepContext.context.activity.value.sessionCode;
     }
+
+    votedPlayerSet.clear();
     const sessionCode = stepContext.options.sessionCode;
     const lifespan = constants.DEFAULT_SPYFALL_LIFESPAN_SEC;
 
@@ -166,5 +170,6 @@ class SpyfallDialog extends ComponentDialog {
 }
 
 module.exports = {
-  SpyfallDialog
+  SpyfallDialog,
+  SpyfallDialogVotedPlayerCache: votedPlayerSet
 };
