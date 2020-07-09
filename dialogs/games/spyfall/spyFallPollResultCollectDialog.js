@@ -55,6 +55,7 @@ class SpyfallPollResultCollectDialog extends Dialog {
         if (isRightGuess) {
           // This is a good guess. End the game.
           //
+          await Resolvers.countdown.resume(pollResultInfo.sessionCode);
           await Resolvers.countdown.kill(pollResultInfo.sessionCode);
           await Resolvers.proactiveMessage.notifySession(
             pollResultInfo.sessionCode,
@@ -73,6 +74,7 @@ class SpyfallPollResultCollectDialog extends Dialog {
         } else {
           // This is a bad guess. Spy win the game.
           //
+          await Resolvers.countdown.resume(pollResultInfo.sessionCode);
           await Resolvers.countdown.kill(pollResultInfo.sessionCode);
           await Resolvers.proactiveMessage.notifySession(
             pollResultInfo.sessionCode,
