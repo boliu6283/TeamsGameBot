@@ -5,7 +5,6 @@ const { ComponentDialog, WaterfallDialog, ChoicePrompt } = require('botbuilder-d
 const { CardFactory } = require('botbuilder-core');
 const { getRandomInt } = require('../../../helpers/thumbnail');
 const constants = require('../../../config/constants');
-const SpyfallRoles = require('../../../static/spyfall.json');
 const SpyfallCard = require('../../../static/spyfallCard.json');
 const Resolvers = require('../../../resolvers');
 
@@ -18,6 +17,7 @@ class SpyfallDialog extends ComponentDialog {
     this.addDialog(new ChoicePrompt(constants.SPYFALL_PROMPT));
     this.addDialog(
       new WaterfallDialog(constants.SPYFALL_WATERFALL_DIALOG, [
+        this.loadGameConfig.bind(this),
         this.startGameSession.bind(this),
         this.registerCountdown.bind(this),
         this.distributeRoleStep.bind(this),
@@ -25,15 +25,22 @@ class SpyfallDialog extends ComponentDialog {
       ])
     );
 
-    for (let i = 0; i < SpyfallRoles.locations.length; i++) {
+    this.initialDialogId = constants.SPYFALL_WATERFALL_DIALOG;
+  }
+
+  async loadGameConfig(stepContext) {
+    let gameInfo = await Resolvers.game.getGameByName({ gameName: '🕵️Who Is Undercover' });
+    this.SpyfallRoles = gameInfo.metadata;
+
+    for (let i = 0; i < this.SpyfallRoles.locations.length; i++) {
       const locationItem = {
         type: 'TextBlock',
-        text: SpyfallRoles.locations[i]
+        text: this.SpyfallRoles.locations[i]
       };
       SpyfallCard.body[1].columns[i % 3].items.push(locationItem);
     }
 
-    this.initialDialogId = constants.SPYFALL_WATERFALL_DIALOG;
+    return stepContext.next();
   }
 
   async startGameSession(stepContext) {
@@ -82,7 +89,7 @@ class SpyfallDialog extends ComponentDialog {
 
   async distributeRoleStep(stepContext) {
     let session = await Resolvers.gameSession.getSession({ code: stepContext.options.sessionCode });
-    const location = SpyfallRoles.locations[getRandomInt(SpyfallRoles.locations.length)];
+    const location = this.SpyfallRoles.locations[getRandomInt(this.SpyfallRoles.locations.length)];
     const spyIndex = getRandomInt(session.players.length + 1);
     let voteChoices = session.players.map(p => {
       return { title: p.name, value: p.aad};
@@ -147,11 +154,11 @@ class SpyfallDialog extends ComponentDialog {
   renderRoleCard(card, index, spyIndex, location, voteChoices, sessionCode) {
     card.content.body[2].text =
       'Your location: ' +
-      SpyfallRoles[`location.${location}`];
+      this.SpyfallRoles[`location.${location}`];
 
     card.content.body[3].text =
       'Your role: ' +
-      SpyfallRoles[`location.${location}.role${((index + spyIndex) % 7) + 1}`];
+      this.SpyfallRoles[`location.${location}.role${((index + spyIndex) % 7) + 1}`];
 
     card.content.body[4].text = 'Note: you only have one chance to vote.'
 
