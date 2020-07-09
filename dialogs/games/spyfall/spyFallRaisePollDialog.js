@@ -1,5 +1,6 @@
 const { Dialog} = require('botbuilder-dialogs');
 const { CardFactory } = require('botbuilder-core');
+const SpyfallDialog = require('./spyfallDialog');
 const Resolvers = require('../../../resolvers');
 const constants = require('../../../config/constants');
 const PollResultCollectorCard = require('../../../static/pollResultCollectorCard.json');
@@ -22,8 +23,26 @@ class SpyfallRaisePollDialog extends Dialog {
     //
     const raisedPollInfo = dc.context.activity.value;
     const relatedSession = await Resolvers.gameSession.getSession({ code: raisedPollInfo.sessionCode });
+    relatedSession.players.push(relatedSession.host);
+    const raiseGuyInfo = relatedSession.players[raisedPollInfo.playerVote];
 
-    // 2. If someone has already raised the poll to against the spy.
+    // 2.1 If the session has ended, we reject poll request.
+    //
+    if (relatedSession.status === 'complete') {
+      console.log(`info: Session: ${relatedSession.code} has ended. Poll request has rejected`);
+      return await dc.endDialog();
+    }
+
+    // 2.2 If the player has voted, then the player will lose the chance to raise another poll.
+    //
+    if (SpyfallDialog.SpyfallDialogVotedPlayerCache.has(raiseGuyInfo.aad)) {
+      Resolvers.proactiveMessage.notifyIndividual(raiseGuyInfo.aad, "Sorry... Each player has only one chance to raise the poll to against another player.");
+      return await dc.endDialog();
+    }
+
+    SpyfallDialog.SpyfallDialogVotedPlayerCache.add(raiseGuyInfo.aad)
+
+    // 3. If someone has already raised the poll to against the spy.
     //    Then we do not allow any other one to raise another poll.
     //
     if (spyfallGameSessionVotingStatus.has(relatedSession.code)) {
@@ -33,17 +52,15 @@ class SpyfallRaisePollDialog extends Dialog {
       spyfallGameSessionVotingStatus.add(relatedSession.code);
     }
 
-    relatedSession.players.push(relatedSession.host);
-    const raiseGuyInfo = relatedSession.players[raisedPollInfo.playerVote];
     const trueSpyInfo = relatedSession.players[raisedPollInfo.spyIdx];
     const selectedPlayerInfo = await Resolvers.user.getUser({ aad: raisedPollInfo.selectedPersonAAD });
     const isRightGuess = selectedPlayerInfo.aad === trueSpyInfo.aad;
     
-    // 3. Pause the countdown.
+    // 4. Pause the countdown.
     //
     await Resolvers.countdown.pause(raisedPollInfo.sessionCode);
 
-    // 4. Broadcast poll in the specific session.
+    // 5. Broadcast poll in the specific session.
     //
     relatedSession.players.forEach(async (player, index) => {
       if (index != raisedPollInfo.playerVote) {
