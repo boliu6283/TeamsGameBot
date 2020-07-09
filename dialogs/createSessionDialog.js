@@ -33,7 +33,8 @@ class CreateSessionDialog extends Dialog {
     let createSessionCard = CardFactory.adaptiveCard(CreateSessionCard);
     createSessionCard.content.body[0].items[0].columns[0].items[0].text = gameInfo.name;
     createSessionCard.content.body[0].items[0].columns[0].items[1].url = gameInfo.profile;
-    createSessionCard.content.body[0].items[0].columns[0].items[2].text = `Room code: ${roomCode.toString()}`;
+    createSessionCard.content.body[0].items[0].columns[0].items[2].text = `**Rules:** \n\n ${gameInfo.rules}`;
+    createSessionCard.content.body[0].items[0].columns[0].items[3].text = `Room code: ${roomCode.toString()}`;
 
     await dc.context.sendActivity({ attachments: [createSessionCard] });
 
