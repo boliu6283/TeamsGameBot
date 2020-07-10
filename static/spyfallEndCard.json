@@ -1,0 +1,28 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "Game ends, do you wanna start a new match?"
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.Submit",
+        "title": "Exit Game",
+        "data": {
+          "exitGame": true
+        }
+      },
+      {
+        "type": "Action.Submit",
+        "title": "🕹️StartAnotherMatch",
+        "data": {
+          "recreateSession": true,
+          "sessionCode": ""
+        }
+      }      
+    ]
+  }
