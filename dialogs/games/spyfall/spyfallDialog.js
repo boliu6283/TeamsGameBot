@@ -4,11 +4,13 @@
 const { ComponentDialog, WaterfallDialog, ChoicePrompt } = require('botbuilder-dialogs');
 const { CardFactory } = require('botbuilder-core');
 const { getRandomInt } = require('../../../helpers/thumbnail');
+const { spyfallEndGamehelper } = require('../../../helpers/games/spyfall');
 const constants = require('../../../config/constants');
 const SpyfallCard = require('../../../static/spyfallCard.json');
 const Resolvers = require('../../../resolvers');
 
 let votedPlayerSet = new Set();
+let spyIndex;
 
 class SpyfallDialog extends ComponentDialog {
   constructor(luisRecognizer) {
@@ -76,11 +78,11 @@ class SpyfallDialog extends ComponentDialog {
       sessionCode,
       constants.DEFAULT_COUNTDOWN_INTERVAL_SEC,
       async () => {
-        // TODO: handle win logic and prompt retry card
-        await Resolvers.proactiveMessage.notifySession(
-          sessionCode,
-          `**Spyfall ${sessionCode} is now finished, spy wins!**`
-        );
+        spyfallEndGamehelper({
+          code: sessionCode,
+          res: 'timeout',
+          spyIdx: spyIndex
+        });
       }
     );
 
@@ -90,7 +92,7 @@ class SpyfallDialog extends ComponentDialog {
   async distributeRoleStep(stepContext) {
     let session = await Resolvers.gameSession.getSession({ code: stepContext.options.sessionCode });
     const location = this.SpyfallRoles.locations[getRandomInt(this.SpyfallRoles.locations.length)];
-    const spyIndex = getRandomInt(session.players.length + 1);
+    spyIndex = getRandomInt(session.players.length + 1);
     let voteChoices = session.players.map(p => {
       return { title: p.name, value: p.aad};
     });

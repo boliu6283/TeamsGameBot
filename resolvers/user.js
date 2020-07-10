@@ -32,8 +32,8 @@ const updateUserScore = async (args) => {
     { $inc: { score: earnedScore } },
     { new: true }
   );
-  if (!user) throw new Error ('Failed to save new record in User collection');
-  console.log(`${user._id} added to User collection successfully`);
+  if (!user) throw new Error ('Failed to update score in User collection');
+  console.log(`${user._id} updated in User collection successfully`);
 
   return user;
 }

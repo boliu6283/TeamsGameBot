@@ -1,5 +1,6 @@
 const { Dialog } = require('botbuilder-dialogs');
 const Resolvers = require('../../../resolvers');
+const { spyfallEndGamehelper } = require('../../../helpers/games/spyfall');
 const constants = require('../../../config/constants');
 const SpyfallRaisePollDialogCache = require('./spyfallRaisePollDialog');
 
@@ -51,40 +52,18 @@ class SpyfallPollResultCollectDialog extends Dialog {
     if (pollResult.votedPlayersCount === pollResult.totalPlayers) {
       const isRightGuess = pollResult.isRightGuess;
       const isPollPassed = pollResult.agreedCount > pollResult.totalPlayers / 2;
+
       if (isPollPassed) {
-        if (isRightGuess) {
-          // This is a good guess. End the game.
-          //
-          await Resolvers.countdown.resume(pollResultInfo.sessionCode);
-          await Resolvers.countdown.kill(pollResultInfo.sessionCode);
-          await Resolvers.proactiveMessage.notifySession(
-            pollResultInfo.sessionCode,
-            `**Spyfall ${sessionCode} is now finished, players win!**`
-          );
+        await Resolvers.countdown.resume(pollResultInfo.sessionCode);
+        await Resolvers.countdown.kill(pollResultInfo.sessionCode);
 
-          // Update player's scores.
-          //
-          session.players.forEach(async (player, index) => {
-            if (index === pollResultInfo.votePlayerIndex) {
-              await Resolvers.user.updateUserScore({aad: player.aad, earnedScore: 10});
-            } else if (index !== pollResultInfo.spyIndex) {
-              await Resolvers.user.updateUserScore({aad: player.aad, earnedScore: 5});
-            }
-          });
-        } else {
-          // This is a bad guess. Spy win the game.
-          //
-          await Resolvers.countdown.resume(pollResultInfo.sessionCode);
-          await Resolvers.countdown.kill(pollResultInfo.sessionCode);
-          await Resolvers.proactiveMessage.notifySession(
-            pollResultInfo.sessionCode,
-            `**Spyfall ${sessionCode} is now finished, spy wins!**`
-          );
+        await spyfallEndGamehelper({
+          code: sessionCode,
+          res: isRightGuess ? 'voteCorrect' : 'voteWrong',
+          spyIdx: pollResultInfo.spyIndex,
+          voterIdx: pollResultInfo.votePlayerIndex
+        });
 
-          // Update spy's score.
-          //
-          await Resolvers.user.updateUserScore({aad: spyInfo.aad, earnedScore: 20});
-        }
       } else {
         // The poll is not passed. Resume the countdown.
         //
