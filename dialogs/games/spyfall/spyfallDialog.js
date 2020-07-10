@@ -37,7 +37,7 @@ class SpyfallDialog extends ComponentDialog {
     for (let i = 0; i < this.SpyfallRoles.locations.length; i++) {
       const locationItem = {
         type: 'TextBlock',
-        text: this.SpyfallRoles.locations[i]
+        text: this.SpyfallRoles[`location.${this.SpyfallRoles.locations[i]}`]
       };
       SpyfallCard.body[1].columns[i % 3].items.push(locationItem);
     }
@@ -92,6 +92,7 @@ class SpyfallDialog extends ComponentDialog {
   async distributeRoleStep(stepContext) {
     let session = await Resolvers.gameSession.getSession({ code: stepContext.options.sessionCode });
     const location = this.SpyfallRoles.locations[getRandomInt(this.SpyfallRoles.locations.length)];
+    const displayLocation = this.SpyfallRoles[`location.${location}`];
     spyIndex = getRandomInt(session.players.length + 1);
     let voteChoices = session.players.map(p => {
       return { title: p.name, value: p.aad};
@@ -149,14 +150,14 @@ class SpyfallDialog extends ComponentDialog {
       type: 'Input.Text',
       id: 'spyGuess'
     };
-    card.content.actions[0].data.location = location;
+    card.content.actions[0].data.location = displayLocation;
     card.content.actions[0].title = 'Guess your location';
   }
 
   renderRoleCard(card, index, spyIndex, location, voteChoices, sessionCode) {
     card.content.body[2].text =
       'Your location: ' +
-      this.SpyfallRoles[`location.${location}`];
+      displayLocation;
 
     card.content.body[3].text =
       'Your role: ' +
