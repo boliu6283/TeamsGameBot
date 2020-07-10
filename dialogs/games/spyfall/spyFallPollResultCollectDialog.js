@@ -54,7 +54,6 @@ class SpyfallPollResultCollectDialog extends Dialog {
       const isPollPassed = pollResult.agreedCount > pollResult.totalPlayers / 2;
 
       if (isPollPassed) {
-        await Resolvers.countdown.resume(pollResultInfo.sessionCode);
         await Resolvers.countdown.kill(pollResultInfo.sessionCode);
 
         await spyfallEndGamehelper({
@@ -63,7 +62,6 @@ class SpyfallPollResultCollectDialog extends Dialog {
           spyIdx: pollResultInfo.spyIndex,
           voterIdx: pollResultInfo.votePlayerIndex
         });
-
       } else {
         // The poll is not passed. Resume the countdown.
         //

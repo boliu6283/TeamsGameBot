@@ -12,7 +12,6 @@ class SessionCountDown {
     this._intervalSec = intervalSec;
     this._finishCallback = finishCallback;
     this._isPause = false;
-    this._isKilled = false;
 
     this._lastPause = null;
     this._pauseDurationMs = 0;
@@ -45,7 +44,7 @@ class SessionCountDown {
   }
 
   hasFinished() {
-    return this._isKilled || !this._interval || this.getReminingSeconds() <= 0;
+    return !this._interval || this.getReminingSeconds() <= 0;
   }
 
   getReminingSeconds() {
@@ -113,7 +112,9 @@ const resume = (sessionCode) => {
 
 const kill = (sessionCode) => {
   const countdown = _countdownTimer[sessionCode];
-  countdown._isKilled = true;
+  if (countdown) {
+    countdown.stop();
+  }
 }
 
 module.exports = {
