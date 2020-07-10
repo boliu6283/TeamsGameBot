@@ -22,14 +22,17 @@ class CreateSessionDialog extends Dialog {
 
     // Generate code
     //
-    const roomCode = generateCode();
+    let roomCode = generateCode();
+    while (await Resolvers.gameSession.doesSessionExist(roomCode)) {
+      roomCode = generateCode();
+    }
 
     // Generate game session
     //
     await Resolvers.gameSession.createSession({ code: roomCode, game: gameInfo._id, host: userInfo._id});
 
-    // Render session creation card. 
-    // 
+    // Render session creation card.
+    //
     let createSessionCard = CardFactory.adaptiveCard(CreateSessionCard);
     createSessionCard.content.body[0].items[0].columns[0].items[0].text = gameInfo.name;
     createSessionCard.content.body[0].items[0].columns[0].items[1].url = gameInfo.profile;

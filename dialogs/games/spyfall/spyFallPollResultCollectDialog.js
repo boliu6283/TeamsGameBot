@@ -1,7 +1,7 @@
 const { Dialog } = require('botbuilder-dialogs');
 const Resolvers = require('../../../resolvers');
 const { spyfallEndGamehelper } = require('../../../helpers/games/spyfall');
-const { pollCardId } = require('../../../helpers/updatableId');
+const { pollCardId, pollWaitingId } = require('../../../helpers/updatableId');
 const constants = require('../../../config/constants');
 const SpyfallRaisePollDialogCache = require('./spyfallRaisePollDialog');
 
@@ -77,9 +77,11 @@ class SpyfallPollResultCollectDialog extends Dialog {
 
       // Whenever a poll is done. We should clean it from the map.
       // Besides, we need to clean the cache in the SpyFallRaisePollDialog.
-      // Otherwise, it may block the further poll request.
+      // Otherwise, it may block the further poll request and clean up all updatable session.
       //
       sessionVoteResultMap.delete(sessionCode);
+      await Resolvers.proactiveMessage.deleteUpdatableSession(
+        sessionCode, pollWaitingId(sessionCode));
 
       // Sanity check
       // DEVNOTE: However, if SpyfallRaisePollDialogCache does not have the value for
@@ -95,11 +97,13 @@ class SpyfallPollResultCollectDialog extends Dialog {
     // Handle a situation where the other player is still voting
     if (pollResult.votedPlayersCount < pollResult.totalPlayers) {
       await Resolvers.proactiveMessage.deleteUpdatableIndividual(
-        options.user.aad, pollCardId(pollResultInfo.sessionCode));
+        options.user.aad, pollCardId(sessionCode));
 
       const remainingVoter = pollResult.totalPlayers - pollResult.votedPlayersCount;
-      await Resolvers.proactiveMessage.notifyIndividual(
-        options.user.aad, `Waiting for ${remainingVoter} players to vote`);
+      await Resolvers.proactiveMessage.notifyUpdatableSession(
+        sessionCode,
+        `Waiting for ${remainingVoter} players to vote`,
+        pollWaitingId(sessionCode));
     }
 
     return await dc.endDialog();
