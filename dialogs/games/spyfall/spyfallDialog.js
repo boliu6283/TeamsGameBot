@@ -150,14 +150,14 @@ class SpyfallDialog extends ComponentDialog {
       type: 'Input.Text',
       id: 'spyGuess'
     };
-    card.content.actions[0].data.location = displayLocation;
+    card.content.actions[0].data.location = location;
     card.content.actions[0].title = 'Guess your location';
   }
 
   renderRoleCard(card, index, spyIndex, location, voteChoices, sessionCode) {
     card.content.body[2].text =
       'Your location: ' +
-      displayLocation;
+      location;
 
     card.content.body[3].text =
       'Your role: ' +
