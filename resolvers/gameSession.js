@@ -1,5 +1,11 @@
 const GameSession = require('../models/gameSession');
 
+const doesSessionExist = async (args) => {
+  return Boolean(await GameSession.findOne({
+    code: args.code
+  }));
+}
+
 const getSession = async (args) => {
   return await GameSession.findOne({
     code: args.code
@@ -73,6 +79,7 @@ const endSession = async (args) => {
 }
 
 module.exports = {
+  doesSessionExist,
   getSession,
   addPlayerToSession,
   createSession,
