@@ -1,5 +1,5 @@
 const { MessageFactory } = require('botbuilder');
-const { TurnContext } = require('botbuilder-core');
+const { TurnContext, CardFactory } = require('botbuilder-core');
 const BotAdapter = require('./botAdapter');
 const GameSession = require('./gameSession');
 
@@ -46,6 +46,24 @@ const notifyUpdatableIndividual = async (userId, message, updatableId) => {
   }
 }
 
+const notifyUpdatableIndividualCard = async (userId, card, updatableId) => {
+  const adapter = BotAdapter.getInstance();
+  if (_conversationReferences[userId]) {
+    const cref = _conversationReferences[userId].turnContext;
+    const updatables = _conversationReferences[userId].updatables;
+
+    await adapter.continueConversation(cref, async turnContext => {
+      const messageContext = CardFactory.adaptiveCard(card);
+      if (updatables[updatableId]) {
+        messageContext.id = updatables[updatableId];
+        await turnContext.updateActivity(messageContext);
+      } else {
+        updatables[updatableId] = await notifyIndividualCard(userId, card);
+      }
+    });
+  }
+}
+
 // Delete updatable messages
 const deleteUpdatableIndividual = async (userId, updatableId) => {
   const adapter = BotAdapter.getInstance();
@@ -68,10 +86,12 @@ const notifyIndividualCard = async(userId, card) => {
   const adapter = BotAdapter.getInstance();
   if (_conversationReferences[userId]) {
     const cref = _conversationReferences[userId].turnContext;
+    let activityId = null;
     await adapter.continueConversation(cref, async turnContext => {
       const activityContext = await turnContext.sendActivity({attachments: [card]});
-      _conversationReferences[userId].activityId = activityContext.id;
+      activityId = activityContext.id;
     });
+    return activityId;
   }
 }
 
@@ -121,6 +141,7 @@ module.exports = {
   notifyAll,
   notifySession,
   notifyUpdatableSession,
+  notifyUpdatableIndividualCard,
   notifyIndividual,
   notifyUpdatableIndividual,
   notifyIndividualCard,

@@ -12,12 +12,12 @@ class SpyfallGuessDialog extends Dialog {
 
   async beginDialog(dc, options) {
     const { spyIdx, spyGuess, location, sessionCode } = dc.context.activity.value;
-    const res = spyGuess.toLowerCase().trim() === location ?
+    const res = spyGuess.toLowerCase().trim() === location.toLowerCase().trim() ?
                 'guessCorrect' : 'guessWrong';
     await Resolvers.countdown.kill(sessionCode);
     await spyfallEndGamehelper({
       code: sessionCode,
-      res, 
+      res,
       spyIdx
     });
 
