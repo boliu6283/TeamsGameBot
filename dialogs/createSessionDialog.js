@@ -50,5 +50,6 @@ function generateCode() {
 }
 
 module.exports = {
-  CreateSessionDialog
+  CreateSessionDialog,
+  generateCode
 };

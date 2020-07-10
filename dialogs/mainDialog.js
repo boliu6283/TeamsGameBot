@@ -8,6 +8,7 @@ const { SpyfallDialog } = require('./games/spyfall/spyfallDialog');
 const { SpyfallGuessDialog } = require('./games/spyfall/spyfallGuessDialog');
 const { SpyfallRaisePollDialog } = require('./games/spyfall/spyfallRaisePollDialog');
 const { SpyfallPollResultCollectDialog } = require('./games/spyfall/spyfallPollResultCollectDialog');
+const { generateCode } = require('./createSessionDialog');
 const constants = require('../config/constants')
 const Resolvers = require('../resolvers');
 
@@ -82,10 +83,38 @@ class MainDialog extends ComponentDialog {
         return await dc.beginDialog(constants.SPYFALL_RAISE_POLL_DIALOG, options);
       } else if (input.spyfallPollSelectedResult) {
         return await dc.beginDialog(constants.SPYFALL_POLL_RESULT_COLLECT_DIALOG, options);
+      }else if (input.recreateSession) {
+        await this.copySession(dc);
+        return await dc.beginDialog(constants.SPYFALL_DIALOG, options);
+      } else if (input.exitGame) {
+        return;
       }
     }
     
     return await dc.beginDialog(constants.WELCOME_DIALOG, options);
+  }
+
+  async copySession(dc) {
+    let session = await Resolvers.gameSession.getSession({ code: dc.context.activity.value.sessionCode });
+    let gameName = session.game.name;
+    let hostInfo = session.host;
+    let roomCode = generateCode();
+
+    // create new game & session
+    const gameInfo = await Resolvers.game.getGameByName({ gameName: gameName });
+    let newSession = await Resolvers.gameSession.createSession({ code: roomCode, game: gameInfo._id, host: hostInfo._id});
+
+    // copy players
+    session.players.forEach(async (player, index) => {
+      await Resolvers.gameSession.addPlayerToSession({
+        code: newSession.code,
+        userId: player.id
+      });
+    });
+    
+    // replace with new session
+    session.status = 'complete';
+    dc.context.activity.value.sessionCode = newSession;
   }
 
   async _loginOrRegisterUser(turnContext) {
