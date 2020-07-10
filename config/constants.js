@@ -33,6 +33,11 @@ module.exports = {
     // User State constants
     USER_PROFILE_STATE: 'UserProfileState',
 
+    // Proactive message updatable ID
+    COUNTDOWN_UPDATABLE: 'countdown',
+    POLL_UPDATABLE: 'poll',
+    ACTION_UPDATABLE: 'action',
+
     // Configurations
     DEFAULT_SPYFALL_LIFESPAN_SEC: 30,
     DEFAULT_COUNTDOWN_INTERVAL_SEC: 10,

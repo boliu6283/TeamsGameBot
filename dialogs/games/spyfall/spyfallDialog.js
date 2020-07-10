@@ -3,10 +3,14 @@
 
 const { ComponentDialog, WaterfallDialog, ChoicePrompt } = require('botbuilder-dialogs');
 const { CardFactory } = require('botbuilder-core');
+const {
+  getIdentityCard,
+  getSpyActionCard,
+  getDetectiveActionCard } = require('../../../helpers/games/spyfallCard');
 const { getRandomInt } = require('../../../helpers/thumbnail');
+const { actionCardId } = require('../../../helpers/updatableId');
 const { spyfallEndGamehelper } = require('../../../helpers/games/spyfall');
 const constants = require('../../../config/constants');
-const SpyfallCard = require('../../../static/spyfallCard.json');
 const Resolvers = require('../../../resolvers');
 
 let votedPlayerSet = new Set();
@@ -16,10 +20,10 @@ class SpyfallDialog extends ComponentDialog {
   constructor(luisRecognizer) {
     super(constants.SPYFALL_DIALOG);
     this._luisRecognizer = luisRecognizer;
+
     this.addDialog(new ChoicePrompt(constants.SPYFALL_PROMPT));
     this.addDialog(
       new WaterfallDialog(constants.SPYFALL_WATERFALL_DIALOG, [
-        this.loadGameConfig.bind(this),
         this.startGameSession.bind(this),
         this.registerCountdown.bind(this),
         this.distributeRoleStep.bind(this),
@@ -27,41 +31,8 @@ class SpyfallDialog extends ComponentDialog {
       ])
     );
 
+    this._spyfallRoles = null;
     this.initialDialogId = constants.SPYFALL_WATERFALL_DIALOG;
-  }
-
-  async loadGameConfig(stepContext) {
-    // clean up card
-    SpyfallCard.body[1].columns = [
-      {
-        "type": "Column",
-        "width": "stretch",
-        "items": []
-      },
-      {
-        "type": "Column",
-        "width": "stretch",
-        "items": []
-      },
-      {
-        "type": "Column",
-        "width": "stretch",
-        "items": []
-      }
-    ];
-
-    let gameInfo = await Resolvers.game.getGameByName({ gameName: '🕵️Who Is Undercover' });
-    this.SpyfallRoles = gameInfo.metadata;
-
-    for (let i = 0; i < this.SpyfallRoles.locations.length; i++) {
-      const locationItem = {
-        type: 'TextBlock',
-        text: this.SpyfallRoles[`location.${this.SpyfallRoles.locations[i]}`]
-      };
-      SpyfallCard.body[1].columns[i % 3].items.push(locationItem);
-    }
-
-    return stepContext.next();
   }
 
   async startGameSession(stepContext) {
@@ -69,6 +40,12 @@ class SpyfallDialog extends ComponentDialog {
       stepContext.options.sessionCode = stepContext.context.activity.value.sessionCode;
     }
 
+    // Initialize game data
+    if (!this._spyfallRoles) {
+      this._spyfallRoles = await Resolvers.game.getSpyfallMetadata();
+    }
+
+    // TODO: lifespan should be adjustable based on the number of players
     votedPlayerSet.clear();
     const sessionCode = stepContext.options.sessionCode;
     const lifespan = constants.DEFAULT_SPYFALL_LIFESPAN_SEC;
@@ -78,7 +55,6 @@ class SpyfallDialog extends ComponentDialog {
       `**Spyfall ${sessionCode} is now started, try to find the spy in ${lifespan} seconds!**`
     );
 
-    // TODO: lifespan should be adjustable based on the number of players
     await Resolvers.gameSession.startSession({
       code: sessionCode,
       lifespanSec: lifespan
@@ -110,8 +86,8 @@ class SpyfallDialog extends ComponentDialog {
 
   async distributeRoleStep(stepContext) {
     let session = await Resolvers.gameSession.getSession({ code: stepContext.options.sessionCode });
-    const location = this.SpyfallRoles.locations[getRandomInt(this.SpyfallRoles.locations.length)];
-    const displayLocation = this.SpyfallRoles[`location.${location}`];
+    const location = this._spyfallRoles.locations[getRandomInt(this._spyfallRoles.locations.length)];
+    const displayLocation = this._spyfallRoles[`location.${location}`];
     spyIndex = getRandomInt(session.players.length + 1);
     let voteChoices = session.players.map(p => {
       return { title: p.name, value: p.aad};
@@ -125,35 +101,37 @@ class SpyfallDialog extends ComponentDialog {
 
     session.players.forEach(async (player, index) => {
       const filteredVoteChoices = voteChoices.filter(choice => choice.title !== player.name);
-      const playerCard = CardFactory.adaptiveCard(SpyfallCard);
-      if (index == spyIndex) {
-        this.renderSpyCard(playerCard, displayLocation);
+      const sessionCode = stepContext.options.sessionCode;
+
+      // Don't use 'let' statement here, await will cause context switch
+      let identityCard;
+      let actionCard
+      if (index === spyIndex) {
+        identityCard = this.renderSpyCard();
+        actionCard = this.renderSpyActionCard(sessionCode, spyIndex, displayLocation);
       } else {
-        this.renderRoleCard(playerCard, index, spyIndex, location, filteredVoteChoices, stepContext.options.sessionCode);
+        identityCard = this.renderDetectiveCard(index, spyIndex, location);
+        actionCard = this.renderDetectiveActionCard(index, spyIndex, filteredVoteChoices, sessionCode);
       }
       await Resolvers.proactiveMessage.notifyIndividualCard(
-        player.aad,
-        playerCard
-      );
+        player.aad, identityCard);
+      await Resolvers.proactiveMessage.notifyUpdatableIndividualCard(
+        player.aad, actionCard, actionCardId(sessionCode));
     });
 
-    // return await stepContext.prompt(constants.SPYFALL_PROMPT, {
-    //   prompt: 'wtf',
-    //   choices: ['🕹️StartAnotherMatch', '📖EndGame']
-    // });
     return await stepContext.endDialog();
   }
 
   async restartStep(stepContext) {
     switch (stepContext.result.value) {
-      case '🕹️StartAnotherMatch': {
+      case '🕹️Start Another Match': {
         return await stepContext.replaceDialog(
           constants.SPYFALL_DIALOG,
           stepContext.options
         );
       }
 
-      case '📖EndGame': {
+      case '📖End Game': {
         return await stepContext.endDialog();
       }
     }
@@ -161,40 +139,45 @@ class SpyfallDialog extends ComponentDialog {
     return await stepContext.endDialog();
   }
 
-  renderSpyCard(card, location) {
+  renderSpyCard() {
+    const spyfallCard = getIdentityCard(this._spyfallRoles);
+    const card = CardFactory.adaptiveCard(spyfallCard);
     card.content.body[2].text = 'Your location: ❓';
     card.content.body[3].text = 'Your role: 😈Spy';
-    card.content.body[4].text = 'Note: you only have one chance to guess.'
-    card.content.body[5] = {
-      type: 'Input.Text',
-      id: 'spyGuess'
-    };
-    card.content.actions[0].data.location = location;
-    card.content.actions[0].title = 'Guess your location';
+    return card;
   }
 
-  renderRoleCard(card, index, spyIndex, location, voteChoices, sessionCode) {
+  renderSpyActionCard(sessionCode, spyIndex, location) {
+    const spyActionCard = getSpyActionCard();
+    const card = CardFactory.adaptiveCard(spyActionCard);
+    card.content.actions[0].title = 'Guess your location';
+    card.content.actions[0].data.sessionCode = sessionCode;
+    card.content.actions[0].data.spyIdx = spyIndex;
+    card.content.actions[0].data.location = location;
+    return card;
+  }
+
+  renderDetectiveCard(index, spyIndex, location) {
+    const detectiveCard = getIdentityCard(this._spyfallRoles);
+    const card = CardFactory.adaptiveCard(detectiveCard);
     card.content.body[2].text =
       'Your location: ' +
-      this.SpyfallRoles[`location.${location}`];
-
+      this._spyfallRoles[`location.${location}`];
     card.content.body[3].text =
       'Your role: ' +
-      this.SpyfallRoles[`location.${location}.role${((index + spyIndex) % 7) + 1}`];
+      this._spyfallRoles[`location.${location}.role${((index + spyIndex) % 7) + 1}`];
+    return card;
+  }
 
-    card.content.body[4].text = 'Note: you only have one chance to vote.'
-
-    card.content.body[5] = {
-      type: 'Input.ChoiceSet',
-      id: 'selectedPersonAAD',
-      style: 'expanded',
-      choices: voteChoices
-    };
-
+  renderDetectiveActionCard(index, spyIndex, voteChoices, sessionCode) {
+    const detectiveActionCard = getDetectiveActionCard();
+    const card = CardFactory.adaptiveCard(detectiveActionCard);
+    card.content.body[1].choices = voteChoices;
+    card.content.actions[0].title = 'Vote the spy';
     card.content.actions[0].data.playerVote = index;
     card.content.actions[0].data.spyIdx = spyIndex;
     card.content.actions[0].data.sessionCode = sessionCode;
-    card.content.actions[0].title = 'Vote the spy';
+    return card;
   }
 }
 
