@@ -2,6 +2,7 @@ const { CardFactory } = require('botbuilder-core');
 const Resolvers = require('../../resolvers/index');
 const { gameScorePics } = require('../../config/pics')
 const GameScoreCard = require('../../static/gameScoreCard.json');
+const SpyfallEndCard = require('../../static/spyfallEndCard.json');
 
 const spyfallEndGamehelper = async (args) => {
   const { code, res, spyIdx, voterIdx } = args;
@@ -51,7 +52,6 @@ const spyfallEndGamehelper = async (args) => {
           });
         }
       });
-
       break;
     }
 
@@ -64,6 +64,7 @@ const spyfallEndGamehelper = async (args) => {
 
       break;
     }
+
   }
 
   // Clean up GameScoreCard
@@ -76,7 +77,8 @@ const spyfallEndGamehelper = async (args) => {
   gameScoreCard.content.body[0].text = displayText;
   gameScoreCard.content.body[1].url = gameScorePics[0];
 
-  const newSession = await Resolvers.gameSession.getSession({ code });
+  const newSession = await Resolvers.gameSession.getSession({ code }); 
+  // ask:: why a new session?
   newSession.players.push(newSession.host);
   newSession.players.forEach((player, index) => {
     let roleIcon;
@@ -118,6 +120,13 @@ const spyfallEndGamehelper = async (args) => {
   newSession.players.forEach(player => {
     Resolvers.proactiveMessage.notifyIndividualCard(player.aad, gameScoreCard);
   });
+
+  const card = CardFactory.adaptiveCard(SpyfallEndCard);
+  card.content.actions[0].data.sessionCode = code;
+  card.content.actions[1].data.sessionCode = code;
+
+  session.status = 'complete';
+  return await Resolvers.proactiveMessage.notifyIndividualCard(session.host.aad, card);
 }
 
 module.exports = {
