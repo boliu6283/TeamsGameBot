@@ -9,9 +9,9 @@ const gameSchema = new Schema({
   price: { type: Number, default: 0 },
   profile: { type: String },
   pictures: [{ type: String }],
+  metadata: { type: Object },
   createdAt: { type: Date },
-  updatedAt: { type: Date },
-  metadata: { type: Object }
+  updatedAt: { type: Date }
 }, {
   timestamps: true
 });

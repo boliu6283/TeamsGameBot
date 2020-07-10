@@ -1,5 +1,6 @@
 const { Dialog } = require('botbuilder-dialogs');
 const Resolvers = require('../../../resolvers');
+const { spyfallEndGamehelper } = require('../../../helpers/games/spyfall')
 const constants = require('../../../config/constants');
 
 class SpyfallGuessDialog extends Dialog {
@@ -10,20 +11,15 @@ class SpyfallGuessDialog extends Dialog {
   }
 
   async beginDialog(dc, options) {
-    const { spyGuess, location, sessionCode } = dc.context.activity.value;
-    await Resolvers.countdown.resume(sessionCode);
+    const { spyIdx, spyGuess, location, sessionCode } = dc.context.activity.value;
+    const res = spyGuess.toLowerCase().trim() === location ?
+                'guessCorrect' : 'guessWrong';
     await Resolvers.countdown.kill(sessionCode);
-    if (spyGuess.toLowerCase() === location) {
-      await Resolvers.proactiveMessage.notifySession(
-        sessionCode,
-        `**Spyfall ${sessionCode} is now finished, spy wins!**`
-      );
-    } else {
-      await Resolvers.proactiveMessage.notifySession(
-        sessionCode,
-        `**Spyfall ${sessionCode} is now finished, players win!**`
-      );
-    }
+    await spyfallEndGamehelper({
+      code: sessionCode,
+      res, 
+      spyIdx
+    });
 
     return await dc.endDialog();
   }

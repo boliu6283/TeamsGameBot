@@ -22,11 +22,10 @@ class RankDialog extends Dialog {
     const usersScore = (await Resolvers.user.getAllUsersScore()).slice(0, 10);
     const rankcard = CardFactory.adaptiveCard(RankCard);
     rankcard.content.body[0].url = rankPics[0];
-    let i = 1;
-    usersScore.forEach(user => {
+    usersScore.forEach((user, index) => {
       rankcard.content.body[1].items[0].columns[0].items.push({
         type: 'TextBlock',
-        text: i > 3 ? i.toString() : rankMedals[i],
+        text: index > 2 ? (index + 1).toString() : rankMedals[index + 1],
         horizontalAlignment: 'center',
         weight: 'Bolder'
       });
@@ -42,7 +41,6 @@ class RankDialog extends Dialog {
         horizontalAlignment: 'center',
         weight: 'Bolder'
       });
-      i++;
     });
 
     await dc.context.sendActivity({ attachments: [rankcard] });
