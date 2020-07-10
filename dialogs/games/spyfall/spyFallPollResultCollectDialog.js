@@ -1,6 +1,7 @@
 const { Dialog } = require('botbuilder-dialogs');
 const Resolvers = require('../../../resolvers');
 const { spyfallEndGamehelper } = require('../../../helpers/games/spyfall');
+const { pollCardId } = require('../../../helpers/updatableId');
 const constants = require('../../../config/constants');
 const SpyfallRaisePollDialogCache = require('./spyfallRaisePollDialog');
 
@@ -31,14 +32,14 @@ class SpyfallPollResultCollectDialog extends Dialog {
     if (sessionVoteResultMap.has(sessionCode)) {
       pollResult = sessionVoteResultMap.get(sessionCode);
     } else {
-      pollResult = { 
+      pollResult = {
         votedPlayersCount: 1,
         agreedCount: 1,
         totalPlayers: session.players.length,
         isRightGuess: pollResultInfo.isRightGuess
       };
     }
-    
+
     pollResult.votedPlayersCount += 1
     if (spyfallPollSelectedResult === 'Agree') {
       pollResult.agreedCount += 1;
@@ -52,7 +53,6 @@ class SpyfallPollResultCollectDialog extends Dialog {
     if (pollResult.votedPlayersCount === pollResult.totalPlayers) {
       const isRightGuess = pollResult.isRightGuess;
       const isPollPassed = pollResult.agreedCount > pollResult.totalPlayers / 2;
-
       if (isPollPassed) {
         await Resolvers.countdown.kill(pollResultInfo.sessionCode);
 
@@ -77,10 +77,10 @@ class SpyfallPollResultCollectDialog extends Dialog {
 
       // Whenever a poll is done. We should clean it from the map.
       // Besides, we need to clean the cache in the SpyFallRaisePollDialog.
-      // Otherwise, it may block the further poll request. 
+      // Otherwise, it may block the further poll request.
       //
       sessionVoteResultMap.delete(sessionCode);
-      
+
       // Sanity check
       // DEVNOTE: However, if SpyfallRaisePollDialogCache does not have the value for
       // this sessionCode. It must be a bug, though it is transient error.
@@ -90,6 +90,16 @@ class SpyfallPollResultCollectDialog extends Dialog {
       } else {
         console.log(`WARNING: ${sessionCode} was not inserted into the SpyfallRaisePollDialogCache!`);
       }
+    }
+
+    // Handle a situation where the other player is still voting
+    if (pollResult.votedPlayersCount < pollResult.totalPlayers) {
+      await Resolvers.proactiveMessage.deleteUpdatableIndividual(
+        options.user.aad, pollCardId(pollResultInfo.sessionCode));
+
+      const remainingVoter = pollResult.totalPlayers - pollResult.votedPlayersCount;
+      await Resolvers.proactiveMessage.notifyIndividual(
+        options.user.aad, `Waiting for ${remainingVoter} players to vote`);
     }
 
     return await dc.endDialog();

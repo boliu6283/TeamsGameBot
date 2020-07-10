@@ -2,6 +2,7 @@ const { Dialog} = require('botbuilder-dialogs');
 const { CardFactory } = require('botbuilder-core');
 const SpyfallDialog = require('./spyfallDialog');
 const Resolvers = require('../../../resolvers');
+const { pollCardId, actionCardId } = require('../../../helpers/updatableId');
 const constants = require('../../../config/constants');
 const PollResultCollectorCard = require('../../../static/pollResultCollectorCard.json');
 
@@ -36,11 +37,14 @@ class SpyfallRaisePollDialog extends Dialog {
     // 2.2 If the player has voted, then the player will lose the chance to raise another poll.
     //
     if (SpyfallDialog.SpyfallDialogVotedPlayerCache.has(raiseGuyInfo.aad)) {
-      Resolvers.proactiveMessage.notifyIndividual(raiseGuyInfo.aad, "Sorry... Each player has only one chance to raise the poll to against another player.");
+      await Resolvers.proactiveMessage.notifyIndividual(raiseGuyInfo.aad, "Sorry... Each player has only one chance to raise the poll to against another player.");
       return await dc.endDialog();
     }
 
+    // 2.3 If the player raises a poll, then s/he should no longer have access to the identity card.
     SpyfallDialog.SpyfallDialogVotedPlayerCache.add(raiseGuyInfo.aad)
+    await Resolvers.proactiveMessage.deleteUpdatableIndividual(
+      raiseGuyInfo.aad, actionCardId(relatedSession.code));
 
     // 3. If someone has already raised the poll to against the spy.
     //    Then we do not allow any other one to raise another poll.
@@ -55,7 +59,7 @@ class SpyfallRaisePollDialog extends Dialog {
     const trueSpyInfo = relatedSession.players[raisedPollInfo.spyIdx];
     const selectedPlayerInfo = await Resolvers.user.getUser({ aad: raisedPollInfo.selectedPersonAAD });
     const isRightGuess = selectedPlayerInfo.aad === trueSpyInfo.aad;
-    
+
     // 4. Pause the countdown.
     //
     await Resolvers.countdown.pause(raisedPollInfo.sessionCode);
@@ -70,7 +74,7 @@ class SpyfallRaisePollDialog extends Dialog {
         raised the poll to disclose
         ${selectedPlayerInfo.name}** as a spy.
         `;
-        
+
         pollResultCollectorCard.content.actions[0].data.sessionCode = raisedPollInfo.sessionCode;
         pollResultCollectorCard.content.actions[0].data.isRightGuess = isRightGuess;
         pollResultCollectorCard.content.actions[0].data.spyIndex = raisedPollInfo.spyIdx;
@@ -80,13 +84,15 @@ class SpyfallRaisePollDialog extends Dialog {
         pollResultCollectorCard.content.actions[1].data.isRightGuess = isRightGuess;
         pollResultCollectorCard.content.actions[1].data.spyIndex = raisedPollInfo.spyIdx;
         pollResultCollectorCard.content.actions[1].data.votePlayerIndex = raisedPollInfo.playerVote;
-        await Resolvers.proactiveMessage.notifyIndividualCard(
+
+        await Resolvers.proactiveMessage.notifyUpdatableIndividualCard(
           player.aad,
-          pollResultCollectorCard
+          pollResultCollectorCard,
+          pollCardId(raisedPollInfo.sessionCode)
         );
       }
     });
-    
+
     return await dc.endDialog();
   }
 }

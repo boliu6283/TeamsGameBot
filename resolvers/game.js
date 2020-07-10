@@ -1,5 +1,4 @@
 const Game = require('../models/game');
-const game = require('../models/game');
 
 const getAllGames = async () => {
   return await Game.find({}, 'name description capacity profile');
@@ -30,8 +29,13 @@ const createGame = async (args) => {
   return game.name;
 }
 
+const getSpyfallMetadata = async () => {
+  return (await getGameByName({ gameName: '🕵️Who Is Undercover' })).metadata;
+}
+
 module.exports = {
   getAllGames,
   createGame,
-  getGameByName
+  getGameByName,
+  getSpyfallMetadata
 };

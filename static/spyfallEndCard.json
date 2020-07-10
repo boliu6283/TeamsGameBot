@@ -11,18 +11,18 @@
     "actions": [
       {
         "type": "Action.Submit",
-        "title": "Exit Game",
+        "title": "📖End Game",
         "data": {
           "exitGame": true
         }
       },
       {
         "type": "Action.Submit",
-        "title": "🕹️StartAnotherMatch",
+        "title": "🕹️Start Another Match",
         "data": {
           "recreateSession": true,
           "sessionCode": ""
         }
-      }      
+      }
     ]
   }

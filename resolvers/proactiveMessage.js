@@ -53,10 +53,10 @@ const notifyUpdatableIndividualCard = async (userId, card, updatableId) => {
     const updatables = _conversationReferences[userId].updatables;
 
     await adapter.continueConversation(cref, async turnContext => {
-      const messageContext = CardFactory.adaptiveCard(card);
+      const cardContext = CardFactory.adaptiveCard(card);
       if (updatables[updatableId]) {
-        messageContext.id = updatables[updatableId];
-        await turnContext.updateActivity(messageContext);
+        cardContext.id = updatables[updatableId];
+        await turnContext.updateActivity(cardContext);
       } else {
         updatables[updatableId] = await notifyIndividualCard(userId, card);
       }
@@ -95,7 +95,6 @@ const notifyIndividualCard = async(userId, card) => {
   }
 }
 
-// sessionCode = RoomNumber, RoomCode, SessionCode
 const notifySession = async (sessionCode, message) => {
   const session = await GameSession.getSession({ code: sessionCode });
   session.players.forEach(async (p) => {
@@ -110,6 +109,14 @@ const notifyUpdatableSession = async (sessionCode, message, updatableId) => {
     await notifyUpdatableIndividual(p.aad, message, updatableId);
   });
   await notifyUpdatableIndividual(session.host.aad, message, updatableId);
+}
+
+const notifyUpdatableSessionCard = async (sessionCode, card, updatableId) => {
+  const session = await GameSession.getSession({ code: sessionCode });
+  session.players.forEach(async (p) => {
+    await notifyUpdatableIndividualCard(p.aad, card, updatableId);
+  });
+  await notifyUpdatableIndividualCard(session.host.aad, card, updatableId);
 }
 
 const deleteUpdatableSession = async (sessionCode, updatableId) => {
@@ -139,12 +146,13 @@ const addConversationReference = (context) => {
 module.exports = {
   addConversationReference,
   notifyAll,
-  notifySession,
-  notifyUpdatableSession,
-  notifyUpdatableIndividualCard,
   notifyIndividual,
-  notifyUpdatableIndividual,
   notifyIndividualCard,
+  notifySession,
+  notifyUpdatableIndividual,
+  notifyUpdatableIndividualCard,
+  notifyUpdatableSession,
+  notifyUpdatableSessionCard,
   deleteUpdatableIndividual,
   deleteUpdatableSession
 }

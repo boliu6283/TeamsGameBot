@@ -1,0 +1,28 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Note: you only have one chance to vote."
+    },
+    {
+      "type": "Input.ChoiceSet",
+      "id": "selectedPersonAAD",
+      "style": "expanded",
+      "choices": []
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "${btnName}",
+      "data": {
+        "playerVote": "${index}",
+        "spyIdx": "${spyIdx}",
+        "sessionCode": "${sessionCode}"
+      }
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 const { Dialog } = require('botbuilder-dialogs');
 const Resolvers = require('../../../resolvers');
+const { actionCardId } = require('../../../helpers/updatableId');
 const { spyfallEndGamehelper } = require('../../../helpers/games/spyfall')
 const constants = require('../../../config/constants');
 
@@ -14,7 +15,12 @@ class SpyfallGuessDialog extends Dialog {
     const { spyIdx, spyGuess, location, sessionCode } = dc.context.activity.value;
     const res = spyGuess.toLowerCase().trim() === location.toLowerCase().trim() ?
                 'guessCorrect' : 'guessWrong';
+
+    // Clean up countdown and location card
     await Resolvers.countdown.kill(sessionCode);
+    await Resolvers.proactiveMessage.deleteUpdatableSession(sessionCode, actionCardId(sessionCode));
+
+    // Calculate endgame score
     await spyfallEndGamehelper({
       code: sessionCode,
       res,
