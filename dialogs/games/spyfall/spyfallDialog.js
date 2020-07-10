@@ -47,8 +47,10 @@ class SpyfallDialog extends ComponentDialog {
 
     // TODO: lifespan should be adjustable based on the number of players
     votedPlayerSet.clear();
+    let session = await Resolvers.gameSession.getSession({ code: stepContext.options.sessionCode });
+    let playersCount = session.players.length + 1;
     const sessionCode = stepContext.options.sessionCode;
-    const lifespan = constants.DEFAULT_SPYFALL_LIFESPAN_SEC;
+    const lifespan = constants.DEFAULT_SPYFALL_LIFESPAN_SEC * playersCount;
 
     await Resolvers.proactiveMessage.notifySession(
       sessionCode,
