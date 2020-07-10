@@ -31,6 +31,25 @@ class SpyfallDialog extends ComponentDialog {
   }
 
   async loadGameConfig(stepContext) {
+    // clean up card
+    SpyfallCard.body[1].columns = [
+      {
+        "type": "Column",
+        "width": "stretch",
+        "items": []
+      },
+      {
+        "type": "Column",
+        "width": "stretch",
+        "items": []
+      },
+      {
+        "type": "Column",
+        "width": "stretch",
+        "items": []
+      }
+    ];
+
     let gameInfo = await Resolvers.game.getGameByName({ gameName: '🕵️Who Is Undercover' });
     this.SpyfallRoles = gameInfo.metadata;
 
@@ -108,7 +127,7 @@ class SpyfallDialog extends ComponentDialog {
       const filteredVoteChoices = voteChoices.filter(choice => choice.title !== player.name);
       const playerCard = CardFactory.adaptiveCard(SpyfallCard);
       if (index == spyIndex) {
-        this.renderSpyCard(playerCard, location);
+        this.renderSpyCard(playerCard, displayLocation);
       } else {
         this.renderRoleCard(playerCard, index, spyIndex, location, filteredVoteChoices, stepContext.options.sessionCode);
       }
@@ -157,7 +176,7 @@ class SpyfallDialog extends ComponentDialog {
   renderRoleCard(card, index, spyIndex, location, voteChoices, sessionCode) {
     card.content.body[2].text =
       'Your location: ' +
-      location;
+      this.SpyfallRoles[`location.${location}`];
 
     card.content.body[3].text =
       'Your role: ' +

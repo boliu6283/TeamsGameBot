@@ -9,10 +9,11 @@ const spyfallEndGamehelper = async (args) => {
   let displayText;
   const session = await Resolvers.gameSession.getSession({ code });
   session.players.push(session.host);
-  
+
   // update scores
   switch(res) {
-    case 'guessCorrect' || 'voteWrong': {
+    case 'voteWrong':
+    case 'guessCorrect': {
       displayText = 'Spy wins!!!'
       await Resolvers.user.updateUserScore({
         aad: session.players[spyIdx].aad,
