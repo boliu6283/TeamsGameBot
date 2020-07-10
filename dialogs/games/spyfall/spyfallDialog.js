@@ -31,6 +31,25 @@ class SpyfallDialog extends ComponentDialog {
   }
 
   async loadGameConfig(stepContext) {
+    // clean up card
+    SpyfallCard.body[1].columns = [
+      {
+        "type": "Column",
+        "width": "stretch",
+        "items": []
+      },
+      {
+        "type": "Column",
+        "width": "stretch",
+        "items": []
+      },
+      {
+        "type": "Column",
+        "width": "stretch",
+        "items": []
+      }
+    ];
+
     let gameInfo = await Resolvers.game.getGameByName({ gameName: '🕵️Who Is Undercover' });
     this.SpyfallRoles = gameInfo.metadata;
 
