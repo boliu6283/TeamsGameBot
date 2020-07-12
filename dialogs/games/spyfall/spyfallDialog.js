@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const { ComponentDialog, WaterfallDialog, ChoicePrompt } = require('botbuilder-dialogs');
+const { ComponentDialog, WaterfallDialog } = require('botbuilder-dialogs');
 const { CardFactory } = require('botbuilder-core');
 const {
   getIdentityCard,
@@ -21,7 +21,6 @@ class SpyfallDialog extends ComponentDialog {
     super(constants.SPYFALL_DIALOG);
     this._luisRecognizer = luisRecognizer;
 
-    this.addDialog(new ChoicePrompt(constants.SPYFALL_PROMPT));
     this.addDialog(
       new WaterfallDialog(constants.SPYFALL_WATERFALL_DIALOG, [
         this.startGameSession.bind(this),
@@ -31,8 +30,8 @@ class SpyfallDialog extends ComponentDialog {
       ])
     );
 
-    this._spyfallRoles = null;
     this.initialDialogId = constants.SPYFALL_WATERFALL_DIALOG;
+    this._metadata = null;
   }
 
   async startGameSession(stepContext) {
@@ -41,16 +40,16 @@ class SpyfallDialog extends ComponentDialog {
     }
 
     // Initialize game data
-    if (!this._spyfallRoles) {
-      this._spyfallRoles = await Resolvers.game.getSpyfallMetadata();
+    if (!this._metadata) {
+      this._metadata = await Resolvers.game.getSpyfallMetadata();
     }
 
-    // TODO: lifespan should be adjustable based on the number of players
+    // Set lifespan of this session
     votedPlayerSet.clear();
     let session = await Resolvers.gameSession.getSession({ code: stepContext.options.sessionCode });
     let playersCount = session.players.length + 1;
     const sessionCode = stepContext.options.sessionCode;
-    const lifespan = constants.DEFAULT_SPYFALL_LIFESPAN_SEC * playersCount;
+    const lifespan = constants.SPYFALL_TURN_PER_PERSON_SEC * playersCount;
 
     await Resolvers.proactiveMessage.notifySession(
       sessionCode,
@@ -62,7 +61,7 @@ class SpyfallDialog extends ComponentDialog {
       lifespanSec: lifespan
     });
 
-    return stepContext.next();
+    return await stepContext.next();
   }
 
   async registerCountdown(stepContext) {
@@ -88,8 +87,8 @@ class SpyfallDialog extends ComponentDialog {
 
   async distributeRoleStep(stepContext) {
     let session = await Resolvers.gameSession.getSession({ code: stepContext.options.sessionCode });
-    const location = this._spyfallRoles.locations[getRandomInt(this._spyfallRoles.locations.length)];
-    const displayLocation = this._spyfallRoles[`location.${location}`];
+    const location = this._metadata.locations[getRandomInt(this._metadata.locations.length)];
+    const displayLocation = this._metadata[`location.${location}`];
     spyIndex = getRandomInt(session.players.length + 1);
     let voteChoices = session.players.map(p => {
       return { title: p.name, value: p.aad};
@@ -142,7 +141,7 @@ class SpyfallDialog extends ComponentDialog {
   }
 
   renderSpyCard() {
-    const spyfallCard = getIdentityCard(this._spyfallRoles);
+    const spyfallCard = getIdentityCard(this._metadata);
     const card = CardFactory.adaptiveCard(spyfallCard);
     card.content.body[2].text = 'Your location: ❓';
     card.content.body[3].text = 'Your role: 😈Spy';
@@ -160,14 +159,14 @@ class SpyfallDialog extends ComponentDialog {
   }
 
   renderDetectiveCard(index, spyIndex, location) {
-    const detectiveCard = getIdentityCard(this._spyfallRoles);
+    const detectiveCard = getIdentityCard(this._metadata);
     const card = CardFactory.adaptiveCard(detectiveCard);
     card.content.body[2].text =
       'Your location: ' +
-      this._spyfallRoles[`location.${location}`];
+      this._metadata[`location.${location}`];
     card.content.body[3].text =
       'Your role: ' +
-      this._spyfallRoles[`location.${location}.role${((index + spyIndex) % 7) + 1}`];
+      this._metadata[`location.${location}.role${((index + spyIndex) % 7) + 1}`];
     return card;
   }
 

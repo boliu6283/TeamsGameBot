@@ -77,7 +77,7 @@ const spyfallEndGamehelper = async (args) => {
   gameScoreCard.content.body[0].text = displayText;
   gameScoreCard.content.body[1].url = gameScorePics[0];
 
-  const newSession = await Resolvers.gameSession.getSession({ code }); 
+  const newSession = await Resolvers.gameSession.getSession({ code });
   // ask:: why a new session?
   newSession.players.push(newSession.host);
   newSession.players.forEach((player, index) => {
@@ -126,6 +126,7 @@ const spyfallEndGamehelper = async (args) => {
   card.content.actions[1].data.sessionCode = code;
 
   session.status = 'complete';
+  session.save();
   return await Resolvers.proactiveMessage.notifyIndividualCard(session.host.aad, card);
 }
 
