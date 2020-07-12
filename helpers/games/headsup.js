@@ -1,80 +1,100 @@
 const { CardFactory } = require('botbuilder-core');
+const { getHeadsupScoreCard } = require('../games/headsupCard');
+const constants = require('../../config/constants');
 const Resolvers = require('../../resolvers');
 const EndgameCard = require('../../static/endgameCard.json');
+const GameScoreCard = require('../../static/gameScoreCard.json');
 
 const headsupEndgameHelper = async (args) => {
-    const { sessionCode, reason, loserAad } = args;
-    const session = await Resolvers.gameSession.getSession({ code: sessionCode });
+  const { sessionCode, reason, loserAad } = args;
+  const session = await Resolvers.gameSession.getSession({ code: sessionCode });
 
-    if (!session) {
-        throw Error(`Session ${session} cannot be found`);
-    }
+  if (!session) {
+    throw Error(`Session ${session} cannot be found`);
+  }
 
-    // Send out Endgame Proactive Messages
-    switch (reason) {
-        case 'admitted':
-            await handleAdmittedEndgame(session, loserAad);
-            await creditScores(session, loserAad);
-            break;
-        case 'timeout':
-            await handleTimeoutEndgame(session);
-            await creditTimeoutScore(session);
-            break;
-        default:
-            throw Error(`Unknown headsup endgame reason ${reason}`);
-    }
+  // Send out Endgame Proactive Messages
+  switch (reason) {
+    case 'admitted':
+      await creditEndgameScores(session, loserAad);
+      await sendEndgameScoreCards(session, loserAad);
+      break;
+    case 'timeout':
+      await creditTimeoutScores(session);
+      await sendTimeoutScoreCards(session);
+      break;
+    default:
+      throw Error(`Unknown headsup endgame reason ${reason}`);
+  }
 
-    // Endgame session
-    await Resolvers.gameSession.endSession({ code: session.code });
+  // Endgame session
+  await Resolvers.gameSession.endSession({ code: session.code });
 
-    // Clean up resources
-    Resolvers.countdown.kill(session.code);
+  // Clean up resources
+  Resolvers.countdown.kill(session.code);
 
-    // Send out restart card
-    await sendRestartCard(session);
+  // Send out restart card
+  await sendRestartCard(session);
 }
 
-const creditScores = async (session, loserAad) => {
-    const allPlayers = [...session.players];
-    allPlayers.push(session.host);
-    const loserName = allPlayers.find(p => p.aad === loserAad).name;
+const creditEndgameScores = async (session, loserAad) => {
+  const allPlayers = [...session.players];
+  allPlayers.push(session.host);
 
-    // TODO: Calculate endgame score if there's a loser
-    await Resolvers.proactiveMessage.notifySession(session.code,
-        `TODO: Here is the endgame summary for ${loserName} a round`);
+  allPlayers.filter(player => player.aad !== loserAad)
+    .forEach(async (player) => {
+      await Resolvers.user.updateUserScore({
+        aad: player.aad,
+        earnedScore: constants.HEADSUP_ENDGAME_SCORE_INCREMENT
+      });
+    });
 }
 
-const creditTimeoutScore = async (session) => {
-    // TODO: Calculate endgame score when timeout
-    await Resolvers.proactiveMessage.notifySession(session.code,
-        `TODO: Here is the endgame summary for timeout`);
+const creditTimeoutScores = async (session) => {
+  const allPlayers = [...session.players];
+  allPlayers.push(session.host);
+
+  allPlayers.forEach(async (player) => {
+    await Resolvers.user.updateUserScore({
+      aad: player.aad,
+      earnedScore: constants.HEADSUP_TIMEOUT_SCORE_INCREMENT
+    });
+  });
 }
 
-const handleAdmittedEndgame = async (session, loserAad) => {
-    const allPlayers = [...session.players];
-    allPlayers.push(session.host);
-    const loserName = allPlayers.find(p => p.aad === loserAad).name;
+const sendEndgameScoreCards = async (session, loserAad) => {
+  const allPlayers = [...session.players];
+  allPlayers.push(session.host);
+  const loserName = allPlayers.find(p => p.aad === loserAad).name;
+  const card = getHeadsupScoreCard(`Player **${loserName}** admitted saying the forbidden word.`,
+    allPlayers,
+    constants.HEADSUP_ENDGAME_SCORE_INCREMENT,
+    loserAad);
+  const adaptiveCard = CardFactory.adaptiveCard(card);
 
-    // TODO: replace this into an adaptive card
-    await Resolvers.proactiveMessage.notifySession(session.code,
-        `TODO: Player **${loserName}** admitted saying the forbidden word.`);
+  await Resolvers.proactiveMessage.notifySessionCard(session.code, adaptiveCard);
 }
 
-const handleTimeoutEndgame = async (session) => {
-    // TODO: replace this into an adaptive card
-    await Resolvers.proactiveMessage.notifySession(session.code,
-        `TODO: No one says any forbidden words. Great jobs everyone!`);
+const sendTimeoutScoreCards = async (session) => {
+  const allPlayers = [...session.players];
+  allPlayers.push(session.host);
+  const card = getHeadsupScoreCard(`No one says any forbidden words. Great work everyone!`,
+    allPlayers,
+    constants.HEADSUP_TIMEOUT_SCORE_INCREMENT);
+  const adaptiveCard = CardFactory.adaptiveCard(card);
+
+  await Resolvers.proactiveMessage.notifySessionCard(session.code, adaptiveCard);
 }
 
 const sendRestartCard = async (session) => {
-    const card = CardFactory.adaptiveCard(EndgameCard);
-    card.content.actions[0].data.sessionCode = session.code;
-    card.content.actions[1].data.sessionCode = session.code;
-    card.content.actions[1].data.recreateSession = 'headsup';
+  const card = CardFactory.adaptiveCard(EndgameCard);
+  card.content.actions[0].data.sessionCode = session.code;
+  card.content.actions[1].data.sessionCode = session.code;
+  card.content.actions[1].data.recreateSession = 'headsup';
 
-    return await Resolvers.proactiveMessage.notifyIndividualCard(session.host.aad, card);
+  return await Resolvers.proactiveMessage.notifyIndividualCard(session.host.aad, card);
 }
 
 module.exports = {
-    headsupEndgameHelper
+  headsupEndgameHelper
 }

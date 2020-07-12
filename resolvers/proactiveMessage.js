@@ -103,6 +103,14 @@ const notifySession = async (sessionCode, message) => {
   await notifyIndividual(session.host.aad, message);
 }
 
+const notifySessionCard = async (sessionCode, card) => {
+  const session = await GameSession.getSession({ code: sessionCode });
+  session.players.forEach(async (p) => {
+    await notifyIndividualCard(p.aad, card);
+  });
+  await notifyIndividualCard(session.host.aad, card);
+}
+
 const notifyUpdatableSession = async (sessionCode, message, updatableId) => {
   const session = await GameSession.getSession({ code: sessionCode });
   session.players.forEach(async (p) => {
@@ -149,6 +157,7 @@ module.exports = {
   notifyIndividual,
   notifyIndividualCard,
   notifySession,
+  notifySessionCard,
   notifyUpdatableIndividual,
   notifyUpdatableIndividualCard,
   notifyUpdatableSession,
