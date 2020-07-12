@@ -22,10 +22,7 @@ class CreateSessionDialog extends Dialog {
 
     // Generate code
     //
-    let roomCode = generateCode();
-    while (await Resolvers.gameSession.doesSessionExist(roomCode)) {
-      roomCode = generateCode();
-    }
+    let roomCode = await generateUniqueSessionCode();
 
     // Generate game session
     //
@@ -45,7 +42,15 @@ class CreateSessionDialog extends Dialog {
   }
 }
 
-function generateCode() {
+async function generateUniqueSessionCode() {
+  let roomCode = _generateCode();
+  while (await Resolvers.gameSession.doesSessionExist(roomCode)) {
+    roomCode = _generateCode();
+  }
+  return roomCode;
+}
+
+async function _generateCode() {
   return 'xxxx'.replace(/[x]/g, function(c) {
      var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
      return v.toString(16);
@@ -54,5 +59,5 @@ function generateCode() {
 
 module.exports = {
   CreateSessionDialog,
-  generateCode
+  generateUniqueSessionCode
 };

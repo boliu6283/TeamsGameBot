@@ -27,9 +27,12 @@ class HeadsupDialog extends ComponentDialog {
   }
 
   async startGameSession(stepContext) {
-    const sessionCode = stepContext.context.activity.value.sessionCode;
-    stepContext.options.sessionCode = sessionCode;
-    stepContext.options.session = await Resolvers.gameSession.getSession({ code: sessionCode });
+    if (stepContext.context.activity.value) {
+      stepContext.options.sessionCode = stepContext.context.activity.value.sessionCode;
+    }
+    const sessionCode = stepContext.options.sessionCode;
+    const session = await Resolvers.gameSession.getSession({ code: sessionCode });
+    stepContext.options.session = session;
 
     // Initialize game data
     if (!this._metadata) {
@@ -37,7 +40,6 @@ class HeadsupDialog extends ComponentDialog {
     }
 
     // Set lifespan of this session
-    const session = stepContext.options.session;
     const playersCount = session.players.length + 1;
     const lifespan = constants.HEADSUP_TURN_PER_PERSON_SEC * playersCount;
 

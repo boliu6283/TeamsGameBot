@@ -10,7 +10,7 @@ const { SpyfallRaisePollDialog } = require('./games/spyfall/spyfallRaisePollDial
 const { SpyfallPollResultCollectDialog } = require('./games/spyfall/spyfallPollResultCollectDialog');
 const { HeadsupDialog } = require('./games/headsup/headsupDialog');
 const { HeadsupResultCollectDialog } = require('./games/headsup/headsupResultCollectDialog');
-const { generateCode } = require('./createSessionDialog');
+const { generateUniqueSessionCode } = require('./createSessionDialog');
 const constants = require('../config/constants')
 const Resolvers = require('../resolvers');
 
@@ -109,23 +109,22 @@ class MainDialog extends ComponentDialog {
     let session = await Resolvers.gameSession.getSession({ code: dc.context.activity.value.sessionCode });
     let gameName = session.game.name;
     let hostInfo = session.host;
-    let roomCode = generateCode();
+    let roomCode = await generateUniqueSessionCode();
 
     // create new game & session
     const gameInfo = await Resolvers.game.getGameByName({ gameName: gameName });
-    let newSession = await Resolvers.gameSession.createSession({ code: roomCode, game: gameInfo._id, host: hostInfo._id});
+    let newSessionCode = await Resolvers.gameSession.createSession({ code: roomCode, game: gameInfo._id, host: hostInfo._id});
 
     // copy players
-    session.players.forEach(async (player, index) => {
+    session.players.forEach(async (player) => {
       await Resolvers.gameSession.addPlayerToSession({
-        code: newSession.code,
-        userId: player.id
+        code: newSessionCode,
+        userId: player._id
       });
     });
 
     // replace with new session
-    session.status = 'complete';
-    dc.context.activity.value.sessionCode = newSession;
+    dc.context.activity.value.sessionCode = newSessionCode;
   }
 
   async _loginOrRegisterUser(turnContext) {
