@@ -69,11 +69,9 @@ class SpyfallRaisePollDialog extends Dialog {
     relatedSession.players.forEach(async (player, index) => {
       if (index != raisedPollInfo.playerVote) {
         let pollResultCollectorCard = CardFactory.adaptiveCard(PollResultCollectorCard);
-        pollResultCollectorCard.content.body[0].text = `
-        Player **${raiseGuyInfo.name}
-        raised the poll to disclose
-        ${selectedPlayerInfo.name}** as a spy.
-        `;
+        pollResultCollectorCard.content.body[0].text = `Player **${raiseGuyInfo.name}** ` +
+        `raised the poll to disclose **${selectedPlayerInfo.name}** as a spy.`;
+        pollResultCollectorCard.content.body[0].wrap = true;
 
         pollResultCollectorCard.content.actions[0].data.sessionCode = raisedPollInfo.sessionCode;
         pollResultCollectorCard.content.actions[0].data.isRightGuess = isRightGuess;
