@@ -20,8 +20,8 @@
         "type": "Action.Submit",
         "title": "🕹️Start Another Match",
         "data": {
-          "recreateSession": "",
-          "sessionCode": ""
+          "recreateSession": "${recreateSession}",
+          "sessionCode": "${sessionCode}"
         }
       }
     ]
