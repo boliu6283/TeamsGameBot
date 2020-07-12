@@ -35,7 +35,7 @@ class JoinSessionDialog extends ComponentDialog {
     const activity = stepContext.context.activity;
 
     // user click return button, go back to the welcome card.
-    if ((activity.value || {}).return == "true") {
+    if ((activity.value || {}).return === "true") {
       return await stepContext.replaceDialog(constants.WELCOME_DIALOG, stepContext.options);
     }
 

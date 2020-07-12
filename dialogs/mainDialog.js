@@ -9,6 +9,7 @@ const { SpyfallGuessDialog } = require('./games/spyfall/spyfallGuessDialog');
 const { SpyfallRaisePollDialog } = require('./games/spyfall/spyfallRaisePollDialog');
 const { SpyfallPollResultCollectDialog } = require('./games/spyfall/spyfallPollResultCollectDialog');
 const { HeadsupDialog } = require('./games/headsup/headsupDialog');
+const { HeadsupResultCollectDialog } = require('./games/headsup/headsupResultCollectDialog');
 const { generateCode } = require('./createSessionDialog');
 const constants = require('../config/constants')
 const Resolvers = require('../resolvers');
@@ -28,6 +29,7 @@ class MainDialog extends ComponentDialog {
       new SpyfallRaisePollDialog(luisRecognizer),
       new SpyfallPollResultCollectDialog(luisRecognizer),
       new HeadsupDialog(luisRecognizer),
+      new HeadsupResultCollectDialog(luisRecognizer)
     ];
 
     // Define the default dialog for a new user to land on
@@ -79,17 +81,22 @@ class MainDialog extends ComponentDialog {
     if (input) {
       if (input.callbackAction === constants.SPYFALL_START_CALLBACK) {
         return await dc.beginDialog(constants.SPYFALL_DIALOG, options);
-      } else if (input.callbackAction === constants.HEADSUP_START_CALLBACK) {
-        return await dc.beginDialog(constants.HEADSUP_DIALOG, options);
       } else if (input.spyGuess) {
         return await dc.beginDialog(constants.SPYFALL_GUESS_DIALOG, options);
       } else if (input.selectedPersonAAD) {
         return await dc.beginDialog(constants.SPYFALL_RAISE_POLL_DIALOG, options);
       } else if (input.spyfallPollSelectedResult) {
         return await dc.beginDialog(constants.SPYFALL_POLL_RESULT_COLLECT_DIALOG, options);
-      } else if (input.recreateSession) {
+      } else if (input.recreateSession === 'spyfall') {
         await this.copySession(dc);
         return await dc.beginDialog(constants.SPYFALL_DIALOG, options);
+      } else if (input.recreateSession === 'headsup') {
+        await this.copySession(dc);
+        return await dc.beginDialog(constants.HEADSUP_DIALOG, options);
+      } else if (input.callbackAction === constants.HEADSUP_START_CALLBACK) {
+        return await dc.beginDialog(constants.HEADSUP_DIALOG, options);
+      } else if (input.headsupLoserAad) {
+        return await dc.beginDialog(constants.HEADSUP_RESULT_COLLECT_DIALOG, options);
       } else if (input.exitGame) {
         return;
       }

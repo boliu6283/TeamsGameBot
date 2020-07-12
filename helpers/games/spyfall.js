@@ -2,7 +2,7 @@ const { CardFactory } = require('botbuilder-core');
 const Resolvers = require('../../resolvers/index');
 const { gameScorePics } = require('../../config/pics')
 const GameScoreCard = require('../../static/gameScoreCard.json');
-const SpyfallEndCard = require('../../static/spyfallEndCard.json');
+const EndgameCard = require('../../static/endgameCard.json');
 
 const spyfallEndGamehelper = async (args) => {
   const { code, res, spyIdx, voterIdx } = args;
@@ -117,16 +117,16 @@ const spyfallEndGamehelper = async (args) => {
   });
 
   // notify session
-  newSession.players.forEach(player => {
-    Resolvers.proactiveMessage.notifyIndividualCard(player.aad, gameScoreCard);
+  newSession.players.forEach(async (player) => {
+    await Resolvers.proactiveMessage.notifyIndividualCard(player.aad, gameScoreCard);
   });
 
-  const card = CardFactory.adaptiveCard(SpyfallEndCard);
+  const card = CardFactory.adaptiveCard(EndgameCard);
   card.content.actions[0].data.sessionCode = code;
   card.content.actions[1].data.sessionCode = code;
+  card.content.actions[1].data.recreateSession = 'spyfall';
 
-  session.status = 'complete';
-  session.save();
+  await Resolvers.gameSession.endSession({ code: session.code });
   return await Resolvers.proactiveMessage.notifyIndividualCard(session.host.aad, card);
 }
 
