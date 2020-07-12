@@ -94,7 +94,9 @@ class JoinSessionDialog extends ComponentDialog {
       code: session.code,
       userId: stepContext.options.user._id
     });
-    await stepContext.context.sendActivity(`Successfully joined session ${session.code}`);
+    await stepContext.context.sendActivity(
+      `Successfully joined ${session.game.name} session ${session.code}, ` +
+      'please wait for host to start the game.');
   }
 
   async notifyHostToStartSession(session, stepContext) {
@@ -116,10 +118,17 @@ class JoinSessionDialog extends ComponentDialog {
     const playersStr = '- ' + session.players.map(p => p.name).join('\r- ');
     newPlayerJoinCard.content.body[2].text = playersStr;
     newPlayerJoinCard.content.actions[0].data.sessionCode = session.code;
-
+    newPlayerJoinCard.content.actions[0].data.callbackAction = this._getCallbackActionFromGame(session);
     return newPlayerJoinCard;
   }
-  
+
+  _getCallbackActionFromGame(session) {
+    switch (session.game._id.toString()) {
+      case '5ef2cda211846b2ac0225533': return constants.SPYFALL_START_CALLBACK;
+      case '5ef2ce5810018e475c941ce1': return constants.HEADSUP_START_CALLBACK;
+      default: throw new Error(`Game Id ${session.game._id} is not registerd in joinSessionDialog`);
+    }
+  }
 }
 
 module.exports = {

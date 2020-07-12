@@ -33,9 +33,14 @@ const getSpyfallMetadata = async () => {
   return (await getGameByName({ gameName: '🕵️Who Is Undercover' })).metadata;
 }
 
+const getHeadsupMetadata = async () => {
+  return (await getGameByName({ gameName: '🗣️Heads Up' })).metadata;
+}
+
 module.exports = {
   getAllGames,
   createGame,
   getGameByName,
-  getSpyfallMetadata
+  getSpyfallMetadata,
+  getHeadsupMetadata
 };

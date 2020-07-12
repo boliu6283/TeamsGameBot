@@ -23,7 +23,7 @@
       "title": "Click to Start Game",
       "data": {
         "sessionCode": "${code}",
-        "callBackMessage": "StartSpyfall"
+        "callbackAction": "${callbackAction}"
       }
     }
   ]

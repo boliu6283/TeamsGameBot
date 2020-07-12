@@ -8,6 +8,7 @@ const { SpyfallDialog } = require('./games/spyfall/spyfallDialog');
 const { SpyfallGuessDialog } = require('./games/spyfall/spyfallGuessDialog');
 const { SpyfallRaisePollDialog } = require('./games/spyfall/spyfallRaisePollDialog');
 const { SpyfallPollResultCollectDialog } = require('./games/spyfall/spyfallPollResultCollectDialog');
+const { HeadsupDialog } = require('./games/headsup/headsupDialog');
 const { generateCode } = require('./createSessionDialog');
 const constants = require('../config/constants')
 const Resolvers = require('../resolvers');
@@ -26,6 +27,7 @@ class MainDialog extends ComponentDialog {
       new SpyfallGuessDialog(luisRecognizer),
       new SpyfallRaisePollDialog(luisRecognizer),
       new SpyfallPollResultCollectDialog(luisRecognizer),
+      new HeadsupDialog(luisRecognizer),
     ];
 
     // Define the default dialog for a new user to land on
@@ -75,22 +77,24 @@ class MainDialog extends ComponentDialog {
     // Handler for proactive messages
     const input = dc.context.activity.value;
     if (input) {
-      if (input.callBackMessage) {
+      if (input.callbackAction === constants.SPYFALL_START_CALLBACK) {
         return await dc.beginDialog(constants.SPYFALL_DIALOG, options);
+      } else if (input.callbackAction === constants.HEADSUP_START_CALLBACK) {
+        return await dc.beginDialog(constants.HEADSUP_DIALOG, options);
       } else if (input.spyGuess) {
         return await dc.beginDialog(constants.SPYFALL_GUESS_DIALOG, options);
       } else if (input.selectedPersonAAD) {
         return await dc.beginDialog(constants.SPYFALL_RAISE_POLL_DIALOG, options);
       } else if (input.spyfallPollSelectedResult) {
         return await dc.beginDialog(constants.SPYFALL_POLL_RESULT_COLLECT_DIALOG, options);
-      }else if (input.recreateSession) {
+      } else if (input.recreateSession) {
         await this.copySession(dc);
         return await dc.beginDialog(constants.SPYFALL_DIALOG, options);
       } else if (input.exitGame) {
         return;
       }
     }
-    
+
     return await dc.beginDialog(constants.WELCOME_DIALOG, options);
   }
 
@@ -111,7 +115,7 @@ class MainDialog extends ComponentDialog {
         userId: player.id
       });
     });
-    
+
     // replace with new session
     session.status = 'complete';
     dc.context.activity.value.sessionCode = newSession;
@@ -144,7 +148,7 @@ class MainDialog extends ComponentDialog {
         givenName: userInfo.givenName
       });
     }
-    
+
     return userDbInfo;
   }
 }

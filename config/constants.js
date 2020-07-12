@@ -10,6 +10,8 @@ module.exports = {
     SPYFALL_GUESS_DIALOG: 'spyfallGuessDialog',
     SPYFALL_RAISE_POLL_DIALOG: 'spyfallRaisePollDialog',
     SPYFALL_POLL_RESULT_COLLECT_DIALOG: 'spyfallPollResultCollectDialog',
+    HEADSUP_DIALOG: 'headsupDialog',
+    HEADSUP_WATERFALL_DIALOG: 'headsupWaterfallDialog',
 
     GAME_CHOICE_DIALOG: 'gameChoiceDialog',
     GAME_WATERFALL_DIALOG: 'gameWaterfallDialog',
@@ -25,7 +27,8 @@ module.exports = {
 
     // Proactive Message Callbacks
     // Spyfall Start Game Proactive Message Callbacks
-    SPYFALL_START_CALLBACK: 'spyfallStartCallback',
+    SPYFALL_START_CALLBACK: 'StartSpyfall',
+    HEADSUP_START_CALLBACK: 'StartHeadsUp',
 
     // Conversation State constants
     DIALOG_STATE: 'DialogState',
@@ -40,6 +43,7 @@ module.exports = {
     ACTION_UPDATABLE: 'action',
 
     // Configurations
-    DEFAULT_SPYFALL_LIFESPAN_SEC: 30,
+    SPYFALL_TURN_PER_PERSON_SEC: 60,
+    HEADSUP_TURN_PER_PERSON_SEC: 60,
     DEFAULT_COUNTDOWN_INTERVAL_SEC: 10,
 }
