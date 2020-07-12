@@ -2,6 +2,9 @@
 // Licensed under the MIT License.
 
 const { ComponentDialog, WaterfallDialog } = require('botbuilder-dialogs');
+const { CardFactory } = require('botbuilder-core');
+const { headsupEndgameHelper } = require('../../../helpers/games/headsup');
+const { getHeadsupCard } = require('../../../helpers/games/headsupCard');
 const constants = require('../../../config/constants');
 const Resolvers = require('../../../resolvers');
 
@@ -40,7 +43,7 @@ class HeadsupDialog extends ComponentDialog {
 
     await Resolvers.proactiveMessage.notifySession(
       sessionCode,
-      `**HeadsUp ${sessionCode} is now started, try to lure other players to speak their words in ${lifespan} seconds!**`
+      `**HeadsUp ${sessionCode} is now started, try to lure other players to say their forbidden words in ${lifespan} seconds!**`
     );
 
     await Resolvers.gameSession.startSession({
@@ -61,7 +64,10 @@ class HeadsupDialog extends ComponentDialog {
       sessionCode,
       constants.DEFAULT_COUNTDOWN_INTERVAL_SEC,
       async () => {
-        console.log('Headsup EndGame Handler should be here (scenario: TIMEOUT)');
+        await headsupEndgameHelper({
+          sessionCode,
+          reason: 'timeout'
+        });
       }
     );
 
@@ -76,8 +82,9 @@ class HeadsupDialog extends ComponentDialog {
 
     const allAssignedWords = this._generateWordsForPlayers(allPlayers);
     allPlayers.forEach(async (player) => {
-      const message = this._generateWordAssignmentCard(allAssignedWords, player.aad);
-      await Resolvers.proactiveMessage.notifyIndividual(player.aad, message);
+      const card = this._generateWordAssignmentCard(session.code, allAssignedWords, player);
+      const adaptiveCard = CardFactory.adaptiveCard(card);
+      await Resolvers.proactiveMessage.notifyIndividualCard(player.aad, adaptiveCard);
     });
     return await stepContext.endDialog();
   }
@@ -119,16 +126,14 @@ class HeadsupDialog extends ComponentDialog {
     return assignedWords;
   }
 
-  _generateWordAssignmentCard(allAssignedWords, currentPlayerAad) {
-    // TODO: generating card instead of message
-    let message = '';
-    Object.keys(allAssignedWords)
-      .filter(playerAad => playerAad != currentPlayerAad)
-      .forEach(playerAad => {
-        const assignedWord = allAssignedWords[playerAad];
-        message += `Lure **${assignedWord.player.name}** to say **${assignedWord.word}**\n\n`
-      });
-    return message;
+  _generateWordAssignmentCard(sessionCode, allAssignedWords, currentPlayer) {
+    const otherAssignedWords = Object.keys(allAssignedWords)
+      .filter(aad => aad != currentPlayer.aad)
+      .reduce((obj, key) => {
+        obj[key] = allAssignedWords[key];
+        return obj;
+      }, {});
+    return getHeadsupCard(sessionCode, currentPlayer, otherAssignedWords);
   }
 }
 
