@@ -10,14 +10,14 @@ const getHeadsupCard = (sessionCode, currentPlayer, otherPlayerAssignedWords) =>
   // { player: player, word: word }
   Object.values(otherPlayerAssignedWords).forEach(item => {
     card.body[1].columns[0].items.push({
-      "type": "TextBlock",
-      "text": item.player.name,
-      "horizontalAlignment": "center"
+      type: 'TextBlock',
+      text: item.player.name,
+      horizontalAlignment: 'center'
     });
     card.body[1].columns[1].items.push({
-      "type": "TextBlock",
-      "text": item.word,
-      "horizontalAlignment": "center"
+      type: 'TextBlock',
+      text: item.word,
+      horizontalAlignment: 'center'
     });
   });
 
