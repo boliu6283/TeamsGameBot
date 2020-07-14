@@ -1,6 +1,7 @@
 const SpyfallCard = require('../../static/spyfallCard.json');
 const SpyActionCard = require('../../static/spyfallSpyActionCard.json');
 const DetectiveActionCard = require('../../static/spyfallDetectiveActionCard.json');
+const GameScoreCard = require('../../static/gameScoreCard.json');
 
 
 const getIdentityCard = (spyfallRoles) => {
@@ -26,8 +27,13 @@ const getDetectiveActionCard = () => {
   return JSON.parse(JSON.stringify(DetectiveActionCard));
 }
 
+const getGameScoreCard = () => {
+  return JSON.parse(JSON.stringify(GameScoreCard));
+}
+
 module.exports = {
   getIdentityCard,
   getSpyActionCard,
-  getDetectiveActionCard
+  getDetectiveActionCard,
+  getGameScoreCard
 }

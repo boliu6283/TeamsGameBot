@@ -56,13 +56,13 @@ const getHeadsupScoreCard = (title, allPlayers, scoreEarned, loserAad) => {
     });
     card.body[2].items[0].columns[2].items.push({
       type: 'TextBlock',
-      text: scoreIncrement.toString(),
+      text: `+${scoreIncrement}`,
       horizontalAlignment: 'center',
       weight: 'Bolder'
     });
     card.body[2].items[0].columns[3].items.push({
       type: 'TextBlock',
-      text: `${player.score} => ${player.score + scoreIncrement}`,
+      text: `${player.score + scoreIncrement}`,
       horizontalAlignment: 'center',
       weight: 'Bolder'
     });

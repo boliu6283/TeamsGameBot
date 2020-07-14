@@ -3,7 +3,6 @@ const { getHeadsupScoreCard } = require('../games/headsupCard');
 const constants = require('../../config/constants');
 const Resolvers = require('../../resolvers');
 const EndgameCard = require('../../static/endgameCard.json');
-const GameScoreCard = require('../../static/gameScoreCard.json');
 
 const headsupEndgameHelper = async (args) => {
   const { sessionCode, reason, loserAad } = args;
