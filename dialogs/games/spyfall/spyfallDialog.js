@@ -14,7 +14,6 @@ const constants = require('../../../config/constants');
 const Resolvers = require('../../../resolvers');
 
 let votedPlayerSet = new Set();
-let spyIndex;
 
 class SpyfallDialog extends ComponentDialog {
   constructor(luisRecognizer) {
@@ -48,6 +47,7 @@ class SpyfallDialog extends ComponentDialog {
     votedPlayerSet.clear();
     let session = await Resolvers.gameSession.getSession({ code: stepContext.options.sessionCode });
     let playersCount = session.players.length + 1;
+    stepContext.options.spyIndex = getRandomInt(playersCount);
     const sessionCode = stepContext.options.sessionCode;
     const lifespan = constants.SPYFALL_TURN_PER_PERSON_SEC * playersCount;
 
@@ -77,7 +77,7 @@ class SpyfallDialog extends ComponentDialog {
         spyfallEndGamehelper({
           code: sessionCode,
           res: 'timeout',
-          spyIdx: spyIndex
+          spyIdx: stepContext.options.spyIndex
         });
       }
     );
@@ -89,7 +89,7 @@ class SpyfallDialog extends ComponentDialog {
     let session = await Resolvers.gameSession.getSession({ code: stepContext.options.sessionCode });
     const location = this._metadata.locations[getRandomInt(this._metadata.locations.length)];
     const displayLocation = this._metadata[`location.${location}`];
-    spyIndex = getRandomInt(session.players.length + 1);
+    const spyIndex = stepContext.options.spyIndex
     let voteChoices = session.players.map(p => {
       return { title: p.name, value: p.aad};
     });
