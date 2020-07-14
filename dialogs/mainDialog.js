@@ -116,12 +116,12 @@ class MainDialog extends ComponentDialog {
     let newSessionCode = await Resolvers.gameSession.createSession({ code: roomCode, game: gameInfo._id, host: hostInfo._id});
 
     // copy players
-    session.players.forEach(async (player) => {
+    await Promise.all(session.players.map(async (player) => {
       await Resolvers.gameSession.addPlayerToSession({
         code: newSessionCode,
         userId: player._id
-      });
-    });
+      })
+    }));
 
     // replace with new session
     dc.context.activity.value.sessionCode = newSessionCode;
