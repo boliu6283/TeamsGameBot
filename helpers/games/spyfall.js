@@ -1,7 +1,7 @@
 const { CardFactory } = require('botbuilder-core');
 const Resolvers = require('../../resolvers/index');
+const { getGameScoreCard } = require('../../helpers/games/spyfallCard');
 const { gameScorePics } = require('../../config/pics')
-const GameScoreCard = require('../../static/gameScoreCard.json');
 const EndgameCard = require('../../static/endgameCard.json');
 
 const spyfallEndGamehelper = async (args) => {
@@ -68,12 +68,7 @@ const spyfallEndGamehelper = async (args) => {
   }
 
   // Clean up GameScoreCard
-  GameScoreCard.body[2].items[0].columns[0].items = [];
-  GameScoreCard.body[2].items[0].columns[1].items = [];
-  GameScoreCard.body[2].items[0].columns[2].items = [];
-  GameScoreCard.body[2].items[0].columns[3].items = [];
-
-  const gameScoreCard = CardFactory.adaptiveCard(GameScoreCard);
+  const gameScoreCard = CardFactory.adaptiveCard(getGameScoreCard());
   gameScoreCard.content.body[0].text = displayText;
   gameScoreCard.content.body[1].url = gameScorePics[0];
 
