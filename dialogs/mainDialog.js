@@ -120,7 +120,7 @@ class MainDialog extends ComponentDialog {
       await Resolvers.gameSession.addPlayerToSession({
         code: newSessionCode,
         userId: player._id
-      })
+      });
     }));
 
     // replace with new session
