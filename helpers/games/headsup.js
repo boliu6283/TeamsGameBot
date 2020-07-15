@@ -40,13 +40,13 @@ const creditEndgameScores = async (session, loserAad) => {
   const allPlayers = [...session.players];
   allPlayers.push(session.host);
 
-  allPlayers.filter(player => player.aad !== loserAad)
-    .forEach(async (player) => {
+  await Promise.all(allPlayers.filter(player => player.aad !== loserAad)
+    .map(async (player) => {
       await Resolvers.user.updateUserScore({
         aad: player.aad,
         earnedScore: constants.HEADSUP_ENDGAME_SCORE_INCREMENT
       });
-    });
+    }));
 }
 
 const creditTimeoutScores = async (session) => {
