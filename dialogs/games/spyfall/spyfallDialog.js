@@ -100,7 +100,7 @@ class SpyfallDialog extends ComponentDialog {
 
     session.players.push(session.host);
 
-    session.players.forEach(async (player, index) => {
+    await Promise.all(session.players.map(async (player, index) => {
       const filteredVoteChoices = voteChoices.filter(choice => choice.title !== player.name);
       const sessionCode = stepContext.options.sessionCode;
 
@@ -118,7 +118,7 @@ class SpyfallDialog extends ComponentDialog {
         player.aad, identityCard);
       await Resolvers.proactiveMessage.notifyUpdatableIndividualCard(
         player.aad, actionCard, actionCardId(sessionCode));
-    });
+    }));
 
     return await stepContext.endDialog();
   }

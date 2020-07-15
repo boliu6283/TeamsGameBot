@@ -25,21 +25,21 @@ const spyfallEndGamehelper = async (args) => {
 
     case 'guessWrong': {
       displayText = 'Players win!!!'
-      session.players.forEach(async (player, index) => {
+      await Promise.all(session.players.map(async (player, index) => {
         if (index !== spyIdx) {
           await Resolvers.user.updateUserScore({
             aad: player.aad,
             earnedScore: 10
           });
         }
-      });
+      }));
 
       break;
     }
 
     case 'voteCorrect': {
       displayText = 'Players win!!!'
-      session.players.forEach(async (player, index) => {
+      await Promise.all(session.players.map(async (player, index) => {
         if (index === voterIdx) {
           await Resolvers.user.updateUserScore({
             aad: player.aad,
@@ -51,7 +51,7 @@ const spyfallEndGamehelper = async (args) => {
             earnedScore: 10
           });
         }
-      });
+      }));
       break;
     }
 
@@ -112,9 +112,9 @@ const spyfallEndGamehelper = async (args) => {
   });
 
   // notify session
-  newSession.players.forEach(async (player) => {
+  await Promise.all(newSession.players.map(async (player) => {
     await Resolvers.proactiveMessage.notifyIndividualCard(player.aad, gameScoreCard);
-  });
+  }));
 
   const card = CardFactory.adaptiveCard(EndgameCard);
   card.content.actions[0].data.sessionCode = code;

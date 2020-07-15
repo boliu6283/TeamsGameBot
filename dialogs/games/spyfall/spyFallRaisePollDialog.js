@@ -66,7 +66,7 @@ class SpyfallRaisePollDialog extends Dialog {
 
     // 5. Broadcast poll in the specific session.
     //
-    relatedSession.players.forEach(async (player, index) => {
+    await Promise.all(relatedSession.players.map(async (player, index) => {
       if (index != raisedPollInfo.playerVote) {
         let pollResultCollectorCard = CardFactory.adaptiveCard(PollResultCollectorCard);
         pollResultCollectorCard.content.body[0].text = `Player **${raiseGuyInfo.name}** ` +
@@ -89,7 +89,7 @@ class SpyfallRaisePollDialog extends Dialog {
           pollCardId(raisedPollInfo.sessionCode)
         );
       }
-    });
+    }));
 
     return await dc.endDialog();
   }
