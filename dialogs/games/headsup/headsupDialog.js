@@ -83,11 +83,11 @@ class HeadsupDialog extends ComponentDialog {
     allPlayers.push(session.host);
 
     const allAssignedWords = this._generateWordsForPlayers(allPlayers);
-    allPlayers.forEach(async (player) => {
+    await Promise.all(allPlayers.map(async (player) => {
       const card = this._generateWordAssignmentCard(session.code, allAssignedWords, player);
       const adaptiveCard = CardFactory.adaptiveCard(card);
       await Resolvers.proactiveMessage.notifyIndividualCard(player.aad, adaptiveCard);
-    });
+    }));
     return await stepContext.endDialog();
   }
 

@@ -97,48 +97,48 @@ const notifyIndividualCard = async(userId, card) => {
 
 const notifySession = async (sessionCode, message) => {
   const session = await GameSession.getSession({ code: sessionCode });
-  session.players.forEach(async (p) => {
+  await Promise.all(session.players.map(async (p) => {
     await notifyIndividual(p.aad, message);
-  });
+  }));
   await notifyIndividual(session.host.aad, message);
 }
 
 const notifySessionCard = async (sessionCode, card) => {
   const session = await GameSession.getSession({ code: sessionCode });
-  session.players.forEach(async (p) => {
+  await Promise.all(session.players.map(async (p) => {
     await notifyIndividualCard(p.aad, card);
-  });
+  }));
   await notifyIndividualCard(session.host.aad, card);
 }
 
 const notifyUpdatableSession = async (sessionCode, message, updatableId) => {
   const session = await GameSession.getSession({ code: sessionCode });
-  session.players.forEach(async (p) => {
+  await Promise.all(session.players.map(async (p) => {
     await notifyUpdatableIndividual(p.aad, message, updatableId);
-  });
+  }));
   await notifyUpdatableIndividual(session.host.aad, message, updatableId);
 }
 
 const notifyUpdatableSessionCard = async (sessionCode, card, updatableId) => {
   const session = await GameSession.getSession({ code: sessionCode });
-  session.players.forEach(async (p) => {
+  await Promise.all(session.players.map(async (p) => {
     await notifyUpdatableIndividualCard(p.aad, card, updatableId);
-  });
+  }));
   await notifyUpdatableIndividualCard(session.host.aad, card, updatableId);
 }
 
 const deleteUpdatableSession = async (sessionCode, updatableId) => {
   const session = await GameSession.getSession({ code: sessionCode });
-  session.players.forEach(async (p) => {
+  await Promise.all(session.players.map(async (p) => {
     await deleteUpdatableIndividual(p.aad, updatableId);
-  });
+  }));
   await deleteUpdatableIndividual(session.host.aad, updatableId);
 }
 
 const notifyAll = async (message) => {
-  Object.keys(_conversationReferences).forEach(async (k) => {
+  await Promise.all(Object.keys(_conversationReferences).map(async (k) => {
     await notifyIndividual(k, message);
-  });
+  }));
 }
 
 const addConversationReference = (context) => {
