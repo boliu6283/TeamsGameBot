@@ -18,6 +18,7 @@ module.exports = {
     GAME_WATERFALL_DIALOG: 'gameWaterfallDialog',
 
     RANK_DIALOG: 'rankDialog',
+    RANK_WATERFALL_DIALOG: 'rankWaterfallDialog',
 
     JOIN_SESSION_DIALOG: 'joinSessionDialog',
     JOIN_SESSION_CARD_PROMPT: 'joinSessionCardPrompt',

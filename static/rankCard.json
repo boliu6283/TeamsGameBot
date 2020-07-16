@@ -33,5 +33,55 @@
         }
       ]
     }
+  ],
+  "actions": [
+    {
+      "type": "Action.ShowCard",
+      "title": "Show my score",
+      "card": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "ColumnSet",
+            "columns": [
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "size": "default",
+                    "weight": "bolder",
+                    "text": "${playerName}",
+                    "horizontalAlignment": "center"
+                  }
+                ]
+              },
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "size": "default",
+                    "weight": "bolder",
+                    "text": "${playerScore}",
+                    "horizontalAlignment": "center"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "🔙Back",
+      "data": {
+        "rankChoice": "back"
+      }
+    }
   ]
 }
