@@ -25,7 +25,7 @@ class GameChoiceDialog extends ComponentDialog {
     GameCard.body = [];
     GameCard.actions = [];
     
-    let gameCard = CardFactory.adaptiveCard(GameCard);
+    let gameCard = CardFactory.adaptiveCard(JSON.parse(JSON.stringify(GameCard)));
     const allGames = await Resolvers.game.getAllGames();
 
     allGames.forEach(game => {
