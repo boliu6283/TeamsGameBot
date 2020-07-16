@@ -132,9 +132,9 @@ class MainDialog extends ComponentDialog {
     if (process.env.DebugMode === 'emulator') {
       const mockUser = {
         aad: turnContext.activity.from.id,
-        email: turnContext.activity.from.id+'test@microsoft.com',
-        name: turnContext.activity.from.id,
-        givenName: turnContext.activity.from.id,
+        email: `${turnContext.activity.from.id}@microsoft.com`,
+        name: turnContext.activity.from.name,
+        givenName: turnContext.activity.from.name,
       };
       let mockUserDbInfo = await Resolvers.user.getUser({ aad: mockUser.aad });
       if (!mockUserDbInfo) {

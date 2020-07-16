@@ -30,13 +30,14 @@ class CreateSessionDialog extends Dialog {
 
     // Render session creation card.
     //
-    let createSessionCard = CardFactory.adaptiveCard(CreateSessionCard);
+    let createSessionCard = CardFactory.adaptiveCard(JSON.parse(JSON.stringify(CreateSessionCard)));
     createSessionCard.content.body[0].items[0].columns[0].items[0].text = gameInfo.name;
     createSessionCard.content.body[0].items[0].columns[0].items[1].url = gameInfo.profile;
     createSessionCard.content.body[0].items[0].columns[0].items[2].text = `**Rules:** \n\n ${gameInfo.rules}`;
     createSessionCard.content.body[0].items[0].columns[0].items[3].text = `Room code: ${roomCode.toString()}`;
 
-    await dc.context.sendActivity({ attachments: [createSessionCard] });
+    await dc.context.deleteActivity(dc.options.lastActivityId);
+    dc.options.lastActivityId = (await dc.context.sendActivity({ attachments: [createSessionCard] })).id;
 
     return dc.endDialog();
   }
