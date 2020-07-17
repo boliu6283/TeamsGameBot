@@ -27,6 +27,10 @@ module.exports = {
     CREATE_SESSION_DIALOG: 'createSessionDialog',
     CREATE_SESSION_WATERFALL_DIALOG: 'createSessionWaterfallDialog',
 
+    // Game ObjIds
+    SPYFALL_OBJ_ID = '5ef2cda211846b2ac0225533',
+    HEADSUP_OBJ_ID = '5ef2ce5810018e475c941ce1',
+
     // Proactive Message Callbacks
     // Spyfall Start Game Proactive Message Callbacks
     SPYFALL_START_CALLBACK: 'StartSpyfall',

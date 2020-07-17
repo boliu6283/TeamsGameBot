@@ -6,7 +6,7 @@ const getAllGames = async () => {
 
 const getGameById = async (args) => {
   const gameInfo = await Game.findById(args._id);
-  if (!gameInfo) throw new Error (`Failed to find game: ${gameName}`);
+  if (!gameInfo) throw new Error ('Failed to find game in Game collection');
 
   return gameInfo;
 }
@@ -28,18 +28,13 @@ const createGame = async (args) => {
   return game.name;
 }
 
-const getSpyfallMetadata = async () => {
-  return (await getGameById({ _id: '5ef2cda211846b2ac0225533' })).metadata;
-}
-
-const getHeadsupMetadata = async () => {
-  return (await getGameById({ _id: '5ef2ce5810018e475c941ce1' })).metadata;
+const getGameMetadata = async (args) => {
+  return (await getGameById({ _id: args._id })).metadata;
 }
 
 module.exports = {
   getAllGames,
   createGame,
   getGameById,
-  getSpyfallMetadata,
-  getHeadsupMetadata
+  getGameMetadata
 };

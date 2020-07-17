@@ -36,7 +36,7 @@ class HeadsupDialog extends ComponentDialog {
 
     // Initialize game data
     if (!this._metadata) {
-      this._metadata = await Resolvers.game.getHeadsupMetadata();
+      this._metadata = await Resolvers.game.getGameMetadata({ _id: constants.HEADSUP_OBJ_ID });
     }
 
     // Set lifespan of this session

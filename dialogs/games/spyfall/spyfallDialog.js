@@ -40,7 +40,7 @@ class SpyfallDialog extends ComponentDialog {
 
     // Initialize game data
     if (!this._metadata) {
-      this._metadata = await Resolvers.game.getSpyfallMetadata();
+      this._metadata = await Resolvers.game.getGameMetadata({ _id: constants.SPYFALL_OBJ_ID});
     }
 
     // Set lifespan of this session
