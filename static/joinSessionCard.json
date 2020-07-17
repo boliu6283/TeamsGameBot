@@ -36,13 +36,16 @@
   "actions": [
     {
       "type": "Action.Submit",
-      "title": "Join"
+      "title": "Join",
+      "data": {
+        "joinSessionChoice": "join"
+      }
     },
     {
       "type": "Action.Submit",
-      "title": "Return",
+      "title": "Back",
       "data": {
-        "return": "true"
+        "joinSessionChoice": "back"
       }
     }
   ]

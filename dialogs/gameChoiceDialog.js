@@ -86,6 +86,22 @@ class GameChoiceDialog extends ComponentDialog {
       gameCard.content.actions.push(gameBtn);
     });
 
+    gameCard.content.actions.push({
+      type: 'Action.Submit',
+      title: '🙋‍♂️Join Game',
+      data: {
+        gameChoice: 'join'
+      }
+    });
+
+    gameCard.content.actions.push({
+      type: 'Action.Submit',
+      title: '🔙Back',
+      data: {
+        gameChoice: 'back'
+      }
+    });
+
     await stepContext.context.deleteActivity(stepContext.options.lastActivityId);
     stepContext.options.lastActivityId = (await stepContext.context.sendActivity({ attachments: [gameCard] })).id;
 
@@ -97,8 +113,22 @@ class GameChoiceDialog extends ComponentDialog {
     if (!choice) {
       return await stepContext.replaceDialog(constants.GAME_CHOICE_DIALOG, stepContext.options);
     }
-    stepContext.options.gameChoice = choice.gameChoice;
-    return await stepContext.replaceDialog(constants.CREATE_SESSION_DIALOG, stepContext.options);
+
+    switch (choice.gameChoice) {
+      case 'join': {
+        return await stepContext.replaceDialog(constants.JOIN_SESSION_DIALOG, stepContext.options);
+      }
+
+      case 'back': {
+        return await stepContext.replaceDialog(constants.WELCOME_DIALOG, stepContext.options);
+      }
+
+      default: {
+        stepContext.options.gameChoice = choice.gameChoice;
+        return await stepContext.replaceDialog(constants.CREATE_SESSION_DIALOG, stepContext.options);
+      }
+    }
+
   }
 }
 
