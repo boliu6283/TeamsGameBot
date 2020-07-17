@@ -79,7 +79,7 @@ class GameChoiceDialog extends ComponentDialog {
         type: 'Action.Submit',
         title: game.name,
         data: {
-          gameChoice: game.name
+          gameChoice: game._id
         }
       };
 

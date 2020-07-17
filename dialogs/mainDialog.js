@@ -107,12 +107,12 @@ class MainDialog extends ComponentDialog {
 
   async copySession(dc) {
     let session = await Resolvers.gameSession.getSession({ code: dc.context.activity.value.sessionCode });
-    let gameName = session.game.name;
+    let gameId = session.game._id;
     let hostInfo = session.host;
     let roomCode = await generateUniqueSessionCode();
 
     // create new game & session
-    const gameInfo = await Resolvers.game.getGameByName({ gameName: gameName });
+    const gameInfo = await Resolvers.game.getGameById({ _id: gameId });
     let newSessionCode = await Resolvers.gameSession.createSession({ code: roomCode, game: gameInfo._id, host: hostInfo._id});
 
     // copy players

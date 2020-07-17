@@ -106,7 +106,7 @@ class SpyfallDialog extends ComponentDialog {
 
       // Don't use 'let' statement here, await will cause context switch
       let identityCard;
-      let actionCard
+      let actionCard;
       if (index === spyIndex) {
         identityCard = this.renderSpyCard();
         actionCard = this.renderSpyActionCard(sessionCode, spyIndex, displayLocation);
