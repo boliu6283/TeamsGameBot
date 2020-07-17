@@ -28,7 +28,7 @@
     },
     {
       "type": "Action.Submit",
-      "title": "🪑Join Game",
+      "title": "🙋‍♂️Join Game",
       "data": {
         "welcomeChoice": "join"
       }

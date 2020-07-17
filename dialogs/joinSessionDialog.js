@@ -21,8 +21,10 @@ class JoinSessionDialog extends ComponentDialog {
 
   async joinSessionCardSetup(stepContext) {
     // first send user a card asking for room code
-    const joinSessionCard = CardFactory.adaptiveCard(JoinSessionCard);
-    await stepContext.context.sendActivity({ attachments: [joinSessionCard] });
+    const joinSessionCard = CardFactory.adaptiveCard(JSON.parse(JSON.stringify(JoinSessionCard)));
+    await stepContext.context.deleteActivity(stepContext.options.lastActivityId);
+    stepContext.options.lastActivityId = (await stepContext.context.sendActivity({ attachments: [joinSessionCard] })).id;
+
 
     // Adaptive Card nativly don't work with prompt, it won't wait for user action
     // to send back, as a workaround, we will first send the card and end the current dialog
@@ -32,23 +34,25 @@ class JoinSessionDialog extends ComponentDialog {
   }
 
   async searchSession(stepContext) {
-    const activity = stepContext.context.activity;
-
-    // user click return button, go back to the welcome card.
-    if ((activity.value || {}).return === "true") {
-      return await stepContext.replaceDialog(constants.WELCOME_DIALOG, stepContext.options);
-    }
-
-    // make sure the response is from postback(adaptive submit button)
-    // otherwise fall back to initial user input card
-    if (!(activity.value || {}).sessionCode) {
+    const choice = stepContext.context._activity.value;
+    if (!choice) {
       return await this.fallBackToUserInput(
         'Action unsupported, please enter a valid room number, or click Return to exit.',
         stepContext)
     }
 
+    switch (choice.gameChoice) {
+      case 'join': {
+        break;
+      }
+
+      case 'back': {
+        return await stepContext.replaceDialog(constants.WELCOME_DIALOG, stepContext.options);
+      }
+    }
+
     // validate user input sessionCode, fallback to user input if failed
-    const sessionCode = activity.value.sessionCode;
+    const sessionCode = choice.sessionCode;
     let session = await Resolvers.gameSession.getSession({ code: sessionCode });
     if (!session) {
       console.log('invalid session code:' + sessionCode);
@@ -81,7 +85,7 @@ class JoinSessionDialog extends ComponentDialog {
     await this.addPlayerToAwaitingSession(session, stepContext);
 
     // get updated session
-    session = await Resolvers.gameSession.getSession({ code: sessionCode });
+    session.players.push(stepContext.options.user);
 
     // notify host that someone join the meeting, generate a link to start game
     await this.notifyHostToStartSession(session, stepContext);
@@ -94,9 +98,10 @@ class JoinSessionDialog extends ComponentDialog {
       code: session.code,
       userId: stepContext.options.user._id
     });
-    await stepContext.context.sendActivity(
+    await stepContext.context.deleteActivity(stepContext.options.lastActivityId);
+    stepContext.options.lastActivityId = (await stepContext.context.sendActivity(
       `Successfully joined ${session.game.name} session ${session.code}, ` +
-      'please wait for host to start the game.');
+      'please wait for host to start the game.')).id;
   }
 
   async notifyHostToStartSession(session, stepContext) {
@@ -119,13 +124,14 @@ class JoinSessionDialog extends ComponentDialog {
     newPlayerJoinCard.content.body[2].text = playersStr;
     newPlayerJoinCard.content.actions[0].data.sessionCode = session.code;
     newPlayerJoinCard.content.actions[0].data.callbackAction = this._getCallbackActionFromGame(session);
+
     return newPlayerJoinCard;
   }
 
   _getCallbackActionFromGame(session) {
     switch (session.game._id.toString()) {
-      case '5ef2cda211846b2ac0225533': return constants.SPYFALL_START_CALLBACK;
-      case '5ef2ce5810018e475c941ce1': return constants.HEADSUP_START_CALLBACK;
+      case constants.SPYFALL_OBJ_ID: return constants.SPYFALL_START_CALLBACK;
+      case constants.HEADSUP_OBJ_ID: return constants.HEADSUP_START_CALLBACK;
       default: throw new Error(`Game Id ${session.game._id} is not registerd in joinSessionDialog`);
     }
   }
