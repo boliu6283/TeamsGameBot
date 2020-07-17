@@ -4,9 +4,8 @@ const getAllGames = async () => {
   return await Game.find({}, 'name description capacity profile');
 }
 
-const getGameByName = async (args) => {
-  const { gameName } = args;
-  const gameInfo = await Game.findOne({ name: gameName });
+const getGameById = async (args) => {
+  const gameInfo = await Game.findById(args._id);
   if (!gameInfo) throw new Error (`Failed to find game: ${gameName}`);
 
   return gameInfo;
@@ -30,17 +29,17 @@ const createGame = async (args) => {
 }
 
 const getSpyfallMetadata = async () => {
-  return (await getGameByName({ gameName: '🕵️Who Is Undercover' })).metadata;
+  return (await getGameById({ _id: '5ef2cda211846b2ac0225533' })).metadata;
 }
 
 const getHeadsupMetadata = async () => {
-  return (await getGameByName({ gameName: '🗣️Heads Up' })).metadata;
+  return (await getGameById({ _id: '5ef2ce5810018e475c941ce1' })).metadata;
 }
 
 module.exports = {
   getAllGames,
   createGame,
-  getGameByName,
+  getGameById,
   getSpyfallMetadata,
   getHeadsupMetadata
 };

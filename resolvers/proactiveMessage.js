@@ -46,19 +46,18 @@ const notifyUpdatableIndividual = async (userId, message, updatableId) => {
   }
 }
 
-const notifyUpdatableIndividualCard = async (userId, card, updatableId) => {
+const notifyUpdatableIndividualCard = async (userId, cardContext, updatableId) => {
   const adapter = BotAdapter.getInstance();
   if (_conversationReferences[userId]) {
     const cref = _conversationReferences[userId].turnContext;
     const updatables = _conversationReferences[userId].updatables;
 
     await adapter.continueConversation(cref, async turnContext => {
-      const cardContext = CardFactory.adaptiveCard(card);
       if (updatables[updatableId]) {
         cardContext.id = updatables[updatableId];
         await turnContext.updateActivity(cardContext);
       } else {
-        updatables[updatableId] = await notifyIndividualCard(userId, card);
+        updatables[updatableId] = await notifyIndividualCard(userId, cardContext);
       }
     });
   }

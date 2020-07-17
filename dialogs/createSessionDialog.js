@@ -13,8 +13,7 @@ class CreateSessionDialog extends Dialog {
   async beginDialog(dc, options) {
     // Find the chosen game.
     //
-    const chosenGame = options.gameChoice;
-    const gameInfo = await Resolvers.game.getGameByName({ gameName: chosenGame });
+    const gameInfo = await Resolvers.game.getGameById({ _id: options.gameChoice });
 
     // Get host info.
     //
