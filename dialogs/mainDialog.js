@@ -12,7 +12,8 @@ const { SpyfallPollResultCollectDialog } = require('./games/spyfall/spyfallPollR
 const { HeadsupDialog } = require('./games/headsup/headsupDialog');
 const { HeadsupResultCollectDialog } = require('./games/headsup/headsupResultCollectDialog');
 const { generateUniqueSessionCode } = require('./createSessionDialog');
-const constants = require('../config/constants')
+const constants = require('../config/constants');
+const { joinSessionHelper } = require('../helpers/joinSession');
 const Resolvers = require('../resolvers');
 
 class MainDialog extends ComponentDialog {
@@ -78,7 +79,7 @@ class MainDialog extends ComponentDialog {
    */
   async beginDialog(dc, options) {
     if (dc.context.activity.text) {
-      await this.textInputHandler(dc);
+      await this.textInputHandler(dc, options);
     }
 
     // Handler for proactive messages
@@ -106,11 +107,11 @@ class MainDialog extends ComponentDialog {
         return;
       }
     }
-
-    return await dc.beginDialog(constants.WELCOME_DIALOG, options);
   }
 
-  async textInputHandler(dc) {
+  async textInputHandler(dc, options) {
+    const input = dc.context.activity.text;
+    const code = input.split(' ').pop();
     const luisResult = await this._luisRecognizer.recognize(dc.context);
     switch (LuisRecognizer.topIntent(luisResult)) {
       case 'Host': {
@@ -118,7 +119,16 @@ class MainDialog extends ComponentDialog {
       }
 
       case 'Join': {
-        return await dc.beginDialog(constants.JOIN_SESSION_DIALOG, options);
+        if (Resolvers.gameSession.doesSessionExist({ code })) {
+          await joinSessionHelper(dc, code, options);
+          return dc.endDialog();
+        } else {
+          return await dc.beginDialog(constants.JOIN_SESSION_DIALOG, options);
+        }
+      }
+
+      default: {
+        return await dc.beginDialog(constants.WELCOME_DIALOG, options);
       }
     }
   }
