@@ -98,17 +98,17 @@ const conversationReferences = {};
 
 // LuisConfiguration Section
 const luisRecognizer = new LuisRecognizer({
-  applicationId: process.env.LuisAppId,
-  endpointKey: process.env.LuisAPIKey,
-  endpoint: `https://${process.env.LuisAPIHostName}`,
-},
+    applicationId: process.env.LuisAppId,
+    endpointKey: process.env.LuisAPIKey,
+    endpoint: `https://${process.env.LuisAPIHostName}`,
+  },
   {
     apiVersion: 'v3'
   }
 );
 
 // Create the main dialog
-const mainDialog = new MainDialog(conversationReferences, luisRecognizer);
+const mainDialog = new MainDialog(luisRecognizer);
 const mainBot = new DialogBot(conversationReferences, conversationState, userState, mainDialog);
 
 // Connect to Mongo DB

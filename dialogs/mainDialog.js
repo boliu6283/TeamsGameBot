@@ -3,6 +3,7 @@
 
 const { TeamsInfo } = require('botbuilder');
 const { ComponentDialog, DialogSet, DialogTurnStatus} = require('botbuilder-dialogs');
+const { LuisRecognizer } = require('botbuilder-ai');
 const { WelcomeDialog } = require('./welcomeDialog');
 const { SpyfallDialog } = require('./games/spyfall/spyfallDialog');
 const { SpyfallGuessDialog } = require('./games/spyfall/spyfallGuessDialog');
@@ -76,6 +77,10 @@ class MainDialog extends ComponentDialog {
    * @param {*} options userProfile
    */
   async beginDialog(dc, options) {
+    if (dc.context.activity.text) {
+      await this.textInputHandler(dc);
+    }
+
     // Handler for proactive messages
     const input = dc.context.activity.value;
     if (input) {
@@ -103,6 +108,19 @@ class MainDialog extends ComponentDialog {
     }
 
     return await dc.beginDialog(constants.WELCOME_DIALOG, options);
+  }
+
+  async textInputHandler(dc) {
+    const luisResult = await this._luisRecognizer.recognize(dc.context);
+    switch (LuisRecognizer.topIntent(luisResult)) {
+      case 'Host': {
+        return await dc.beginDialog(constants.GAME_CHOICE_DIALOG, options);
+      }
+
+      case 'Join': {
+        return await dc.beginDialog(constants.JOIN_SESSION_DIALOG, options);
+      }
+    }
   }
 
   async copySession(dc) {
