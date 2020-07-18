@@ -7,7 +7,7 @@ const {
   getIdentityCard,
   getSpyActionCard,
   getDetectiveActionCard } = require('../../../helpers/games/spyfallCard');
-const { getRandomInt } = require('../../../helpers/thumbnail');
+const { getRandomInt, printTime } = require('../../../helpers/thumbnail');
 const { actionCardId } = require('../../../helpers/updatableId');
 const { spyfallEndGamehelper } = require('../../../helpers/games/spyfall');
 const constants = require('../../../config/constants');
@@ -50,10 +50,14 @@ class SpyfallDialog extends ComponentDialog {
     stepContext.options.spyIndex = getRandomInt(playersCount);
     const sessionCode = stepContext.options.sessionCode;
     const lifespan = constants.SPYFALL_TURN_PER_PERSON_SEC * playersCount;
+    const min = Math.floor(lifespan / 60);
+    const sec = lifespan - min * 60;
 
     await Resolvers.proactiveMessage.notifySession(
       sessionCode,
-      `**Spyfall ${sessionCode} is now started, try to find the spy in ${lifespan} seconds!**`
+      `Spyfall **${sessionCode}** is now started, ` +
+      `try to find the spy in ` +
+      `**${printTime(min, '0', 2)}:${printTime(sec, '0', 2)}**`
     );
 
     await Resolvers.gameSession.startSession({

@@ -3,6 +3,7 @@
 
 const { ComponentDialog, WaterfallDialog } = require('botbuilder-dialogs');
 const { CardFactory } = require('botbuilder-core');
+const { printTime } = require('../../../helpers/thumbnail');
 const { headsupEndgameHelper } = require('../../../helpers/games/headsup');
 const { getHeadsupCard } = require('../../../helpers/games/headsupCard');
 const constants = require('../../../config/constants');
@@ -42,10 +43,14 @@ class HeadsupDialog extends ComponentDialog {
     // Set lifespan of this session
     const playersCount = session.players.length + 1;
     const lifespan = constants.HEADSUP_TURN_PER_PERSON_SEC * playersCount;
+    const min = Math.floor(lifespan / 60);
+    const sec = lifespan - min * 60;
 
     await Resolvers.proactiveMessage.notifySession(
       sessionCode,
-      `**HeadsUp ${sessionCode} is now started, try to lure other players to say their forbidden words in ${lifespan} seconds!**`
+      `HeadsUp **${sessionCode}** is now started, ` + 
+      `try to lure other players to say their forbidden words in ` + 
+      `**${printTime(min, '0', 2)}:${printTime(sec, '0', 2)}**`
     );
 
     await Resolvers.gameSession.startSession({

@@ -1,5 +1,6 @@
 const { getSession } = require('./gameSession');
 const { notifyUpdatableSession, deleteUpdatableSession } = require('./proactiveMessage');
+const { printTime } = require('../helpers/thumbnail');
 const { countdownMessageId } = require('../helpers/updatableId');
 
 // { sessionCode: SessionCountdown }
@@ -67,9 +68,12 @@ class SessionCountDown {
       this._finishCallback();
     } else {
       const reminingSec = this.getReminingSeconds();
+      const min = Math.floor(reminingSec / 60);
+      const sec = reminingSec - min * 60;
       await notifyUpdatableSession(
         this._session.code,
-        `Game session ${this._session.code} remains ${reminingSec} seconds.`,
+        `Game session ${this._session.code} remains ` +
+        `**${printTime(min, '0', 2)}:${printTime(sec, '0', 2)}**`,
         this._proactiveMessageUpdatableId);
     }
   }
