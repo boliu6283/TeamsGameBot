@@ -4,7 +4,10 @@ root = true
 end_of_line = lf
 insert_final_new_line = true
 
-[*, {js, json}]
+[*.{js}]
+quote_type = single
+
+[*.{js, json}]
 charset = utf-8
 indent_size = 2
 indent_style = space

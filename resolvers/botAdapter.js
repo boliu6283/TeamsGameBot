@@ -14,4 +14,4 @@ const getInstance = (appId, appPassword) => {
 
 module.exports = {
   getInstance
-}
+};

@@ -1,8 +1,8 @@
 {
-  "name": "GameBot",
+  "name": "Jolly",
   "version": "1.0.0",
-  "description": "Game Bot on Teams",
-  "author": "Secret Team",
+  "description": "Jolly Game Lobby on Teams",
+  "author": "Jolly Team",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com"
+    "url": "https://github.com/boliu6283/TeamsGameBot"
   },
   "dependencies": {
     "@microsoft/recognizers-text-data-types-timex-expression": "^1.1.4",

@@ -30,7 +30,7 @@ class WelcomeDialog extends ComponentDialog {
 
   async welcomeCardStep(stepContext) {
     let welcomeCard = CardFactory.adaptiveCard(WelcomeCard);
-    welcomeCard.content.body[0].text = `Hey ${stepContext.options.user.givenName}! Welcome to Game Bot!`
+    welcomeCard.content.body[0].text = `Hey ${stepContext.options.user.givenName}! Welcome to Jolly!`
     welcomeCard.content.body[1].url = getRandomPic(menuPics);
     if (stepContext.options.lastActivityId) {
       await stepContext.context.deleteActivity(stepContext.options.lastActivityId);

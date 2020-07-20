@@ -146,4 +146,4 @@ class HeadsupDialog extends ComponentDialog {
 
 module.exports = {
   HeadsupDialog
-}
+};
