@@ -102,10 +102,12 @@ class SpyfallDialog extends ComponentDialog {
       value: session.host.aad
     });
 
-    session.players.push(session.host);
+    const allPlayers = [...session.players];
+    allPlayers.push(session.host);
+    // session.players.push(session.host);
 
-    await Promise.all(session.players.map(async (player, index) => {
-      const filteredVoteChoices = voteChoices.filter(choice => choice.title !== player.name);
+    await Promise.all(allPlayers.map(async (player, index) => {
+      const filteredVoteChoices = voteChoices.filter(choice => choice.value !== player.aad);
       const sessionCode = stepContext.options.sessionCode;
 
       // Don't use 'let' statement here, await will cause context switch
