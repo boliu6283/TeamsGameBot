@@ -9,6 +9,7 @@ const { SpyfallDialog } = require('./games/spyfall/spyfallDialog');
 const { SpyfallGuessDialog } = require('./games/spyfall/spyfallGuessDialog');
 const { SpyfallRaisePollDialog } = require('./games/spyfall/spyfallRaisePollDialog');
 const { SpyfallPollResultCollectDialog } = require('./games/spyfall/spyfallPollResultCollectDialog');
+const { SpyfallExitSessionDialog } = require('./games/spyfall/spyfallExitSessionDialog');
 const { HeadsupDialog } = require('./games/headsup/headsupDialog');
 const { HeadsupResultCollectDialog } = require('./games/headsup/headsupResultCollectDialog');
 const { generateUniqueSessionCode } = require('./createSessionDialog');
@@ -31,7 +32,8 @@ class MainDialog extends ComponentDialog {
       new SpyfallRaisePollDialog(luisRecognizer),
       new SpyfallPollResultCollectDialog(luisRecognizer),
       new HeadsupDialog(luisRecognizer),
-      new HeadsupResultCollectDialog(luisRecognizer)
+      new HeadsupResultCollectDialog(luisRecognizer),
+      new SpyfallExitSessionDialog(luisRecognizer)
     ];
 
     // Define the default dialog for a new user to land on
@@ -104,7 +106,7 @@ class MainDialog extends ComponentDialog {
       } else if (input.headsupLoserAad) {
         return await dc.beginDialog(constants.HEADSUP_RESULT_COLLECT_DIALOG, options);
       } else if (input.exitGame) {
-        return;
+        return await dc.beginDialog(constants.SPYFALL_EXIT_SESSION_DIALOG, options);
       }
     }
   }
