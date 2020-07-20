@@ -9,6 +9,7 @@ module.exports = {
     SPYFALL_GUESS_DIALOG: 'spyfallGuessDialog',
     SPYFALL_RAISE_POLL_DIALOG: 'spyfallRaisePollDialog',
     SPYFALL_POLL_RESULT_COLLECT_DIALOG: 'spyfallPollResultCollectDialog',
+    SPYFALL_EXIT_SESSION_DIALOG: 'spyfallExitSessionDialog',
 
     HEADSUP_DIALOG: 'headsupDialog',
     HEADSUP_WATERFALL_DIALOG: 'headsupWaterfallDialog',
