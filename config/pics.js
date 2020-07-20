@@ -18,9 +18,14 @@ const gameScorePics = [
   'https://gamebot.blob.core.windows.net/menu-pic/cat_2.jpg'
 ];
 
+const exitSessionPics = [
+  'https://gamebot.blob.core.windows.net/game-pic/pic_end_session_card.png'
+];
+
 module.exports = {
   menuPics,
   rankPics,
   rankMedals,
-  gameScorePics
+  gameScorePics,
+  exitSessionPics
 };
