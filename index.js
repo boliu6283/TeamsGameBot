@@ -4,6 +4,7 @@
 // index.js is used to setup and configure your bot
 
 // Import required packages
+const fs = require('fs')
 const path = require("path");
 const restify = require("restify");
 const mongoose = require('mongoose');
@@ -135,6 +136,41 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
   console.log(`\n${server.name} listening to ${server.url}`);
   console.log("\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator");
   console.log('\nTo talk to your bot, open the emulator select "Open Bot"');
+});
+
+// Static Pages: Privacy, Service Agreement, Home Page
+const Resources = require('./config/resources');
+
+server.get('/privacy', (req, res, next) => {
+  const body = fs.readFileSync(Resources.PRIVACY_PATH, { encoding: 'utf-8', flag: 'r' });
+  res.setHeader('Content-Type', 'text/html');
+  res.write(body);
+  res.end();
+  return next();
+});
+
+server.get('/serviceagreement', (req, res, next) => {
+  const body = fs.readFileSync(Resources.SERVICE_AGREEMENT_PATH, { encoding: 'utf-8', flag: 'r' });
+  res.setHeader('Content-Type', 'text/html');
+  res.write(body);
+  res.end();
+  return next();
+});
+
+server.get('/favicon.ico', (req, res, next) => {
+  const body = fs.readFileSync(Resources.FAVICON_PATH);
+  res.setHeader('Content-Type', 'image/x-icon');
+  res.write(body);
+  res.end();
+  return next();
+});
+
+server.get('/', (req, res, next) => {
+  const body = fs.readFileSync(Resources.HOME_PATH, { encoding: 'utf-8', flag: 'r' });
+  res.setHeader('Content-Type', 'text/html');
+  res.write(body);
+  res.end();
+  return next();
 });
 
 // Listen for incoming activities and route them to your bot main dialog.
