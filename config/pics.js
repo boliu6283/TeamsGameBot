@@ -1,5 +1,5 @@
 const menuPics = [
-  'https://gamebot.blob.core.windows.net/menu-pic/TeamsGameBot.png'
+  'https://gamebot.blob.core.windows.net/menu-pic/main.png'
 ];
 
 const rankPics = [
