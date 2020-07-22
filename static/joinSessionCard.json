@@ -36,14 +36,14 @@
   "actions": [
     {
       "type": "Action.Submit",
-      "title": "Join",
+      "title": "🙋‍♂️Join",
       "data": {
         "joinSessionChoice": "join"
       }
     },
     {
       "type": "Action.Submit",
-      "title": "Back",
+      "title": "🔙Back",
       "data": {
         "joinSessionChoice": "back"
       }
