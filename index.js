@@ -27,8 +27,10 @@ const { MainDialog } = require("./dialogs/mainDialog");
 const Resolver = require("./resolvers");
 
 // Note: Ensure you have a .env file and include LuisAppId, LuisAPIKey and LuisAPIHostName.
-const ENV_FILE = path.join(__dirname, ".env");
-require("dotenv").config({ path: ENV_FILE });
+const envFilePath = path.join(__dirname, ".env");
+if (fs.existsSync(envFilePath)) {
+  require("dotenv").config({ path: envFilePath });
+}
 
 // Use .env DebugMode = emulator to enable local bot-emulator debug
 // Set id & psw to empty for localhost (when testing on bot-emulator)
