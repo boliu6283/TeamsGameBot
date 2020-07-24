@@ -11,4 +11,4 @@ module.exports = {
   HOME_PATH,
   SERVICE_AGREEMENT_PATH,
   FAVICON_PATH
-}
+};

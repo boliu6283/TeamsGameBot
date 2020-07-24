@@ -3,7 +3,7 @@ const menuPics = [
 ];
 
 const rankPics = [
-  'https://gamebot.blob.core.windows.net/menu-pic/rank_1.jpg'
+  'https://gamebot.blob.core.windows.net/menu-pic/pets_1.jpg'
 ];
 
 const rankMedals = [
@@ -13,19 +13,25 @@ const rankMedals = [
   '🥉'
 ];
 
-const gameScorePics = [
+const sharePics = [
   'https://gamebot.blob.core.windows.net/menu-pic/cat_1.jpg',
-  'https://gamebot.blob.core.windows.net/menu-pic/cat_2.jpg'
+  'https://gamebot.blob.core.windows.net/menu-pic/cat_2.jpg',
+  'https://gamebot.blob.core.windows.net/menu-pic/cat_3.jpg'
+];
+
+const gameScorePics = [
+  'https://gamebot.blob.core.windows.net/menu-pic/game_score.jpg'
 ];
 
 const exitSessionPics = [
-  'https://gamebot.blob.core.windows.net/game-pic/pic_end_session_card.png'
+  'https://gamebot.blob.core.windows.net/menu-pic/end_session_1.png'
 ];
 
 module.exports = {
   menuPics,
   rankPics,
   rankMedals,
+  sharePics,
   gameScorePics,
   exitSessionPics
 };
