@@ -1,8 +1,8 @@
 const { Dialog } = require('botbuilder-dialogs');
 const { CardFactory } = require('botbuilder-core');
-const constants = require('../../../config/constants');
-const { exitSessionPics } = require('../../../config/pics');
-const ExitSessionCard = require('../../../static/exitSessionCard.json');
+const constants = require('../config/constants');
+const { exitSessionPics } = require('../config/pics');
+const ExitSessionCard = require('../static/exitSessionCard.json');
 
 class ExitSessionDialog extends Dialog {
   constructor(luisRecognizer) {
