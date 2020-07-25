@@ -18,4 +18,4 @@ const gameSessionSchema = new Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('GameSessionSchema', gameSessionSchema);
+module.exports = mongoose.model('GameSession', gameSessionSchema);
