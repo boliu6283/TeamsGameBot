@@ -1,0 +1,51 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "spacing": "medium",
+      "size": "default",
+      "weight": "bolder",
+      "text": "${welcomeText}",
+      "wrap": true,
+      "maxLines": 0
+    },
+    {
+      "type": "Image",
+      "url": "${welcomePic}",
+      "size": "stretch"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "🕹️Host Game",
+      "data": {
+        "welcomeChoice": "host"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "🙋‍♂️Join Game",
+      "data": {
+        "welcomeChoice": "join"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "🔝Top10 Rank",
+      "data": {
+        "welcomeChoice": "rank"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "❤️Share",
+      "data": {
+        "welcomeChoice": "share"
+      }
+    }
+  ]
+}

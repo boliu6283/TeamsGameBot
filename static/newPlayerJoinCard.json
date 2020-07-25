@@ -1,0 +1,30 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": ""
+    },
+    {
+      "type": "TextBlock",
+      "text": "Current Players in the Room:"
+    },
+    {
+      "type": "TextBlock",
+      "text": "",
+      "wrap": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Click to Start Game",
+      "data": {
+        "sessionCode": "${code}",
+        "callbackAction": "${callbackAction}"
+      }
+    }
+  ]
+}

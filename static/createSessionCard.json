@@ -1,0 +1,54 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "spacing": "large",
+                  "size": "extraLarge",
+                  "weight": "bolder",
+                  "text": "${game.name}",
+                  "wrap": true,
+                  "maxLines": 0
+                },
+                {
+                  "type": "Image",
+                  "url": "${game.profile}",
+                  "size": "large"
+                },
+                {
+                  "type": "TextBlock",
+                  "spacing": "medium",
+                  "size": "medium",
+                  "text": "${rules}",
+                  "wrap": true,
+                  "maxLines": 0
+                },
+                {
+                  "type": "TextBlock",
+                  "spacing": "medium",
+                  "size": "large",
+                  "weight": "bolder",
+                  "text": "${roomCode}",
+                  "wrap": true,
+                  "maxLines": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

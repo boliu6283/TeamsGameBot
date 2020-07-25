@@ -1,0 +1,52 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "spacing": "large",
+      "size": "default",
+      "weight": "bolder",
+      "text": "Please type room number",
+      "wrpa": true,
+      "maxLines": 0
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "Input.Text",
+                  "id": "sessionCode"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "🙋‍♂️Join",
+      "data": {
+        "joinSessionChoice": "join"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "🔙Back",
+      "data": {
+        "joinSessionChoice": "back"
+      }
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "Image",
+      "url": "${rankPic}",
+      "size": "stretch"
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": []
+            },
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": []
+            },
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.ShowCard",
+      "title": "Show my score",
+      "card": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "ColumnSet",
+            "columns": [
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "size": "default",
+                    "weight": "bolder",
+                    "text": "${playerName}",
+                    "horizontalAlignment": "center"
+                  }
+                ]
+              },
+              {
+                "type": "Column",
+                "width": "stretch",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "size": "default",
+                    "weight": "bolder",
+                    "text": "${playerScore}",
+                    "horizontalAlignment": "center"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "🔙Back",
+      "data": {
+        "rankChoice": "back"
+      }
+    }
+  ]
+}

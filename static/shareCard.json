@@ -1,0 +1,60 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "Image",
+      "url": "${sharePic}",
+      "size": "stretch"
+    },
+    {
+      "type": "TextBlock",
+      "spacing": "small",
+      "size": "default",
+      "weight": "bolder",
+      "text": "Share your friend with below link, add Jolly to your Teams!",
+      "wrap": true,
+      "maxLines": 0
+    },
+    {
+      "type": "TextBlock",
+      "spacing": "small",
+      "size": "default",
+      "weight": "bolder",
+      "text": "${homeLink}",
+      "wrap": true,
+      "maxLines": 0
+    },
+    {
+      "type": "TextBlock",
+      "spacing": "large",
+      "size": "default",
+      "weight": "bolder",
+      "text": "Or enter your friends' email below! (Seperate emails by ' , ')",
+      "wrap": true
+    },
+    {
+      "type": "Input.Text",
+      "isMultiline": true,
+      "placeholder": "e.g. alias1@microsoft.com,alias2@microsoft.com",
+      "id": "email",
+      "inlineAction": {
+        "type": "Action.Submit",
+        "title": "❤️Share", 
+        "data": {
+          "shareChoice": "share"
+        }
+      }
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "🔙Back",
+      "data": {
+        "shareChoice": "back"
+      }
+    }
+  ]
+}
