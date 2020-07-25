@@ -157,7 +157,7 @@ class SpyfallDialog extends ComponentDialog {
   renderSpyActionCard(sessionCode, spyIndex, location) {
     const spyActionCard = getSpyActionCard();
     const card = CardFactory.adaptiveCard(spyActionCard);
-    card.content.actions[0].title = 'Guess your location';
+    card.content.actions[0].title = 'Guess location';
     card.content.actions[0].data.sessionCode = sessionCode;
     card.content.actions[0].data.spyIdx = spyIndex;
     card.content.actions[0].data.location = location;

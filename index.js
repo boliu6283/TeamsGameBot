@@ -19,7 +19,6 @@ const {
   UserState,
 } = require("botbuilder");
 const { LuisRecognizer } = require("botbuilder-ai");
-const { MicrosoftAppCredentials } = require('botframework-connector');
 
 // This bot's main dialog.
 const { DialogBot } = require("./bots/dialogBot");
@@ -30,6 +29,16 @@ const Resolver = require("./resolvers");
 const envFilePath = path.join(__dirname, ".env");
 if (fs.existsSync(envFilePath)) {
   require("dotenv").config({ path: envFilePath });
+}
+
+// Use .env DebugMode = emulator to enable local bot-emulator debug
+// Set id & psw to empty for localhost (when testing on bot-emulator)
+if (process.env.DebugMode === 'emulator' && !process.env.port && !process.env.PORT) {
+  console.log('Environment .env DebugMode="emulator", using local bot-emulator debug');
+  process.env.MicrosoftAppId = '';
+  process.env.MicrosoftAppPassword = '';
+} else if (process.env.DebugMode === 'teams') {
+  console.log('Environment .env DebugMode="teams", using teams app studio debug');
 }
 
 // Use .env DebugMode = emulator to enable local bot-emulator debug

@@ -3,9 +3,10 @@
 
 const { Dialog, ComponentDialog, WaterfallDialog } = require("botbuilder-dialogs");
 const { CardFactory } = require('botbuilder-core');
-const { RankDialog } = require('./rankDialog');
 const { GameChoiceDialog } = require('./gameChoiceDialog');
 const { JoinSessionDialog } = require('./joinSessionDialog');
+const { RankDialog } = require('./rankDialog');
+const { ShareDialog } = require('./shareDialog');
 const { getRandomPic } = require('../helpers/thumbnail');
 const { menuPics } = require('../config/pics');
 const constants = require('../config/constants');
@@ -24,6 +25,7 @@ class WelcomeDialog extends ComponentDialog {
     this.addDialog(new GameChoiceDialog(luisRecognizer));
     this.addDialog(new RankDialog(luisRecognizer));
     this.addDialog(new JoinSessionDialog(luisRecognizer));
+    this.addDialog(new ShareDialog(luisRecognizer));
 
     this.initialDialogId = constants.WELCOME_WATERFALL_DIALOG;
   }
@@ -57,6 +59,10 @@ class WelcomeDialog extends ComponentDialog {
 
       case 'rank': {
         return await stepContext.replaceDialog(constants.RANK_DIALOG, stepContext.options);
+      }
+
+      case 'share': {
+        return await stepContext.replaceDialog(constants.SHARE_DIALOG, stepContext.options);
       }
     }
 

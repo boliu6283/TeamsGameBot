@@ -39,6 +39,13 @@
       "data": {
         "welcomeChoice": "rank"
       }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "😍Share Jolly with friends",
+      "data": {
+        "welcomeChoice": "share"
+      }
     }
   ]
 }

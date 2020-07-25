@@ -116,18 +116,11 @@ class MainDialog extends ComponentDialog {
     const code = input.split(' ').pop();
     const luisResult = await this._luisRecognizer.recognize(dc.context);
     switch (LuisRecognizer.topIntent(luisResult)) {
-      case 'Host': {
-        return dc.endDialog();
-        // return await dc.beginDialog(constants.GAME_CHOICE_DIALOG, options);
-      }
-
       case 'Join': {
-        if (Resolvers.gameSession.doesSessionExist({ code })) {
+        if (await Resolvers.gameSession.doesSessionExist({ code })) {
           await joinSessionHelper(dc, code, options);
-          return dc.endDialog();
-        } else {
-          return await dc.beginDialog(constants.JOIN_SESSION_DIALOG, options);
         }
+        return await dc.endDialog();
       }
 
       default: {

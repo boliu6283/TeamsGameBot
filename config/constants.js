@@ -1,4 +1,14 @@
 module.exports = {
+    // Domain
+    DOMAIN: 'http://gamebot.azurewebsites.net',
+
+    // Paths
+    HOME_PATH: '/',
+
+    // Teams Deep Links
+    BOT_URL: 'https://teams.microsoft.com/l/chat/0/0?users=28:a108d78b-8d6e-4672-8449-bd9f1064a577',
+    TEAMS_CHAT_URL: 'https://teams.microsoft.com/l/chat/0/0?users=',
+
     // Dialog IDs
     MAIN_DIALOG: 'mainDialog',
 
@@ -54,7 +64,7 @@ module.exports = {
     ACTION_UPDATABLE: 'action',
 
     // Configurations
-    SPYFALL_TURN_PER_PERSON_SEC: 10,
+    SPYFALL_TURN_PER_PERSON_SEC: 60,
     HEADSUP_TURN_PER_PERSON_SEC: 60,
     HEADSUP_ENDGAME_SCORE_INCREMENT: 20,
     HEADSUP_TIMEOUT_SCORE_INCREMENT: 10,
