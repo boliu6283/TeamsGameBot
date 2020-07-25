@@ -59,6 +59,7 @@ module.exports = {
 
     // Proactive message updatable ID
     COUNTDOWN_UPDATABLE: 'countdown',
+    HOST_START_UPDATABLE: 'HOST_START_UPDATABLE',
     POLL_UPDATABLE: 'poll',
     POLL_WAITING_UPDATABLE: 'pollWaiting',
     ACTION_UPDATABLE: 'action',

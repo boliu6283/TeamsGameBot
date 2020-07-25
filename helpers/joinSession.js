@@ -1,6 +1,7 @@
 const { CardFactory } = require('botbuilder-core');
 const Resolvers = require('../resolvers');
 const constants = require('../config/constants');
+const { hostStartCardId } = require('../helpers/updatableId');
 const NewPlayerJoinCard = require('../static/newPlayerJoinCard.json');
 
 const joinSessionHelper = async (context, sessionCode, options) => {
@@ -66,9 +67,10 @@ const addPlayerToAwaitingSession = async (session, context, contextOptions) => {
 };
 
 const notifyHostToStartSession = async (session, context, contextOptions) => {
-  await Resolvers.proactiveMessage.notifyIndividualCard(
+  await Resolvers.proactiveMessage.notifyUpdatableIndividualCard(
     session.host.aad,
-    generateHostNotificationCard(session, context, contextOptions)
+    generateHostNotificationCard(session, context, contextOptions),
+    hostStartCardId(session.code)
   );
 };
 
