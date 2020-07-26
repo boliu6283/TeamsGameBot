@@ -9,12 +9,16 @@
     },
     {
       "type": "TextBlock",
-      "text": "Current Players in the Room:"
+      "text": "Current Players in the Room"
     },
     {
       "type": "TextBlock",
       "text": "",
       "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Language"
     },
     {
       "type": "Input.ChoiceSet",
