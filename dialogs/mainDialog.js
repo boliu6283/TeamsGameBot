@@ -81,7 +81,12 @@ class MainDialog extends ComponentDialog {
    */
   async beginDialog(dc, options) {
     if (dc.context.activity.text) {
-      await this.textInputHandler(dc, options);
+      const result = await this.textInputHandler(dc, options);
+      if (result === 'failure') {
+        return await dc.beginDialog(constants.WELCOME_DIALOG, options);
+      } else if (result === 'success') {
+        return await dc.endDialog();
+      }
     }
 
     // Handler for proactive messages
@@ -109,8 +114,6 @@ class MainDialog extends ComponentDialog {
         return await dc.beginDialog(constants.EXIT_SESSION_DIALOG, options);
       }
     }
-
-    return await dc.beginDialog(constants.WELCOME_DIALOG, options);
   }
 
   async textInputHandler(dc, options) {
@@ -121,10 +124,11 @@ class MainDialog extends ComponentDialog {
       case 'Join': {
         if (await Resolvers.gameSession.doesSessionExist({ code })) {
           await joinSessionHelper(dc, code, options);
+          return 'success';
         }
-        return await dc.endDialog();
       }
     }
+    return 'failure';
   }
 
   async copySession(dc) {
