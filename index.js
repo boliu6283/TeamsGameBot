@@ -4,9 +4,9 @@
 // index.js is used to setup and configure your bot
 
 // Import required packages
-const fs = require('fs')
-const path = require("path");
-const restify = require("restify");
+const fs = require('fs');
+const path = require('path');
+const restify = require('restify');
 const mongoose = require('mongoose');
 
 // Import required bot services.
@@ -17,28 +17,18 @@ const {
   InputHints,
   MemoryStorage,
   UserState,
-} = require("botbuilder");
-const { LuisRecognizer } = require("botbuilder-ai");
+} = require('botbuilder');
+const { LuisRecognizer } = require('botbuilder-ai');
 
 // This bot's main dialog.
-const { DialogBot } = require("./bots/dialogBot");
-const { MainDialog } = require("./dialogs/mainDialog");
-const Resolver = require("./resolvers");
+const { DialogBot } = require('./bots/dialogBot');
+const { MainDialog } = require('./dialogs/mainDialog');
+const Resolver = require('./resolvers');
 
 // Note: Ensure you have a .env file and include LuisAppId, LuisAPIKey and LuisAPIHostName.
-const envFilePath = path.join(__dirname, ".env");
+const envFilePath = path.join(__dirname, '.env');
 if (fs.existsSync(envFilePath)) {
-  require("dotenv").config({ path: envFilePath });
-}
-
-// Use .env DebugMode = emulator to enable local bot-emulator debug
-// Set id & psw to empty for localhost (when testing on bot-emulator)
-if (process.env.DebugMode === 'emulator' && !process.env.port && !process.env.PORT) {
-  console.log('Environment .env DebugMode="emulator", using local bot-emulator debug');
-  process.env.MicrosoftAppId = '';
-  process.env.MicrosoftAppPassword = '';
-} else if (process.env.DebugMode === 'teams') {
-  console.log('Environment .env DebugMode="teams", using teams app studio debug');
+  require('dotenv').config({ path: envFilePath });
 }
 
 // Use .env DebugMode = emulator to enable local bot-emulator debug
@@ -58,7 +48,7 @@ const adapter = Resolver.botAdapter.getInstance(
   process.env.MicrosoftAppPassword);
 
 // Register trust service url endpoint
-// MicrosoftAppCredentials.trustServiceUrl("https://smba.trafficmanager.net/");
+// MicrosoftAppCredentials.trustServiceUrl('https://smba.trafficmanager.net/');
 
 // Catch-all for errors.
 const onTurnErrorHandler = async (context, error) => {
@@ -69,21 +59,21 @@ const onTurnErrorHandler = async (context, error) => {
 
   // Send a trace activity, which will be displayed in Bot Framework Emulator
   await context.sendTraceActivity(
-    "OnTurnError Trace",
+    'OnTurnError Trace',
     `${error}`,
-    "https://www.botframework.com/schemas/error",
-    "TurnError"
+    'https://www.botframework.com/schemas/error',
+    'TurnError'
   );
 
   // Send a message to the user
   if (process.env.DebugMode === 'emulator') {
-    let onTurnErrorMessage = "The bot encountered an error or bug.";
+    let onTurnErrorMessage = 'The bot encountered an error or bug.';
     await context.sendActivity(
       onTurnErrorMessage,
       onTurnErrorMessage,
       InputHints.ExpectingInput
     );
-    onTurnErrorMessage = "To continue to run this bot, please fix the bot source code.";
+    onTurnErrorMessage = 'To continue to run this bot, please fix the bot source code.';
     await context.sendActivity(
       onTurnErrorMessage,
       onTurnErrorMessage,
@@ -147,8 +137,6 @@ mongoose.connection.on('error', () => {
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
   console.log(`\n${server.name} listening to ${server.url}`);
-  console.log("\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator");
-  console.log('\nTo talk to your bot, open the emulator select "Open Bot"');
 });
 
 // Static Pages: Privacy, Service Agreement, Home Page
@@ -187,7 +175,7 @@ server.get('/', (req, res, next) => {
 });
 
 // Listen for incoming activities and route them to your bot main dialog.
-server.post("/api/messages", (req, res) => {
+server.post('/api/messages', (req, res) => {
   // Route received a request to adapter for processing
   adapter.processActivity(req, res, async (turnContext) => {
     // route to bot activity handler.
@@ -196,7 +184,7 @@ server.post("/api/messages", (req, res) => {
 });
 
 // Listen for Upgrade requests for Streaming.
-server.on("upgrade", (req, socket, head) => {
+server.on('upgrade', (req, socket, head) => {
   // Create an adapter scoped to this WebSocket connection to allow storing session data.
   const streamingAdapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,

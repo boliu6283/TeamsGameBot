@@ -30,6 +30,7 @@ class SpyfallDialog extends ComponentDialog {
     );
 
     this.initialDialogId = constants.SPYFALL_WATERFALL_DIALOG;
+    this.language = null;
     this._metadata = null;
   }
 
@@ -39,8 +40,10 @@ class SpyfallDialog extends ComponentDialog {
     }
 
     // Initialize game data
-    if (!this._metadata) {
-      this._metadata = await Resolvers.game.getGameMetadata({ _id: constants.SPYFALL_OBJ_ID});
+    const metaDataUpdate = this.language !== stepContext.context.activity.value.language;
+    if (!this._metadata || !this.language || metaDataUpdate) {
+      this.language = stepContext.context.activity.value.language;
+      this._metadata = (await Resolvers.game.getGameMetadata({ _id: constants.SPYFALL_OBJ_ID}))[this.language];
     }
 
     // Set lifespan of this session
