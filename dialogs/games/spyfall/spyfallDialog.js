@@ -152,8 +152,8 @@ class SpyfallDialog extends ComponentDialog {
   renderSpyCard() {
     const spyfallCard = getIdentityCard(this._metadata);
     const card = CardFactory.adaptiveCard(spyfallCard);
-    card.content.body[2].text = 'Your location: ❓';
-    card.content.body[3].text = 'Your role: 😈Spy';
+    card.content.body[2].text = `${this._metadata['interface.location']}: ❓`;
+    card.content.body[3].text = `${this._metadata['interface.role']}: 😈${this._metadata['interface.spy']}`;
     return card;
   }
 
