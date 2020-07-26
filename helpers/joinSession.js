@@ -67,10 +67,9 @@ const addPlayerToAwaitingSession = async (session, context, contextOptions) => {
 };
 
 const notifyHostToStartSession = async (session, context, contextOptions) => {
-  await Resolvers.proactiveMessage.notifyUpdatableIndividualCard(
+  await Resolvers.proactiveMessage.notifyIndividualCard(
     session.host.aad,
-    generateHostNotificationCard(session, context, contextOptions),
-    hostStartCardId(session.code)
+    generateHostNotificationCard(session, context, contextOptions)
   );
 };
 

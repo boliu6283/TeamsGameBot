@@ -109,6 +109,8 @@ class MainDialog extends ComponentDialog {
         return await dc.beginDialog(constants.EXIT_SESSION_DIALOG, options);
       }
     }
+
+    return await dc.beginDialog(constants.WELCOME_DIALOG, options);
   }
 
   async textInputHandler(dc, options) {
@@ -121,10 +123,6 @@ class MainDialog extends ComponentDialog {
           await joinSessionHelper(dc, code, options);
         }
         return await dc.endDialog();
-      }
-
-      default: {
-        return await dc.beginDialog(constants.WELCOME_DIALOG, options);
       }
     }
   }

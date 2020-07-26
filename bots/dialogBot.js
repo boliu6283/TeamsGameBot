@@ -31,7 +31,7 @@ class DialogBot extends ActivityHandler {
     // Activity Handlers
     // https://docs.microsoft.com/en-us/azure/bot-service/bot-builder-basics?view=azure-bot-service-4.0&tabs=csharp#bot-logic
     this.onMessage(async (context, next) => {
-      console.log('Running dialog with Message Activity.');
+      console.log(`Running dialog with Message Activity. ${context.activity.from.name}`);
 
       // Storing conversation reference for proactive message
       Resolvers.proactiveMessage.addConversationReference(context);
