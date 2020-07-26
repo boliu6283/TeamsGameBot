@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="56" height="66" viewBox="0 0 56 66">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        fill-rule: evenodd;
+        filter: url(#filter);
+      }
+    </style>
+    <filter id="filter" x="0.969" y="0.656" width="54.063" height="65.344" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dy="1" in="SourceAlpha"/>
+      <feGaussianBlur result="blur"/>
+      <feFlood result="flood" flood-color="#0d718b" flood-opacity="0.34"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <path id="windows_bag_logo" data-name="windows bag logo" class="cls-1" d="M45.525,12.936l9.52,3.842L54.962,60.956l-8.184,3.675L0.962,55.612V22.291ZM11.711,38.742v7.776l9.311,1.306V38.742H11.711Zm9.311-9.523-9.311,1.307v7.387h9.311V29.219Zm12.768,8.694V27.427L21.852,29.1v8.81H33.789ZM21.852,47.94l11.938,1.676V38.742H21.852v9.2ZM15.013,17.676L12.9,18V7.549c-0.009-.523-0.11-4.58,6.945-6.367,3.66-.929,6.438-0.653,8.259.815a5.834,5.834,0,0,1,2.04,4.45v7.638l-2.161.282V6.412a3.455,3.455,0,0,0-1.155-2.868c-1.286-1.025-3.531-1.17-6.491-.42-5.676,1.44-5.331,4.258-5.33,4.378V17.676Zm5.98-6.784v5.593l2.122-.245V10.856c0-.078.418-1.452,3.329-2.538V6.438C21.839,7.922,20.986,10.528,20.993,10.892Zm13.923,2.833,2.025-.215V10.055a5.161,5.161,0,0,0-2.055-3.383A6.263,6.263,0,0,0,31.2,5.651v1.66a4.046,4.046,0,0,1,2.6.537,2.776,2.776,0,0,1,1.116,2.18v3.7Z"/>
+</svg>

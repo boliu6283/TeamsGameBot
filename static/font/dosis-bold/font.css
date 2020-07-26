@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'Dosis-Bold';
+  src: url('Dosis-Bold.woff') format('woff'),
+       url('Dosis-Bold.ttf') format('truetype'),
+       url('Dosis-Bold.svg#Dosis-Bold') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'dosis-bold_[allfont.net]';
+  src: url('dosis-bold_[allfont.net].eot');
+  src: url('dosis-bold_[allfont.net].woff2') format('woff2'),
+       url('dosis-bold_[allfont.net].eot?#iefix') format('embedded-opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
