@@ -1,3 +1,56 @@
+<<<<<<< HEAD
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "New Member Joined: "
+    },
+    {
+      "type": "TextBlock",
+      "text": "Current Players in the Room"
+    },
+    {
+      "type": "TextBlock",
+      "text": "",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Language"
+    },
+    {
+      "type": "Input.ChoiceSet",
+      "id": "language",
+      "style": "expanded",
+      "value": "en-US",
+      "choices": [
+        {
+          "title": "English",
+          "value": "en-US"
+        },
+        {
+          "title": "简体中文",
+          "value": "zh-CN"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Click to Start Game",
+      "data": {
+        "sessionCode": "${code}",
+        "callBackMessage": "StartSpyfall"
+      }
+    }
+  ]
+}
+||||||| 24d17a4
+=======
 {
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
   "type": "AdaptiveCard",
@@ -48,3 +101,4 @@
     }
   ]
 }
+>>>>>>> c50b1021c7ccf1f7cf8fb485ded1be6ffd32b76f

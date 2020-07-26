@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'Dosis Regular';
+  src: url('Dosis Regular.eot');
+  src: url('Dosis Regular.woff2') format('woff2'),
+       url('Dosis Regular.eot?#iefix') format('embedded-opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Dosis-Regular';
+  src: url('Dosis-Regular.woff') format('woff'),
+       url('Dosis-Regular.ttf') format('truetype'),
+       url('Dosis-Regular.svg#Dosis-Regular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
