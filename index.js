@@ -166,6 +166,10 @@ server.get('/favicon.ico', (req, res, next) => {
   return next();
 });
 
+server.get('/public/*', // don't forget the `/*`
+     restify.plugins.serveStaticFiles('./static')
+);
+
 server.get('/', (req, res, next) => {
   const body = fs.readFileSync(Resources.HOME_PATH, { encoding: 'utf-8', flag: 'r' });
   res.setHeader('Content-Type', 'text/html');
