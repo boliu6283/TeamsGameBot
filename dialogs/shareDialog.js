@@ -21,7 +21,7 @@ class ShareDialog extends ComponentDialog {
   async shareCardStep(stepContext) {
     const shareCard = CardFactory.adaptiveCard(JSON.parse(JSON.stringify(ShareCard)));
     shareCard.content.body[0].url = getRandomPic(sharePics);
-    shareCard.content.body[2].text = constants.DOMAIN + constants.HOME_PATH;
+    shareCard.content.body[2].text = constants.DOMAIN;
 
     await stepContext.context.deleteActivity(stepContext.options.lastActivityId);
     stepContext.options.lastActivityId = (await stepContext.context.sendActivity({ attachments: [shareCard] })).id;
