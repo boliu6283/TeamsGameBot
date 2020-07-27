@@ -6,9 +6,12 @@ const SERVICE_AGREEMENT_PATH = './static/page/serviceAgreement.html';
 
 const FAVICON_PATH = './static/favicon.ico';
 
+const SPYFALL_RULES_PATH = './static/page/spayfallRules.html';
+
 module.exports = {
   PRIVACY_PATH,
   HOME_PATH,
   SERVICE_AGREEMENT_PATH,
-  FAVICON_PATH
+  FAVICON_PATH,
+  SPYFALL_RULES_PATH
 };

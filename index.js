@@ -167,6 +167,14 @@ server.get('/', (req, res, next) => {
   return next();
 });
 
+server.get('/spyfallrules', (req, res, next) => {
+  const body = fs.readFileSync(Resources.SPYFALL_RULES_PATH, { encoding: 'utf-8', flag: 'r' });
+  res.setHeader('Content-Type', 'text/html');
+  res.write(body);
+  res.end();
+  return next();
+});
+
 // Listen for incoming activities and route them to your bot main dialog.
 server.post('/api/messages', (req, res) => {
   // Route received a request to adapter for processing
