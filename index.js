@@ -133,15 +133,6 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
   console.log(`\n${server.name} listening to ${server.url}`);
 });
 
-server.get('/.well-known/acme-challenge/qFZ_M8hpBX4-0eYtSzgcSBEBX3Gkqgj9VqtkJwLDWs4', (req, res, next) => {
-  const body = fs.readFileSync(Resources.ACME_PATH, { encoding: 'utf-8', flag: 'r' });
-  res.setHeader('Content-Type', 'text/html');
-  res.write(body);
-  res.end();
-  return next();
-});
-
-
 server.get('/privacy', (req, res, next) => {
   const body = fs.readFileSync(Resources.PRIVACY_PATH, { encoding: 'utf-8', flag: 'r' });
   res.setHeader('Content-Type', 'text/html');

@@ -83,7 +83,7 @@ class MainDialog extends ComponentDialog {
     if (dc.context.activity.text) {
       const result = await this.textInputHandler(dc, options);
       if (result === 'failure') {
-        return await dc.beginDialog(constants.WELCOME_DIALOG, options);
+        return await dc.replaceDialog(constants.WELCOME_DIALOG, options);
       } else if (result === 'success') {
         return await dc.endDialog();
       }
@@ -93,27 +93,29 @@ class MainDialog extends ComponentDialog {
     const input = dc.context.activity.value;
     if (input) {
       if (input.callbackAction === constants.SPYFALL_START_CALLBACK) {
-        return await dc.beginDialog(constants.SPYFALL_DIALOG, options);
+        return await dc.replaceDialog(constants.SPYFALL_DIALOG, options);
       } else if (input.spyGuess) {
-        return await dc.beginDialog(constants.SPYFALL_GUESS_DIALOG, options);
+        return await dc.replaceDialog(constants.SPYFALL_GUESS_DIALOG, options);
       } else if (input.selectedPersonAAD) {
-        return await dc.beginDialog(constants.SPYFALL_RAISE_POLL_DIALOG, options);
+        return await dc.replaceDialog(constants.SPYFALL_RAISE_POLL_DIALOG, options);
       } else if (input.spyfallPollSelectedResult) {
-        return await dc.beginDialog(constants.SPYFALL_POLL_RESULT_COLLECT_DIALOG, options);
+        return await dc.replaceDialog(constants.SPYFALL_POLL_RESULT_COLLECT_DIALOG, options);
       } else if (input.recreateSession === 'spyfall') {
         await this.copySession(dc);
-        return await dc.beginDialog(constants.SPYFALL_DIALOG, options);
+        return await dc.replaceDialog(constants.SPYFALL_DIALOG, options);
       } else if (input.recreateSession === 'headsup') {
         await this.copySession(dc);
-        return await dc.beginDialog(constants.HEADSUP_DIALOG, options);
+        return await dc.replaceDialog(constants.HEADSUP_DIALOG, options);
       } else if (input.callbackAction === constants.HEADSUP_START_CALLBACK) {
-        return await dc.beginDialog(constants.HEADSUP_DIALOG, options);
+        return await dc.replaceDialog(constants.HEADSUP_DIALOG, options);
       } else if (input.headsupLoserAad) {
-        return await dc.beginDialog(constants.HEADSUP_RESULT_COLLECT_DIALOG, options);
+        return await dc.replaceDialog(constants.HEADSUP_RESULT_COLLECT_DIALOG, options);
       } else if (input.exitGame) {
-        return await dc.beginDialog(constants.EXIT_SESSION_DIALOG, options);
+        return await dc.replaceDialog(constants.EXIT_SESSION_DIALOG, options);
       }
     }
+
+
   }
 
   async textInputHandler(dc, options) {
