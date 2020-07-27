@@ -81,15 +81,32 @@ class MainDialog extends ComponentDialog {
    */
   async beginDialog(dc, options) {
     if (dc.context.activity.text) {
-      const result = await this.textInputHandler(dc, options);
-      if (result === 'failure') {
-        return await dc.replaceDialog(constants.WELCOME_DIALOG, options);
-      } else if (result === 'success') {
-        return await dc.endDialog();
-      }
+      await this.textInputHandler(dc, options);
+    } else if (dc.context.activity.value) {
+      await this.proactiveMsgHandler(dc, options);
+    } else {
+      return await dc.replaceDialog(constants.WELCOME_DIALOG, options);
     }
+  }
 
-    // Handler for proactive messages
+  async textInputHandler(dc, options) {
+    const input = dc.context.activity.text;
+    const code = input.split(' ').pop();
+    const luisResult = await this._luisRecognizer.recognize(dc.context);
+    switch (LuisRecognizer.topIntent(luisResult)) {
+      case 'Join': {
+        if (await Resolvers.gameSession.doesSessionExist({ code })) {
+          await joinSessionHelper(dc, code, options);
+          return;
+        }
+        break;
+      }
+    };
+
+    return await dc.replaceDialog(constants.WELCOME_DIALOG, options);
+  }
+
+  async proactiveMsgHandler(dc, options) {
     const input = dc.context.activity.value;
     if (input) {
       if (input.callbackAction === constants.SPYFALL_START_CALLBACK) {
@@ -114,23 +131,6 @@ class MainDialog extends ComponentDialog {
         return await dc.replaceDialog(constants.EXIT_SESSION_DIALOG, options);
       }
     }
-
-
-  }
-
-  async textInputHandler(dc, options) {
-    const input = dc.context.activity.text;
-    const code = input.split(' ').pop();
-    const luisResult = await this._luisRecognizer.recognize(dc.context);
-    switch (LuisRecognizer.topIntent(luisResult)) {
-      case 'Join': {
-        if (await Resolvers.gameSession.doesSessionExist({ code })) {
-          await joinSessionHelper(dc, code, options);
-          return 'success';
-        }
-      }
-    }
-    return 'failure';
   }
 
   async copySession(dc) {
