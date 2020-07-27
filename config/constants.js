@@ -1,6 +1,6 @@
 module.exports = {
   // Domain
-  DOMAIN: "http://gamebot.azurewebsites.net",
+  DOMAIN: "jolly-game.com",
 
   // Paths
   HOME_PATH: "/",

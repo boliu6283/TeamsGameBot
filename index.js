@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const restify = require('restify');
 const mongoose = require('mongoose');
+const Resources = require('./config/resources');
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
@@ -66,20 +67,13 @@ const onTurnErrorHandler = async (context, error) => {
   );
 
   // Send a message to the user
-  if (process.env.DebugMode === 'emulator') {
-    let onTurnErrorMessage = 'The bot encountered an error or bug.';
-    await context.sendActivity(
-      onTurnErrorMessage,
-      onTurnErrorMessage,
-      InputHints.ExpectingInput
-    );
-    onTurnErrorMessage = 'To continue to run this bot, please fix the bot source code.';
-    await context.sendActivity(
-      onTurnErrorMessage,
-      onTurnErrorMessage,
-      InputHints.ExpectingInput
-    );
-  }
+  const onTurnErrorMessage = 'The bot encountered an error. ' +
+                             'Please contact **jolly-game@microsoft.com** for support!';
+  await context.sendActivity(
+    onTurnErrorMessage,
+    onTurnErrorMessage,
+    InputHints.ExpectingInput
+  );
   // Clear out state
   await conversationState.delete(context);
 };
@@ -139,8 +133,14 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
   console.log(`\n${server.name} listening to ${server.url}`);
 });
 
-// Static Pages: Privacy, Service Agreement, Home Page
-const Resources = require('./config/resources');
+server.get('/.well-known/acme-challenge/qFZ_M8hpBX4-0eYtSzgcSBEBX3Gkqgj9VqtkJwLDWs4', (req, res, next) => {
+  const body = fs.readFileSync(Resources.ACME_PATH, { encoding: 'utf-8', flag: 'r' });
+  res.setHeader('Content-Type', 'text/html');
+  res.write(body);
+  res.end();
+  return next();
+});
+
 
 server.get('/privacy', (req, res, next) => {
   const body = fs.readFileSync(Resources.PRIVACY_PATH, { encoding: 'utf-8', flag: 'r' });
@@ -166,9 +166,7 @@ server.get('/favicon.ico', (req, res, next) => {
   return next();
 });
 
-server.get('/public/*', // don't forget the `/*`
-     restify.plugins.serveStaticFiles('./static')
-);
+server.get('/public/*', restify.plugins.serveStaticFiles('./static'));
 
 server.get('/', (req, res, next) => {
   const body = fs.readFileSync(Resources.HOME_PATH, { encoding: 'utf-8', flag: 'r' });
