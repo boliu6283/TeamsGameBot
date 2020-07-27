@@ -40,10 +40,12 @@ class SpyfallDialog extends ComponentDialog {
     }
 
     // Initialize game data
-    const metaDataUpdate = this.language !== stepContext.context.activity.value.language;
-    if (!this._metadata || !this.language || metaDataUpdate) {
-      this.language = stepContext.context.activity.value.language;
-      this._metadata = (await Resolvers.game.getGameMetadata({ _id: constants.SPYFALL_OBJ_ID}))[this.language];
+    if (stepContext.context.activity.value.language) { // this is a new session not restart session
+      const metaDataUpdateNeeded = this.language !== stepContext.context.activity.value.language;
+      if (!this._metadata || !this.language || metaDataUpdateNeeded) {
+        this.language = stepContext.context.activity.value.language;
+        this._metadata = (await Resolvers.game.getGameMetadata({ _id: constants.SPYFALL_OBJ_ID}))[this.language];
+      }
     }
 
     // Set lifespan of this session
