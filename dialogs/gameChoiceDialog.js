@@ -59,14 +59,14 @@ class GameChoiceDialog extends ComponentDialog {
         actions: [
           {
             type: 'Action.Submit',
-            title: '🚀Start',
+            title: '🚀Start ',
             data: {
               gameChoice: game._id
             }
           },
           {
             type: 'Action.OpenUrl',
-            title: '📖Rule',
+            title: '📖Rules',
             url: game.rulesUrl
           }
         ]
