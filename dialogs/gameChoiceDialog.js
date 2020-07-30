@@ -54,6 +54,24 @@ class GameChoiceDialog extends ComponentDialog {
         size: 'auto'
       };
 
+      const gameBtn = {
+        type: 'ActionSet',
+        actions: [
+          {
+            type: 'Action.Submit',
+            title: 'Start',
+            data: {
+              gameChoice: game._id
+            }
+          },
+          {
+            type: 'Action.OpenUrl',
+            title: 'Rules',
+            url: game.rulesUrl
+          }
+        ]
+      };
+
       gameCard.content.body.push({
         type: 'Container',
         items: [
@@ -69,21 +87,26 @@ class GameChoiceDialog extends ComponentDialog {
                 type: 'Column',
                 width: 'stretch',
                 items: [gameImage]
+              },
+              {
+                type: 'Column',
+                width: 'stretch',
+                items: [gameBtn]
               }
             ]
           }
         ]
       });
 
-      const gameBtn = {
-        type: 'Action.Submit',
-        title: game.name,
-        data: {
-          gameChoice: game._id
-        }
-      };
+      // const gameBtn = {
+      //   type: 'Action.Submit',
+      //   title: game.name,
+      //   data: {
+      //     gameChoice: game._id
+      //   }
+      // };
 
-      gameCard.content.actions.push(gameBtn);
+      // gameCard.content.actions.push(gameBtn);
     });
 
     gameCard.content.actions.push({

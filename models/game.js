@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const constants = require('../config/constants');
 
 const gameSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, default: '' },
   rules: { type: String, default: '' },
+  rulesUrl: { type: String, default: constants.DOMAIN },
   capacity: [{ type: Number }],
   price: { type: Number, default: 0 },
   profile: { type: String },

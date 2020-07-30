@@ -1,7 +1,7 @@
 const Game = require('../models/game');
 
 const getAllGames = async () => {
-  return await Game.find({}, 'name description capacity profile');
+  return await Game.find({}, 'name description rulesUrl capacity profile');
 }
 
 const getGameById = async (args) => {
