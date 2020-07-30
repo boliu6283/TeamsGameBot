@@ -59,14 +59,14 @@ class GameChoiceDialog extends ComponentDialog {
         actions: [
           {
             type: 'Action.Submit',
-            title: 'Start',
+            title: '🚀Start',
             data: {
               gameChoice: game._id
             }
           },
           {
             type: 'Action.OpenUrl',
-            title: 'Rules',
+            title: '📖Rule',
             url: game.rulesUrl
           }
         ]
@@ -97,16 +97,6 @@ class GameChoiceDialog extends ComponentDialog {
           }
         ]
       });
-
-      // const gameBtn = {
-      //   type: 'Action.Submit',
-      //   title: game.name,
-      //   data: {
-      //     gameChoice: game._id
-      //   }
-      // };
-
-      // gameCard.content.actions.push(gameBtn);
     });
 
     gameCard.content.actions.push({
