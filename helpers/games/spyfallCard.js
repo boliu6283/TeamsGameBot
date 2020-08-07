@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const SpyfallCard = require('../../static/spyfallCard.json');
 const SpyActionCard = require('../../static/spyfallSpyActionCard.json');
 const DetectiveActionCard = require('../../static/spyfallDetectiveActionCard.json');

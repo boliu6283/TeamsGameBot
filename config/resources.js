@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const PRIVACY_PATH = './static/page/privacy.html';
 
 const HOME_PATH = './static/page/home.html';

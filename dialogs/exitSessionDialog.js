@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const { Dialog } = require('botbuilder-dialogs');
 const { CardFactory } = require('botbuilder-core');
 const constants = require('../config/constants');
@@ -14,7 +17,7 @@ class ExitSessionDialog extends Dialog {
   async beginDialog(dc, options) {
     let card = CardFactory.adaptiveCard(ExitSessionCard);
     card.content.body[0].url = exitSessionPics[0];
-    
+
     await dc.context.sendActivity({ attachments: [card] });
     return await dc.endDialog();
   }

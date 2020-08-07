@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const { getSession } = require('./gameSession');
 const { notifyUpdatableSession, deleteUpdatableSession } = require('./proactiveMessage');
 const { printTime } = require('../helpers/thumbnail');

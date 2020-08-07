@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const { Dialog, ComponentDialog, WaterfallDialog } = require("botbuilder-dialogs");
 const { CardFactory } = require('botbuilder-core');
 const constants = require('../config/constants');

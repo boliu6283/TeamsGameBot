@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const { Dialog, ComponentDialog, WaterfallDialog, ChoicePrompt } = require('botbuilder-dialogs');
 const { CardFactory } = require('botbuilder-core');
 const { CreateSessionDialog } = require('./createSessionDialog');
@@ -24,7 +27,7 @@ class GameChoiceDialog extends ComponentDialog {
     // Clean up GameCard
     GameCard.body = [];
     GameCard.actions = [];
-    
+
     let gameCard = CardFactory.adaptiveCard(JSON.parse(JSON.stringify(GameCard)));
     const allGames = await Resolvers.game.getAllGames();
 

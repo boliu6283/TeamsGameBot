@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const { BotFrameworkAdapter } = require('botbuilder');
 
 let _adapterInstance = null;

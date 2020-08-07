@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const { CardFactory } = require('botbuilder-core');
 const { getHeadsupScoreCard } = require('../games/headsupCard');
 const constants = require('../../config/constants');

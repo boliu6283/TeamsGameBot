@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const menuPics = [
   'https://gamebot.blob.core.windows.net/menu-pic/main.png'
 ];

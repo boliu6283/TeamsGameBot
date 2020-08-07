@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const { Dialog } = require('botbuilder-dialogs');
 const Resolvers = require('../../../resolvers');
 const { spyfallEndGamehelper } = require('../../../helpers/games/spyfall');
